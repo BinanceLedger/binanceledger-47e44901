@@ -9,7 +9,7 @@ const BinanceHeader: FC = () => {
         <div className="flex items-center">
           <Link to="/" className="mr-8">
             <img 
-              src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" 
+              src="https://public.bnbstatic.com/image/cms/blog/20200707/631c823b-886e-4e46-b21d-a3bf21aea8bf.png" 
               alt="Binance Logo" 
               className="h-8"
             />
