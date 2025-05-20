@@ -8,7 +8,7 @@ const BinanceHeader: FC = () => {
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center">
           <Link to="/" className="mr-8">
-            {/* Added fallback text in case image doesn't load */}
+            {/* Logo with fallback text */}
             <div className="flex items-center">
               <img 
                 src="https://public.bnbstatic.com/image/cms/blog/20200707/631c823b-886e-4e46-b21d-a3bf21aea8bf.png" 
@@ -16,15 +16,17 @@ const BinanceHeader: FC = () => {
                 className="h-8"
                 onError={(e) => {
                   e.currentTarget.onerror = null; 
+                  if (e.currentTarget.nextElementSibling instanceof HTMLElement) {
+                    e.currentTarget.nextElementSibling.style.display = 'block';
+                  }
                   e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling.style.display = 'block';
                 }}
               />
               <span 
                 className="text-binance-yellow font-bold text-xl hidden"
                 style={{ display: 'none' }}
               >
-                BINANCE
+                BINANCE LEDGER
               </span>
             </div>
           </Link>
@@ -54,6 +56,9 @@ const BinanceHeader: FC = () => {
           >
             Register
           </Link>
+        </div>
+        <div className="text-gray-500 text-xs hidden md:block">
+          © {new Date().getFullYear()} BINANCE LEDGER
         </div>
       </div>
     </header>
