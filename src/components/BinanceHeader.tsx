@@ -7,8 +7,12 @@ const BinanceHeader: FC = () => {
     <header className="bg-binance-black py-4 border-b border-gray-800">
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center">
-          <Link to="/" className="text-binance-yellow font-bold text-2xl mr-8">
-            Binance Ledger
+          <Link to="/" className="mr-8">
+            <img 
+              src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" 
+              alt="Binance Logo" 
+              className="h-8"
+            />
           </Link>
           <nav className="hidden md:flex space-x-8">
             <Link to="/" className="text-gray-300 hover:text-binance-yellow transition-colors">
