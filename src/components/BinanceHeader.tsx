@@ -8,11 +8,25 @@ const BinanceHeader: FC = () => {
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center">
           <Link to="/" className="mr-8">
-            <img 
-              src="https://public.bnbstatic.com/image/cms/blog/20200707/631c823b-886e-4e46-b21d-a3bf21aea8bf.png" 
-              alt="Binance Logo" 
-              className="h-8"
-            />
+            {/* Added fallback text in case image doesn't load */}
+            <div className="flex items-center">
+              <img 
+                src="https://public.bnbstatic.com/image/cms/blog/20200707/631c823b-886e-4e46-b21d-a3bf21aea8bf.png" 
+                alt="Binance Logo" 
+                className="h-8"
+                onError={(e) => {
+                  e.currentTarget.onerror = null; 
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling.style.display = 'block';
+                }}
+              />
+              <span 
+                className="text-binance-yellow font-bold text-xl hidden"
+                style={{ display: 'none' }}
+              >
+                BINANCE
+              </span>
+            </div>
           </Link>
           <nav className="hidden md:flex space-x-8">
             <Link to="/" className="text-gray-300 hover:text-binance-yellow transition-colors">
