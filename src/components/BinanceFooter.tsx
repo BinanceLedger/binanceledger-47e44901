@@ -26,7 +26,7 @@ const BinanceFooter: FC = () => {
   return (
     <footer className="bg-binance-black py-8 mt-16 border-t border-gray-800">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
           {/* About Us */}
           <div>
             <h3 className="text-binance-yellow font-bold text-lg mb-4">About Us</h3>
@@ -256,73 +256,6 @@ const BinanceFooter: FC = () => {
               </li>
             </ul>
           </div>
-          
-          {/* Mobile Apps */}
-          <div>
-            <h3 className="text-white font-medium mb-4">Mobile Apps</h3>
-            <div className="space-y-3">
-              <a 
-                href="https://www.binance.com/en/download" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="block"
-              >
-                <img 
-                  src="https://public.bnbstatic.com/static/images/common/app/app_store.png" 
-                  alt="Download on App Store" 
-                  className="h-10"
-                  onError={(e) => {
-                    e.currentTarget.src = "https://public.bnbstatic.com/static/images/common/app/app_store_en.svg";
-                  }}
-                />
-              </a>
-              <a 
-                href="https://www.binance.com/en/download" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="block"
-              >
-                <img 
-                  src="https://public.bnbstatic.com/static/images/common/app/google_play.png" 
-                  alt="Get it on Google Play" 
-                  className="h-10"
-                  onError={(e) => {
-                    e.currentTarget.src = "https://public.bnbstatic.com/static/images/common/app/google_play_en.svg";
-                  }}
-                />
-              </a>
-              <a 
-                href="https://www.binance.com/en/download" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="block"
-              >
-                <img 
-                  src="https://public.bnbstatic.com/static/images/common/app/android_apk.png" 
-                  alt="Android APK" 
-                  className="h-10"
-                  onError={(e) => {
-                    e.currentTarget.src = "https://public.bnbstatic.com/static/images/common/app/android_apk_en.svg";
-                  }}
-                />
-              </a>
-              
-              <div className="pt-3">
-                <h4 className="text-white font-medium mb-2">QR Code</h4>
-                <div className="bg-white p-1 inline-block">
-                  <img 
-                    src="https://public.bnbstatic.com/static/images/common/app/app_qrcode.png" 
-                    alt="Binance App QR Code" 
-                    className="w-24 h-24"
-                  />
-                </div>
-                <p className="text-gray-400 text-xs mt-2">
-                  Scan to Download the<br />
-                  Binance Mobile App
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
         
         <Separator className="my-8 bg-gray-800" />
@@ -387,7 +320,7 @@ const BinanceFooter: FC = () => {
           </div>
           
           {/* Language Selector */}
-          <div className="flex space-x-4 items-center">
+          <div className="flex items-center">
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="bg-transparent border-gray-700 text-gray-400 hover:text-white hover:bg-gray-800">
@@ -407,27 +340,6 @@ const BinanceFooter: FC = () => {
                       onClick={() => setSelectedLanguage(lang)}
                     >
                       {lang}
-                    </button>
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="bg-transparent border-gray-700 text-gray-400 hover:text-white hover:bg-gray-800">
-                  USD
-                  <ChevronDown className="h-4 w-4 ml-1" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-32 bg-binance-darkGray border-gray-700">
-                <div className="grid gap-1 py-1">
-                  {['USD', 'EUR', 'GBP', 'AUD', 'JPY'].map((currency) => (
-                    <button
-                      key={currency}
-                      className="px-2 py-1.5 text-left text-gray-300 hover:bg-gray-800 rounded"
-                    >
-                      {currency}
                     </button>
                   ))}
                 </div>
