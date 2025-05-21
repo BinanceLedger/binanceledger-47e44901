@@ -13,17 +13,37 @@ const Index = () => {
         {/* Hero Section */}
         <div className="bg-binance-black py-10 md:py-16">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-3xl md:text-4xl font-bold mb-4">
-                Binance Ledger <span className="text-binance-yellow">Privacy Portal</span>
-              </h1>
-              <p className="text-gray-300 text-lg mb-6">
-                Secure your crypto assets with the most trusted hardware wallet in the industry
-              </p>
-              <div className="flex justify-center space-x-4">
-                <div className="w-1/4 md:w-1/6 h-px bg-binance-yellow my-auto"></div>
-                <span className="text-binance-yellow px-4">Trusted by millions</span>
-                <div className="w-1/4 md:w-1/6 h-px bg-binance-yellow my-auto"></div>
+            <div className="max-w-5xl mx-auto">
+              <div className="flex flex-col md:flex-row items-center">
+                <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
+                  <h1 className="text-3xl md:text-4xl font-bold mb-4">
+                    Binance Ledger <span className="text-binance-yellow">Privacy Portal</span>
+                  </h1>
+                  <p className="text-gray-300 text-lg mb-6">
+                    Secure your crypto assets with the most trusted hardware wallet in the industry
+                  </p>
+                  <div className="flex justify-center md:justify-start space-x-4">
+                    <div className="w-12 h-px bg-binance-yellow my-auto"></div>
+                    <span className="text-binance-yellow px-4">Trusted by millions</span>
+                    <div className="w-12 h-px bg-binance-yellow my-auto"></div>
+                  </div>
+                </div>
+                <div className="md:w-1/2 flex justify-center md:justify-end">
+                  <div className="relative">
+                    <img 
+                      src="https://i.ibb.co/vVVpCCG/binance-ledger-device.png" 
+                      alt="Binance Ledger Device" 
+                      className="max-w-full h-auto rounded-lg shadow-xl"
+                    />
+                    <div className="absolute bottom-4 right-4">
+                      <img 
+                        src="https://public.bnbstatic.com/image/cms/blog/20200707/631c823b-886e-4e46-b21d-a3bf21aea8bf.png"
+                        alt="Binance Logo" 
+                        className="h-6"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

