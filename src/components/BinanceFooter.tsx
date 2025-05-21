@@ -319,8 +319,8 @@ const BinanceFooter: FC = () => {
             </a>
           </div>
           
-          {/* Language Selector */}
-          <div className="flex items-center">
+          {/* Language Selector and Currency Selector */}
+          <div className="flex space-x-4 items-center">
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="bg-transparent border-gray-700 text-gray-400 hover:text-white hover:bg-gray-800">
@@ -340,6 +340,27 @@ const BinanceFooter: FC = () => {
                       onClick={() => setSelectedLanguage(lang)}
                     >
                       {lang}
+                    </button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className="bg-transparent border-gray-700 text-gray-400 hover:text-white hover:bg-gray-800">
+                  USD
+                  <ChevronDown className="h-4 w-4 ml-1" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-32 bg-binance-darkGray border-gray-700">
+                <div className="grid gap-1 py-1">
+                  {['USD', 'EUR', 'GBP', 'AUD', 'JPY'].map((currency) => (
+                    <button
+                      key={currency}
+                      className="px-2 py-1.5 text-left text-gray-300 hover:bg-gray-800 rounded"
+                    >
+                      {currency}
                     </button>
                   ))}
                 </div>
@@ -368,3 +389,4 @@ const BinanceFooter: FC = () => {
 };
 
 export default BinanceFooter;
+
