@@ -34,7 +34,7 @@ const BinanceHeader: FC = () => {
           <a href="https://www.binance.com" target="_blank" rel="noopener noreferrer" className="mr-8">
             <div className="flex items-center">
               <img 
-                src="/lovable-uploads/d63633e6-e7fe-40be-8099-d29cf671a45d.png" 
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
                 alt="Binance Logo" 
                 className="h-6"
                 onError={(e) => {
