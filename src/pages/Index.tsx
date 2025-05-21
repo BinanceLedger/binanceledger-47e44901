@@ -33,7 +33,7 @@ const Index = () => {
           {/* Ledger Image positioned to overlap sections */}
           <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 hidden md:block">
             <img 
-              src="/lovable-uploads/938c67ba-a1d3-4451-8b8d-ea78479af87c.png" 
+              src="/lovable-uploads/c41e1819-05c2-4b68-babe-06fee72ca2a2.png" 
               alt="Binance Ledger Device" 
               className="max-w-md h-auto"
             />
@@ -42,7 +42,7 @@ const Index = () => {
           {/* Mobile view for Ledger image */}
           <div className="md:hidden flex justify-center mt-6 mb-4">
             <img 
-              src="/lovable-uploads/938c67ba-a1d3-4451-8b8d-ea78479af87c.png" 
+              src="/lovable-uploads/c41e1819-05c2-4b68-babe-06fee72ca2a2.png" 
               alt="Binance Ledger Device" 
               className="max-w-[250px] h-auto"
             />
