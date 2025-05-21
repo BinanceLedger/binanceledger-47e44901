@@ -176,7 +176,7 @@ const BinanceFooter: FC = () => {
             </a>
           </div>
           <p className="text-gray-400 text-center">
-            &copy; {new Date().getFullYear()} Binance Ledger. All rights reserved.
+            Binance&copy; {new Date().getFullYear()}
           </p>
         </div>
       </div>

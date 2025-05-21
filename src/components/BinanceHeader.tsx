@@ -91,10 +91,6 @@ const BinanceHeader: FC = () => {
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-
-        <div className="text-gray-500 text-xs hidden md:block">
-          © {new Date().getFullYear()} BINANCE LEDGER
-        </div>
       </div>
 
       {/* Mobile menu */}
