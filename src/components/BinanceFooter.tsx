@@ -1,4 +1,3 @@
-
 import { FC, useState } from "react";
 import { ChevronDown, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -373,15 +372,6 @@ const BinanceFooter: FC = () => {
           <div className="text-xs text-gray-500 mb-4 md:mb-0">
             Binance&copy; {new Date().getFullYear()} | <a href="https://www.binance.com/en/terms" className="hover:text-binance-yellow">Terms of Use</a> | <a href="https://www.binance.com/en/privacy" className="hover:text-binance-yellow">Privacy Notice</a> | <a href="https://www.binance.com/en/risk-warning" className="hover:text-binance-yellow">Risk Warning</a>
           </div>
-          
-          <div className="flex flex-wrap gap-3">
-            <img src="https://public.bnbstatic.com/static/images/common/footer/trustwallet.png" alt="Trust Wallet" className="h-5" />
-            <img src="https://public.bnbstatic.com/static/images/common/footer/gtc.svg" alt="GTC" className="h-5" />
-            <img src="https://public.bnbstatic.com/static/images/common/footer/unicef.svg" alt="Unicef" className="h-5" />
-            <img src="https://public.bnbstatic.com/static/images/common/footer/web3.svg" alt="Web3" className="h-5" />
-            <img src="https://public.bnbstatic.com/static/images/common/footer/pciDss.svg" alt="PCI DSS" className="h-5" />
-            <img src="https://public.bnbstatic.com/static/images/common/footer/iso.svg" alt="ISO" className="h-5" />
-          </div>
         </div>
       </div>
     </footer>
@@ -389,4 +379,3 @@ const BinanceFooter: FC = () => {
 };
 
 export default BinanceFooter;
-
