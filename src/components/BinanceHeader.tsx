@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 const BinanceHeader: FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,23 +34,19 @@ const BinanceHeader: FC = () => {
           <a href="https://www.binance.com" target="_blank" rel="noopener noreferrer" className="mr-8">
             <div className="flex items-center">
               <img 
-                src="https://public.bnbstatic.com/image/cms/blog/20200707/631c823b-886e-4e46-b21d-a3bf21aea8bf.png" 
+                src="/lovable-uploads/d63633e6-e7fe-40be-8099-d29cf671a45d.png" 
                 alt="Binance Logo" 
-                className="h-8"
+                className="h-6"
                 onError={(e) => {
-                  e.currentTarget.onerror = null; 
-                  if (e.currentTarget.nextElementSibling instanceof HTMLElement) {
-                    e.currentTarget.nextElementSibling.style.display = 'block';
-                  }
+                  setLogoError(true);
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              <span 
-                className="text-binance-yellow font-bold text-xl hidden"
-                style={{ display: 'none' }}
-              >
-                BINANCE LEDGER
-              </span>
+              {logoError && (
+                <span className="text-binance-yellow font-bold text-xl">
+                  BINANCE LEDGER
+                </span>
+              )}
             </div>
           </a>
           <nav className="hidden md:flex space-x-8">
