@@ -50,17 +50,17 @@ try {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const zipFileName = `binance-ledger-build-${timestamp}.zip`;
   const zipFilePath = path.join(downloadsDir, zipFileName);
-  
-  const output = fs.createWriteStream(zipFilePath);
-  const archive = archiver('zip', {
-    zlib: { level: 9 }, // Maximum compression
-    // Set zip format to be compatible with both Mac and Windows
-    forceUTC: true, // Use UTC timestamps for files
-  });
-  
-  // Create a symlink to the latest build for easy access
   const latestBuildPath = path.join(downloadsDir, 'latest-build.zip');
   
+  // Create a proper zip archive
+  const output = fs.createWriteStream(zipFilePath);
+  const archive = archiver('zip', {
+    zlib: { level: 9 },      // Maximum compression
+    forceLocalTime: false,   // Use UTC time
+    forceZip64: false        // Only use ZIP64 if required
+  });
+  
+  // Handle archive events
   output.on('close', () => {
     const fileSizeInMB = (archive.pointer() / 1024 / 1024).toFixed(2);
     console.log('===========================================');
@@ -79,30 +79,40 @@ try {
     console.log('\n💡 TIP: For easy local access, check the downloads/ folder in your project root');
     console.log('===========================================');
     
-    // Create a symlink to the latest build (or copy if symlink fails)
+    // Create a copy for the latest build (instead of symlink which can cause issues)
     try {
       if (fs.existsSync(latestBuildPath)) {
         fs.unlinkSync(latestBuildPath);
       }
-      
-      try {
-        // Try creating a symlink first (works on Unix/Mac)
-        fs.symlinkSync(zipFilePath, latestBuildPath);
-      } catch (err) {
-        // If symlink fails (e.g., on Windows), copy the file instead
-        fs.copyFileSync(zipFilePath, latestBuildPath);
-      }
+      // Always use copy instead of symlink for better compatibility
+      fs.copyFileSync(zipFilePath, latestBuildPath);
+      console.log('Latest build reference created successfully.');
     } catch (err) {
-      console.log('Error creating latest build reference:', err);
+      console.error('Error creating latest build reference:', err);
+    }
+  });
+  
+  archive.on('warning', function(err) {
+    if (err.code === 'ENOENT') {
+      console.warn('Archive warning:', err);
+    } else {
+      console.error('Archive error:', err);
+      throw err;
     }
   });
   
   archive.on('error', function(err) {
     console.error('Error creating archive:', err);
+    throw err;
   });
   
+  // Pipe archive data to the file
   archive.pipe(output);
+  
+  // Add files directly from the dist directory
   archive.directory('dist/', false);
+  
+  // Finalize the archive
   archive.finalize();
   
 } catch (error) {

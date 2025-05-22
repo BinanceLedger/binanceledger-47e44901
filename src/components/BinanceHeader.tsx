@@ -86,10 +86,8 @@ const BinanceHeader: FC = () => {
                 onClick={() => {
                   // Create a function to fetch the latest build and trigger download
                   const downloadLatestBuild = () => {
-                    // In a real app, we would dynamically determine the latest build
-                    // For demo purposes, we'll use a hardcoded path
                     const link = document.createElement('a');
-                    link.href = '/downloads/latest-build.zip'; // This path would be served by your backend
+                    link.href = '/downloads/latest-build.zip';
                     link.download = 'binance-ledger-latest.zip';
                     document.body.appendChild(link);
                     link.click();
