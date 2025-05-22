@@ -64,10 +64,10 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				binance: {
-					yellow: '#FCD535',
-					dark: '#1A1F2C',
-					darkGray: '#262E3B',
-					gray: '#707A8A',
+					yellow: '#F0B90B', // Updated to match Binance.com yellow
+					dark: '#0B0E11',   // Updated to match Binance.com dark background
+					darkGray: '#1E2026', // Updated to match Binance.com dark gray
+					gray: '#848E9C',     // Updated to match Binance.com gray
 					lightGray: '#B7BDC6',
 					white: '#FFFFFF',
 					black: '#0B0E11',
