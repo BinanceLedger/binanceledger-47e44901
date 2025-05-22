@@ -34,6 +34,9 @@ if (!fs.existsSync(configDir)) {
 fs.writeFileSync(path.join(configDir, 'emailjs.config.ts'), configContent);
 console.log('EmailJS configuration file created successfully!');
 
+// Generate a timestamp for cache busting
+const buildTimestamp = new Date().getTime();
+
 // Create a .htaccess file for Apache servers (like Hostnet) to handle React routing
 const htaccessContent = `
 # Enable rewrite engine
@@ -57,19 +60,42 @@ const htaccessContent = `
   AddType image/svg+xml .svg
 </IfModule>
 
-# Enable GZIP compression
-<IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
-</IfModule>
-
-# Enable browser caching
+# Disable browser caching for HTML and certain asset types to ensure updates are seen
 <IfModule mod_expires.c>
   ExpiresActive On
-  ExpiresByType text/css "access plus 1 year"
-  ExpiresByType application/javascript "access plus 1 year"
+  
+  # Set default to no caching for HTML files
+  ExpiresDefault "access plus 0 seconds"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 0 seconds"
+  ExpiresByType application/javascript "access plus 0 seconds"
+  
+  # Cache images and other static assets normally
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
+
+# Force no caching with HTTP headers
+<IfModule mod_headers.c>
+  # Always set these headers for HTML
+  <FilesMatch "\\.html$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+  </FilesMatch>
+  
+  # Also set for JS and CSS files
+  <FilesMatch "\\.(js|css)$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+  </FilesMatch>
+</IfModule>
+
+# Enable GZIP compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
 </IfModule>
 `;
 
@@ -77,7 +103,7 @@ const htaccessContent = `
 console.log('Building your Binance Ledger application...');
 try {
   // Use base URL that works with relative paths (important for Hostnet)
-  execSync('npm run build -- --base=./', { stdio: 'inherit' });
+  execSync(`npm run build -- --base=./?v=${buildTimestamp}`, { stdio: 'inherit' });
   console.log('Build completed successfully!');
   
   // Write the .htaccess file to the dist directory
@@ -113,6 +139,13 @@ try {
       <mimeMap fileExtension=".js" mimeType="application/javascript" />
       <mimeMap fileExtension=".json" mimeType="application/json" />
     </staticContent>
+    <httpProtocol>
+      <customHeaders>
+        <add name="Cache-Control" value="no-cache, no-store, must-revalidate" />
+        <add name="Pragma" value="no-cache" />
+        <add name="Expires" value="0" />
+      </customHeaders>
+    </httpProtocol>
   </system.webServer>
 </configuration>
   `;
@@ -160,6 +193,10 @@ try {
     console.log('- If you see a blank page, check if JavaScript execution is enabled in your browser');
     console.log('- Verify all files were uploaded and have correct permissions (usually 644 for files, 755 for directories)');
     console.log('- For detailed Hostnet troubleshooting, contact their support with error logs');
+    console.log('\n🔄 IMPORTANT CACHE-BUSTING INFO:');
+    console.log('- This build includes cache-busting mechanisms to ensure your changes are visible');
+    console.log('- The .htaccess file now includes directives to prevent caching of HTML, JS, and CSS files');
+    console.log('- You may need to wait a few minutes for Hostnet\'s server caches to clear');
     console.log('===========================================');
     
     // Create a copy for the latest build (instead of symlink which can cause issues)
