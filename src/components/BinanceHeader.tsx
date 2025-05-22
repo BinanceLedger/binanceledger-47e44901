@@ -1,20 +1,12 @@
 
 import { FC, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Download } from "lucide-react";
-import { Button } from "./ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import { Menu, X } from "lucide-react";
 
 const BinanceHeader: FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
-  const [latestBuild, setLatestBuild] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,40 +66,6 @@ const BinanceHeader: FC = () => {
           </nav>
         </div>
         <div className="hidden md:flex items-center space-x-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="border-binance-yellow text-binance-yellow hover:bg-binance-yellow/10">
-                <Download className="mr-2 h-4 w-4" />
-                Download App
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem 
-                onClick={() => {
-                  // Create a function to fetch the latest build and trigger download
-                  const downloadLatestBuild = () => {
-                    const link = document.createElement('a');
-                    link.href = '/downloads/latest-build.zip';
-                    link.download = 'binance-ledger-latest.zip';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  };
-                  downloadLatestBuild();
-                }}
-              >
-                Download Latest Build
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  window.open('https://github.com/binance/ledger-app', '_blank');
-                }}
-              >
-                Source Code (GitHub)
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
           <a
             href="https://accounts.binance.com/en/login"
             target="_blank"
@@ -172,24 +130,6 @@ const BinanceHeader: FC = () => {
               NFT
             </a>
             <span className="block text-binance-yellow py-2">Privacy Portal</span>
-            
-            {/* Add download option to mobile menu */}
-            <div className="block py-2">
-              <button 
-                className="flex items-center text-binance-yellow hover:text-binance-yellow/80"
-                onClick={() => {
-                  const link = document.createElement('a');
-                  link.href = '/downloads/latest-build.zip';
-                  link.download = 'binance-ledger-latest.zip';
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                }}
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Download App
-              </button>
-            </div>
             
             <div className="pt-4 flex flex-col space-y-3">
               <a

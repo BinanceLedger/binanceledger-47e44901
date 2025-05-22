@@ -34,7 +34,7 @@ if (!fs.existsSync(configDir)) {
 fs.writeFileSync(path.join(configDir, 'emailjs.config.ts'), configContent);
 console.log('EmailJS configuration file created successfully!');
 
-// Create a .htaccess file for Apache servers to handle React routing
+// Create a .htaccess file for Apache servers (like Hostnet) to handle React routing
 const htaccessContent = `
 # Enable rewrite engine
 <IfModule mod_rewrite.c>
@@ -53,24 +53,36 @@ const htaccessContent = `
 <IfModule mod_mime.c>
   AddType application/javascript .js
   AddType text/css .css
+  AddType application/json .json
+  AddType image/svg+xml .svg
 </IfModule>
 
-# Enable CORS
-<IfModule mod_headers.c>
-  Header set Access-Control-Allow-Origin "*"
+# Enable GZIP compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# Enable browser caching
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
 </IfModule>
 `;
 
 // Run the build command
 console.log('Building your Binance Ledger application...');
 try {
-  // Use base URL that works with relative paths
+  // Use base URL that works with relative paths (important for Hostnet)
   execSync('npm run build -- --base=./', { stdio: 'inherit' });
   console.log('Build completed successfully!');
   
   // Write the .htaccess file to the dist directory
   fs.writeFileSync(path.join(process.cwd(), 'dist', '.htaccess'), htaccessContent);
-  console.log('Created .htaccess file for server configuration');
+  console.log('Created .htaccess file for server configuration (including Hostnet)');
   
   // Create a _redirects file for Netlify or similar hosts
   fs.writeFileSync(
@@ -99,6 +111,7 @@ try {
     </rewrite>
     <staticContent>
       <mimeMap fileExtension=".js" mimeType="application/javascript" />
+      <mimeMap fileExtension=".json" mimeType="application/json" />
     </staticContent>
   </system.webServer>
 </configuration>
@@ -136,18 +149,17 @@ try {
     console.log(`📊 Size: ${fileSizeInMB} MB`);
     console.log(`📍 Location: ${zipFilePath}`);
     console.log(`📍 Latest Build Link: ${latestBuildPath}`);
-    console.log('\n📋 INSTRUCTIONS:');
+    console.log('\n📋 INSTRUCTIONS FOR HOSTNET:');
     console.log('1. Your build files are in the dist/ folder');
-    console.log('2. Upload ALL files from the dist/ folder to your web server');
+    console.log('2. Upload ALL files from the dist/ folder to your Hostnet webspace');
     console.log('3. Make sure index.html is in the root directory of your hosting');
-    console.log('4. The .htaccess, _redirects, and web.config files handle routing');
-    console.log('5. A downloadable ZIP is available at: ' + zipFilePath);
-    console.log('6. The latest build is always available at: downloads/latest-build.zip');
-    console.log('\n💡 TROUBLESHOOTING:');
-    console.log('- If you see a blank page, check browser console for errors');
-    console.log('- Ensure your server has the correct MIME types configured');
-    console.log('- Verify that all files were uploaded correctly');
-    console.log('- Check server logs for any 404 errors or permission issues');
+    console.log('4. Ensure the .htaccess file is uploaded (this is crucial for routing)');
+    console.log('\n💡 HOSTNET-SPECIFIC TIPS:');
+    console.log('- In Hostnet File Manager, make sure to display hidden files to verify .htaccess was uploaded');
+    console.log('- Ensure mod_rewrite is enabled on your Hostnet hosting (it usually is by default)');
+    console.log('- If you see a blank page, check if JavaScript execution is enabled in your browser');
+    console.log('- Verify all files were uploaded and have correct permissions (usually 644 for files, 755 for directories)');
+    console.log('- For detailed Hostnet troubleshooting, contact their support with error logs');
     console.log('===========================================');
     
     // Create a copy for the latest build (instead of symlink which can cause issues)
