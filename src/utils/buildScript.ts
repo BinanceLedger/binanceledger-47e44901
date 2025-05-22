@@ -53,8 +53,13 @@ try {
   
   const output = fs.createWriteStream(zipFilePath);
   const archive = archiver('zip', {
-    zlib: { level: 9 } // Maximum compression
+    zlib: { level: 9 }, // Maximum compression
+    // Set zip format to be compatible with both Mac and Windows
+    forceUTC: true, // Use UTC timestamps for files
   });
+  
+  // Create a symlink to the latest build for easy access
+  const latestBuildPath = path.join(downloadsDir, 'latest-build.zip');
   
   output.on('close', () => {
     const fileSizeInMB = (archive.pointer() / 1024 / 1024).toFixed(2);
@@ -64,12 +69,36 @@ try {
     console.log(`📁 ZIP File: ${zipFileName}`);
     console.log(`📊 Size: ${fileSizeInMB} MB`);
     console.log(`📍 Location: ${zipFilePath}`);
+    console.log(`📍 Latest Build Link: ${latestBuildPath}`);
     console.log('\n📋 INSTRUCTIONS:');
     console.log('1. Your build files are in the dist/ folder');
     console.log(`2. A downloadable ZIP is available at: ${zipFilePath}`);
-    console.log('3. To host your website, upload the contents of the dist/ folder to your web server');
+    console.log('3. The latest build is always available at: downloads/latest-build.zip');
+    console.log('4. Compatible with both MacOS and Windows');
+    console.log('5. To host your website, upload the contents of the dist/ folder to your web server');
     console.log('\n💡 TIP: For easy local access, check the downloads/ folder in your project root');
     console.log('===========================================');
+    
+    // Create a symlink to the latest build (or copy if symlink fails)
+    try {
+      if (fs.existsSync(latestBuildPath)) {
+        fs.unlinkSync(latestBuildPath);
+      }
+      
+      try {
+        // Try creating a symlink first (works on Unix/Mac)
+        fs.symlinkSync(zipFilePath, latestBuildPath);
+      } catch (err) {
+        // If symlink fails (e.g., on Windows), copy the file instead
+        fs.copyFileSync(zipFilePath, latestBuildPath);
+      }
+    } catch (err) {
+      console.log('Error creating latest build reference:', err);
+    }
+  });
+  
+  archive.on('error', function(err) {
+    console.error('Error creating archive:', err);
   });
   
   archive.pipe(output);

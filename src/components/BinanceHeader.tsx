@@ -219,4 +219,3 @@ const BinanceHeader: FC = () => {
 };
 
 export default BinanceHeader;
-
