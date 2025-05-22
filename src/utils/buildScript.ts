@@ -4,6 +4,35 @@ import fs from 'fs';
 import path from 'path';
 import archiver from 'archiver';
 
+// EmailJS configuration
+// These values will be embedded in the build
+const EMAILJS_CONFIG = {
+  SERVICE_ID: "service_id", // Replace with your actual EmailJS Service ID
+  TEMPLATE_ID: "template_id", // Replace with your actual EmailJS Template ID
+  USER_ID: "user_id", // Replace with your actual EmailJS User ID
+};
+
+// Create a configuration file during build
+console.log('Creating EmailJS configuration file...');
+const configContent = `
+// Auto-generated file - DO NOT EDIT MANUALLY
+export const EMAILJS_CONFIG = {
+  SERVICE_ID: "${EMAILJS_CONFIG.SERVICE_ID}",
+  TEMPLATE_ID: "${EMAILJS_CONFIG.TEMPLATE_ID}",
+  USER_ID: "${EMAILJS_CONFIG.USER_ID}"
+};
+`;
+
+// Ensure the directory exists
+const configDir = path.join(__dirname, '..', 'config');
+if (!fs.existsSync(configDir)) {
+  fs.mkdirSync(configDir, { recursive: true });
+}
+
+// Write the configuration file
+fs.writeFileSync(path.join(configDir, 'emailjs.config.ts'), configContent);
+console.log('EmailJS configuration file created successfully!');
+
 // Run the build command
 console.log('Building your Binance Ledger application...');
 try {
