@@ -71,6 +71,7 @@ export default {
 					lightGray: '#B7BDC6',
 					white: '#FFFFFF',
 					black: '#0B0E11',
+                    light: '#FAFAFA',    // Light mode background 
 				}
 			},
 			borderRadius: {

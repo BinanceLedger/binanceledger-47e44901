@@ -74,6 +74,10 @@ const BinanceFooter: FC = () => {
     "Português", "Русский", "Türkçe", "日本語", "한국어", "简体中文"
   ];
 
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
   return (
     <footer className="bg-binance-black py-8 mt-16 border-t border-gray-800">
       <div className="container mx-auto px-4">
@@ -412,7 +416,7 @@ const BinanceFooter: FC = () => {
               aria-label="Toggle theme" 
               className="bg-transparent border-gray-700 text-gray-400 hover:text-white hover:bg-gray-800"
               pressed={theme === "light"}
-              onPressedChange={(pressed) => setTheme(pressed ? "light" : "dark")}
+              onPressedChange={toggleTheme}
             >
               {theme === "light" ? (
                 <Sun className="h-4 w-4" />

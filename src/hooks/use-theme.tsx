@@ -15,21 +15,27 @@ const ThemeContext = createContext<ThemeContextProps>({
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<ThemeType>(() => {
+    // Check for stored theme preference or use system preference as fallback
     const savedTheme = localStorage.getItem("theme");
-    return (savedTheme as ThemeType) || "dark";
+    if (savedTheme === "light" || savedTheme === "dark") {
+      return savedTheme;
+    }
+    
+    // Use system preference as fallback
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
 
   useEffect(() => {
+    // Save theme preference to localStorage
     localStorage.setItem("theme", theme);
     
+    // Apply theme to document element
     const root = window.document.documentElement;
-    if (theme === "dark") {
-      root.classList.remove("light");
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-      root.classList.add("light");
-    }
+    root.classList.remove("light", "dark");
+    root.classList.add(theme);
+    
+    // Log theme change for debugging
+    console.log("Theme changed to:", theme);
   }, [theme]);
 
   return (
