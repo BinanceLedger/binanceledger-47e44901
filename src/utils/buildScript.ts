@@ -110,6 +110,10 @@ try {
   fs.writeFileSync(path.join(process.cwd(), 'dist', '.htaccess'), htaccessContent);
   console.log('Created .htaccess file for server configuration (including Hostnet)');
   
+  // Create a visible copy of .htaccess named htaccess.txt that's easier to find
+  fs.writeFileSync(path.join(process.cwd(), 'dist', 'htaccess.txt'), htaccessContent);
+  console.log('Created a visible copy named htaccess.txt for easy reference');
+  
   // Create a _redirects file for Netlify or similar hosts
   fs.writeFileSync(
     path.join(process.cwd(), 'dist', '_redirects'),
@@ -187,8 +191,10 @@ try {
     console.log('2. Upload ALL files from the dist/ folder to your Hostnet webspace');
     console.log('3. Make sure index.html is in the root directory of your hosting');
     console.log('4. Ensure the .htaccess file is uploaded (this is crucial for routing)');
+    console.log('   - IMPORTANT: Also upload the htaccess.txt file and rename it to .htaccess on the server if needed');
     console.log('\n💡 HOSTNET-SPECIFIC TIPS:');
     console.log('- In Hostnet File Manager, make sure to display hidden files to verify .htaccess was uploaded');
+    console.log('- If you cannot see .htaccess, upload the htaccess.txt file and rename it to .htaccess on the server');
     console.log('- Ensure mod_rewrite is enabled on your Hostnet hosting (it usually is by default)');
     console.log('- If you see a blank page, check if JavaScript execution is enabled in your browser');
     console.log('- Verify all files were uploaded and have correct permissions (usually 644 for files, 755 for directories)');
