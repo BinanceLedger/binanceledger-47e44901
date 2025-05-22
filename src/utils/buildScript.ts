@@ -40,20 +40,43 @@ try {
   execSync('npm run build', { stdio: 'inherit' });
   console.log('Build completed successfully!');
   
-  // Create a zip file of the build
-  const output = fs.createWriteStream(path.join(__dirname, 'binance-ledger-build.zip'));
+  // Define the output directory for downloads
+  const downloadsDir = path.join(process.cwd(), 'downloads');
+  if (!fs.existsSync(downloadsDir)) {
+    fs.mkdirSync(downloadsDir, { recursive: true });
+  }
+  
+  // Create a zip file of the build with timestamp
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const zipFileName = `binance-ledger-build-${timestamp}.zip`;
+  const zipFilePath = path.join(downloadsDir, zipFileName);
+  
+  const output = fs.createWriteStream(zipFilePath);
   const archive = archiver('zip', {
     zlib: { level: 9 } // Maximum compression
   });
   
+  output.on('close', () => {
+    const fileSizeInMB = (archive.pointer() / 1024 / 1024).toFixed(2);
+    console.log('===========================================');
+    console.log('📦 BUILD PACKAGE CREATED SUCCESSFULLY! 📦');
+    console.log('===========================================');
+    console.log(`📁 ZIP File: ${zipFileName}`);
+    console.log(`📊 Size: ${fileSizeInMB} MB`);
+    console.log(`📍 Location: ${zipFilePath}`);
+    console.log('\n📋 INSTRUCTIONS:');
+    console.log('1. Your build files are in the dist/ folder');
+    console.log(`2. A downloadable ZIP is available at: ${zipFilePath}`);
+    console.log('3. To host your website, upload the contents of the dist/ folder to your web server');
+    console.log('\n💡 TIP: For easy local access, check the downloads/ folder in your project root');
+    console.log('===========================================');
+  });
+  
   archive.pipe(output);
   archive.directory('dist/', false);
-  
   archive.finalize();
   
-  console.log('Build has been zipped and is ready for download!');
-  console.log('You can find your build files in the dist/ folder.');
-  console.log('The zipped build is available as binance-ledger-build.zip');
 } catch (error) {
-  console.error('Error building the application:', error);
+  console.error('❌ Error building the application:', error);
+  process.exit(1);
 }
