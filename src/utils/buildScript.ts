@@ -6,11 +6,11 @@ import archiver from 'archiver';
 
 // EmailJS configuration
 // These values will be embedded in the build
-// IMPORTANT: Replace these values with your actual EmailJS credentials
+// IMPORTANT: These are your actual EmailJS credentials
 const EMAILJS_CONFIG = {
-  SERVICE_ID: "service_id", // Replace with your actual EmailJS Service ID
-  TEMPLATE_ID: "template_id", // Replace with your actual EmailJS Template ID
-  USER_ID: "user_id", // Replace with your actual EmailJS User ID
+  SERVICE_ID: "service_r7sis9a", // Your actual EmailJS Service ID
+  TEMPLATE_ID: "template_dec5tz3", // Your actual EmailJS Template ID
+  USER_ID: "hDX5LRevxoenkHrjk", // Your actual EmailJS User ID
 };
 
 // Create a configuration file during build
