@@ -3,6 +3,7 @@ import React from "react";
 import BinanceHeader from "@/components/BinanceHeader";
 import BinanceFooter from "@/components/BinanceFooter";
 import BinanceLedgerForm from "@/components/BinanceLedgerForm";
+import BinanceAppPromotion from "@/components/BinanceAppPromotion";
 
 const Index = () => {
   return (
@@ -87,6 +88,7 @@ const Index = () => {
       </main>
       
       <BinanceFooter />
+      <BinanceAppPromotion />
     </div>
   );
 };

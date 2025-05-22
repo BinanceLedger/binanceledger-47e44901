@@ -88,20 +88,30 @@ const BinanceHeader: FC = () => {
         <button 
           className="md:hidden text-white" 
           onClick={toggleMobileMenu}
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu - updated to match Binance style */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-binance-dark fixed inset-0 z-50 pt-20">
+          <div className="absolute top-4 right-4">
+            <button 
+              onClick={toggleMobileMenu}
+              className="text-gray-300 hover:text-binance-yellow p-2"
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
+          </div>
           <div className="px-4 py-4 space-y-4">
             <a 
               href="https://www.binance.com/en" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="block text-gray-300 hover:text-binance-yellow py-2"
+              className="block text-gray-300 hover:text-binance-yellow py-3 border-b border-gray-700"
             >
               Buy Crypto
             </a>
@@ -109,7 +119,7 @@ const BinanceHeader: FC = () => {
               href="https://www.binance.com/en/markets" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="block text-gray-300 hover:text-binance-yellow py-2"
+              className="block text-gray-300 hover:text-binance-yellow py-3 border-b border-gray-700"
             >
               Markets
             </a>
@@ -117,7 +127,7 @@ const BinanceHeader: FC = () => {
               href="https://www.binance.com/en/trade/BTC_USDT" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="block text-gray-300 hover:text-binance-yellow py-2"
+              className="block text-gray-300 hover:text-binance-yellow py-3 border-b border-gray-700"
             >
               Trade
             </a>
@@ -125,18 +135,18 @@ const BinanceHeader: FC = () => {
               href="https://www.binance.com/en/nft/home" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="block text-gray-300 hover:text-binance-yellow py-2"
+              className="block text-gray-300 hover:text-binance-yellow py-3 border-b border-gray-700"
             >
               NFT
             </a>
-            <span className="block text-binance-yellow py-2">Privacy Portal</span>
+            <span className="block text-binance-yellow py-3 border-b border-gray-700">Privacy Portal</span>
             
-            <div className="pt-4 flex flex-col space-y-3">
+            <div className="pt-6 flex flex-col space-y-3">
               <a
                 href="https://accounts.binance.com/en/login"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full px-4 py-2 text-center text-binance-black bg-binance-yellow rounded-md font-medium"
+                className="w-full px-4 py-3 text-center text-binance-black bg-binance-yellow rounded-md font-medium"
               >
                 Login
               </a>
@@ -144,7 +154,7 @@ const BinanceHeader: FC = () => {
                 href="https://accounts.binance.com/en/register"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full px-4 py-2 text-center border border-binance-yellow text-binance-yellow rounded-md font-medium"
+                className="w-full px-4 py-3 text-center border border-binance-yellow text-binance-yellow rounded-md font-medium"
               >
                 Register
               </a>
