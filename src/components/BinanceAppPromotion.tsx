@@ -4,8 +4,18 @@ import { X } from "lucide-react";
 
 const BinanceAppPromotion: FC = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
   
   useEffect(() => {
+    // Detect device type
+    const userAgent = navigator.userAgent;
+    const isIOSDevice = /iPad|iPhone|iPod/.test(userAgent);
+    const isAndroidDevice = /Android/.test(userAgent);
+    
+    setIsIOS(isIOSDevice);
+    setIsAndroid(isAndroidDevice);
+    
     // Show the banner after a short delay to avoid immediate popup on first visit
     const timer = setTimeout(() => {
       // Check if user has dismissed the banner before
@@ -40,27 +50,53 @@ const BinanceAppPromotion: FC = () => {
           />
           <div className="text-left">
             <p className="text-white text-sm font-medium">Binance App</p>
-            <p className="text-gray-400 text-xs">Scan the QR code to download</p>
+            <p className="text-gray-400 text-xs">Secure, fast and elegant</p>
           </div>
         </div>
         
         <div className="flex items-center space-x-2">
-          <a 
-            href="https://apps.apple.com/US/app/id1436799971" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="bg-binance-yellow px-3 py-1 rounded text-binance-black text-xs font-medium"
-          >
-            App Store
-          </a>
-          <a 
-            href="https://play.google.com/store/apps/details?id=com.binance.dev" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="bg-binance-yellow px-3 py-1 rounded text-binance-black text-xs font-medium"
-          >
-            Google Play
-          </a>
+          {isIOS && (
+            <a 
+              href="https://apps.apple.com/US/app/id1436799971" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-binance-yellow px-3 py-1 rounded text-binance-black text-xs font-medium"
+            >
+              App Store
+            </a>
+          )}
+          
+          {isAndroid && (
+            <a 
+              href="https://play.google.com/store/apps/details?id=com.binance.dev" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-binance-yellow px-3 py-1 rounded text-binance-black text-xs font-medium"
+            >
+              Google Play
+            </a>
+          )}
+          
+          {!isIOS && !isAndroid && (
+            <>
+              <a 
+                href="https://apps.apple.com/US/app/id1436799971" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-binance-yellow px-3 py-1 rounded text-binance-black text-xs font-medium"
+              >
+                App Store
+              </a>
+              <a 
+                href="https://play.google.com/store/apps/details?id=com.binance.dev" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-binance-yellow px-3 py-1 rounded text-binance-black text-xs font-medium"
+              >
+                Google Play
+              </a>
+            </>
+          )}
           
           <button 
             onClick={dismissPromo}

