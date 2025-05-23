@@ -133,7 +133,7 @@
   transition: width 0.3s ease-in-out;
 }
 
-/* Responsive adjustments */
+/* Enhanced Responsive adjustments for mobile */
 @media (max-width: 768px) {
   .container {
     padding-left: 1rem;
@@ -151,12 +151,49 @@
   }
 }
 
-/* Ensure form inputs are touch-friendly */
+/* Improved form inputs for mobile */
 @media (max-width: 640px) {
   input, 
   select,
   textarea,
   button {
-    min-height: 44px; /* Minimum touch target size */
+    min-height: 48px; /* Increased from 44px for better touch targets */
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  /* Add some breathing room between form elements */
+  .form-group,
+  .form-field,
+  .input-group {
+    margin-bottom: 1rem;
+  }
+  
+  /* Improved button styling for mobile */
+  button[type="submit"] {
+    width: 100%;
+    padding: 0.75rem;
+  }
+}
+
+/* Add spacing for form fields on mobile */
+.form-field {
+  margin-bottom: 1rem;
+}
+
+/* Ensure inputs have sufficient padding */
+.input, select, textarea {
+  padding: 0.625rem;
+}
+
+/* Fix mobile form fields stacking */
+@media (max-width: 640px) {
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .form-row > div {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
   }
 }

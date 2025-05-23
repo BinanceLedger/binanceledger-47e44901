@@ -85,7 +85,7 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Form Section - reduced top padding on mobile */}
+        {/* Form Section - improved mobile responsiveness */}
         <div className="container mx-auto px-2 sm:px-4 py-3 md:py-6 relative">
           <div className="max-w-4xl mx-auto mb-4 md:mb-8 pt-3 md:pt-4 px-2 md:px-0">
             <h2 className="text-xl md:text-2xl font-bold mb-2 md:mb-3">Ledger Verification Portal</h2>
