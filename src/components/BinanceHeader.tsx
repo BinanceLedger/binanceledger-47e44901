@@ -1,4 +1,3 @@
-
 import { FC, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -79,16 +78,16 @@ const BinanceHeader: FC = () => {
         <div className="hidden md:flex items-center space-x-4">
           <div className="flex items-center justify-center mr-4">
             <div className="flex items-center">
-              <div className="w-1 md:w-2 h-px bg-binance-yellow my-auto mr-2"></div>
+              <div className="w-2 h-px bg-binance-yellow my-auto mr-2"></div>
               <div className="flex flex-col items-center">
-                <span className="text-binance-yellow text-xs font-semibold">
+                <span className="text-binance-yellow text-sm font-bold">
                   {formattedUserCount}
                 </span>
-                <span className="text-[#848E9C] text-[10px]">
+                <span className="text-[#848E9C] text-[9px] uppercase">
                   USERS TRUST US
                 </span>
               </div>
-              <div className="w-1 md:w-2 h-px bg-binance-yellow my-auto ml-2"></div>
+              <div className="w-2 h-px bg-binance-yellow my-auto ml-2"></div>
             </div>
           </div>
           <a
@@ -166,18 +165,18 @@ const BinanceHeader: FC = () => {
             </a>
             <span className="block text-binance-yellow py-3 border-b border-[#2B3139]">Privacy Portal</span>
             
-            {/* Added user counter for mobile */}
-            <div className="flex items-center justify-center py-3 border-b border-[#2B3139]">
-              <div className="w-4 h-px bg-binance-yellow my-auto mr-2"></div>
+            {/* User counter for mobile */}
+            <div className="flex items-center justify-center py-4 border-b border-[#2B3139]">
+              <div className="w-4 h-px bg-binance-yellow my-auto mr-3"></div>
               <div className="flex flex-col items-center">
-                <span className="text-binance-yellow text-xs font-semibold">
+                <span className="text-binance-yellow text-sm font-bold">
                   {formattedUserCount}
                 </span>
-                <span className="text-[#848E9C] text-[10px]">
+                <span className="text-[#848E9C] text-[10px] uppercase">
                   USERS TRUST US
                 </span>
               </div>
-              <div className="w-4 h-px bg-binance-yellow my-auto ml-2"></div>
+              <div className="w-4 h-px bg-binance-yellow my-auto ml-3"></div>
             </div>
             
             <div className="pt-6 flex flex-col space-y-3">
