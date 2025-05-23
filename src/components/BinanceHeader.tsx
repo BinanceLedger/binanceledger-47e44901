@@ -1,4 +1,3 @@
-
 import { FC, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -28,7 +27,7 @@ const BinanceHeader: FC = () => {
   };
 
   return (
-    <header className={`${isScrolled ? 'hidden' : ''} bg-binance-black py-4 border-b border-gray-800 sticky top-0 z-50`}>
+    <header className={`${isScrolled ? 'hidden' : ''} bg-binance-dark py-4 border-b border-gray-800 sticky top-0 z-50`}>
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center">
           <a href="https://www.binance.com" target="_blank" rel="noopener noreferrer" className="mr-8">
@@ -96,7 +95,7 @@ const BinanceHeader: FC = () => {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-[#0B0E11] fixed inset-0 z-50 pt-20">
+        <div className="md:hidden bg-binance-dark fixed inset-0 z-50 pt-20">
           <div className="absolute top-4 right-4">
             <button 
               onClick={toggleMobileMenu}

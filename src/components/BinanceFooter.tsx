@@ -79,7 +79,7 @@ const BinanceFooter: FC = () => {
   };
 
   return (
-    <footer className="bg-binance-black py-8 mt-16 border-t border-gray-800">
+    <footer className="bg-binance-dark py-8 mt-16 border-t border-gray-800">
       <div className="container mx-auto px-4">
         <div className={`${isMobile ? 'space-y-0' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8'}`}>
           {/* About Us */}
