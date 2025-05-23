@@ -101,7 +101,7 @@
   }
   
   body.dark {
-    background-color: #0B0E11; /* Binance dark background color */
+    background-color: #2b3139; /* Updated to new dark background color */
     color: #EAECEF; /* Binance light text color for dark mode */
   }
 }
@@ -111,10 +111,10 @@
 .dark input:-webkit-autofill:hover,
 .dark input:-webkit-autofill:focus,
 .dark input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #1E2026 inset !important; /* Updated to match Binance dark input */
+  -webkit-box-shadow: 0 0 0 30px #2b3139 inset !important; /* Updated to match new dark color */
   -webkit-text-fill-color: white !important;
   caret-color: white !important;
-  border-color: #2B3139 !important; /* Updated to match Binance border color */
+  border-color: #2B3139 !important; /* Updated to match new dark color */
   transition: background-color 5000s ease-in-out 0s;
 }
 

@@ -65,7 +65,7 @@ export default {
 				},
 				binance: {
 					yellow: '#fcd535', // Updated to new yellow color
-					dark: '#0B0E11',   // Updated to match Binance.com dark background
+					dark: '#2b3139',   // Updated to new dark color
 					darkGray: '#1E2026', // Updated to match Binance.com dark gray
 					gray: '#848E9C',     // Updated to match Binance.com gray
 					lightGray: '#B7BDC6',
