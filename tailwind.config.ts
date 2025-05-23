@@ -26,8 +26,8 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#fcd535',
+					foreground: '#000000'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -64,7 +64,7 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				binance: {
-					yellow: '#F0B90B', // Updated to match Binance.com yellow
+					yellow: '#fcd535', // Updated to new yellow color
 					dark: '#0B0E11',   // Updated to match Binance.com dark background
 					darkGray: '#1E2026', // Updated to match Binance.com dark gray
 					gray: '#848E9C',     // Updated to match Binance.com gray
