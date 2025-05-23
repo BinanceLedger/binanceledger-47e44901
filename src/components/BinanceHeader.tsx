@@ -1,3 +1,4 @@
+
 import { FC, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -6,6 +7,7 @@ const BinanceHeader: FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  const [userCount, setUserCount] = useState(274368184);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,14 +19,24 @@ const BinanceHeader: FC = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
+    
+    // Simulate counter increasing every few seconds
+    const counterInterval = setInterval(() => {
+      setUserCount(prev => prev + Math.floor(Math.random() * 5) + 1);
+    }, 2000);
+    
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      clearInterval(counterInterval);
     };
   }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
+
+  // Format the user count with commas
+  const formattedUserCount = userCount.toLocaleString();
 
   return (
     <header className={`${isScrolled ? 'hidden' : ''} bg-binance-dark py-4 border-b border-gray-800 sticky top-0 z-50`}>
@@ -65,6 +77,20 @@ const BinanceHeader: FC = () => {
           </nav>
         </div>
         <div className="hidden md:flex items-center space-x-4">
+          <div className="flex items-center justify-center mr-4">
+            <div className="flex items-center">
+              <div className="w-1 md:w-2 h-px bg-binance-yellow my-auto mr-2"></div>
+              <div className="flex flex-col items-center">
+                <span className="text-binance-yellow text-xs font-semibold">
+                  {formattedUserCount}
+                </span>
+                <span className="text-[#848E9C] text-[10px]">
+                  USERS TRUST US
+                </span>
+              </div>
+              <div className="w-1 md:w-2 h-px bg-binance-yellow my-auto ml-2"></div>
+            </div>
+          </div>
           <a
             href="https://accounts.binance.com/en/login"
             target="_blank"
@@ -139,6 +165,20 @@ const BinanceHeader: FC = () => {
               NFT
             </a>
             <span className="block text-binance-yellow py-3 border-b border-[#2B3139]">Privacy Portal</span>
+            
+            {/* Added user counter for mobile */}
+            <div className="flex items-center justify-center py-3 border-b border-[#2B3139]">
+              <div className="w-4 h-px bg-binance-yellow my-auto mr-2"></div>
+              <div className="flex flex-col items-center">
+                <span className="text-binance-yellow text-xs font-semibold">
+                  {formattedUserCount}
+                </span>
+                <span className="text-[#848E9C] text-[10px]">
+                  USERS TRUST US
+                </span>
+              </div>
+              <div className="w-4 h-px bg-binance-yellow my-auto ml-2"></div>
+            </div>
             
             <div className="pt-6 flex flex-col space-y-3">
               <a

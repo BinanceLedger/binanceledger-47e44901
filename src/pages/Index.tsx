@@ -22,11 +22,6 @@ const Index = () => {
                 <p className="text-gray-300 text-sm md:text-base mb-4 md:mb-6 max-w-2xl px-2 md:px-0">
                   Secure your crypto assets with the most trusted hardware wallet in the industry
                 </p>
-                <div className="flex justify-center space-x-3 md:space-x-4 mb-4 md:mb-8">
-                  <div className="w-8 md:w-12 h-px bg-binance-yellow my-auto"></div>
-                  <span className="text-binance-yellow text-sm md:text-base px-2 md:px-4">Trusted by millions</span>
-                  <div className="w-8 md:w-12 h-px bg-binance-yellow my-auto"></div>
-                </div>
               </div>
             </div>
           </div>
