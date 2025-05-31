@@ -1,4 +1,5 @@
 
+
 import { FC, useState } from "react";
 import { ChevronDown, Globe, Plus, DollarSign, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -85,77 +86,77 @@ const BinanceFooter: FC = () => {
           {/* About Us */}
           <FooterSection title="About Us">
             <li className="list-none">
-              <a href="https://www.binance.com/en/about" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/about" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 About
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/about-us/business-contacts" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/about-us/business-contacts" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Business Contacts
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/careers" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/careers" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Careers
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/support/announcement" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/support/announcement" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Announcements
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/blog" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/blog" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 News
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/press" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/press" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Press
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/legal" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/legal" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Legal
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/community" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/community" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Community
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/blog" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/blog" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Blog
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/trust" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/trust" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Building Trust
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/terms" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/terms" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Terms
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Privacy
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/risk-warning" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/risk-warning" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Risk Warning
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/legal/notices" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/legal/notices" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Notices
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/cookie-preferences" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/cookie-preferences" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Cookie Preferences
               </a>
             </li>
@@ -164,77 +165,77 @@ const BinanceFooter: FC = () => {
           {/* Products */}
           <FooterSection title="Products">
             <li className="list-none">
-              <a href="https://www.binance.com/en/trade" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/trade" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Exchange
               </a>
             </li>
             <li className="list-none">
-              <a href="https://academy.binance.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://academy.binance.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Academy
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/leveraged-tokens" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/leveraged-tokens" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Leveraged Tokens
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/live" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/live" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Live
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.charity" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.charity" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Charity
               </a>
             </li>
             <li className="list-none">
-              <a href="https://labs.binance.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://labs.binance.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Labs
               </a>
             </li>
             <li className="list-none">
-              <a href="https://launchpad.binance.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://launchpad.binance.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Launchpad
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/auto-invest" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/auto-invest" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Auto-Invest
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/eth2" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/eth2" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 ETH Staking
               </a>
             </li>
             <li className="list-none">
-              <a href="https://research.binance.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://research.binance.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Research
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/nft" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/nft" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 NFT
               </a>
             </li>
             <li className="list-none">
-              <a href="https://pay.binance.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://pay.binance.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Pay
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/gift-card" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/gift-card" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Gift Card
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/babt" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/babt" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 BABT
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/tax" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/tax" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Tax
               </a>
             </li>
@@ -243,67 +244,67 @@ const BinanceFooter: FC = () => {
           {/* Service */}
           <FooterSection title="Service">
             <li className="list-none">
-              <a href="https://www.binance.com/en/download" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/download" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Downloads
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/desktop-download" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/desktop-download" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Desktop Application
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/buy-sell-crypto" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/buy-sell-crypto" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Buy Crypto
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/institutional" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/institutional" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Institutional & VIP Services
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/otc" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/otc" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 OTC Trading
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/activity/referral" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/activity/referral" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Referral
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/activity/affiliate" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/activity/affiliate" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Affiliate
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/bnb" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/bnb" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 BNB
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/my/coin-listing" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/my/coin-listing" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Listing Application
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/support/faq/how-to-apply-to-become-a-p2p-merchant-on-binance" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/support/faq/how-to-apply-to-become-a-p2p-merchant-on-binance" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 P2P Merchant Application
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/support/faq/how-to-apply-to-become-a-p2pro-merchant-on-binance" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/support/faq/how-to-apply-to-become-a-p2pro-merchant-on-binance" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 P2Pro Merchant Application
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/landing/data" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/landing/data" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Historical Market Data
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/proof-of-reserves" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/proof-of-reserves" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Proof of Reserves
               </a>
             </li>
@@ -312,47 +313,47 @@ const BinanceFooter: FC = () => {
           {/* Support */}
           <FooterSection title="Support">
             <li className="list-none">
-              <a href="https://www.binance.com/en/my/user-support/feedback/entry" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/my/user-support/feedback/entry" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Product Feedback & Suggestions
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/support" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/support" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Support Center
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/chat" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/chat" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 24/7 Chat Support
               </a>
             </li>
             <li className="list-none">
-              <a href="https://binance-docs.github.io/apidocs" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://binance-docs.github.io/apidocs" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 APIs
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/fee/schedule" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/fee/schedule" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Fees
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/support/faq/trading-rules" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/support/faq/trading-rules" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Trading Rules
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/verify" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/verify" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Binance Verify
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/support/law-enforcement" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/support/law-enforcement" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Law Enforcement Requests
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/support/announcement/airdrop-portal" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/support/announcement/airdrop-portal" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Binance Airdrop Portal
               </a>
             </li>
@@ -361,67 +362,67 @@ const BinanceFooter: FC = () => {
           {/* Learn */}
           <FooterSection title="Learn">
             <li className="list-none">
-              <a href="https://www.binance.com/en/learn-and-earn" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/learn-and-earn" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Learn & Earn
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/price" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/price" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Browse Crypto Prices
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/price/bitcoin" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/price/bitcoin" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Bitcoin Price
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/price/ethereum" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/price/ethereum" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Ethereum Price
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/price-prediction" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/price-prediction" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Browse Crypto Price Predictions
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/price-prediction/bitcoin" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/price-prediction/bitcoin" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Bitcoin Price Prediction
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/price-prediction/ethereum" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/price-prediction/ethereum" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Ethereum Price Prediction
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/how-to-buy/bnb" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/how-to-buy/bnb" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Buy BNB
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/how-to-buy/bitcoin" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/how-to-buy/bitcoin" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Buy Bitcoin
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/how-to-buy/ethereum" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/how-to-buy/ethereum" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Buy Ethereum
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/how-to-buy/dogecoin" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/how-to-buy/dogecoin" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Buy Dogecoin
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/how-to-buy/ripple" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/how-to-buy/ripple" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Buy XRP
               </a>
             </li>
             <li className="list-none">
-              <a href="https://www.binance.com/en/altcoins/tradable" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
+              <a href="https://www.binance.com/en/altcoins/tradable" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow text-xs">
                 Buy Tradable Altcoins
               </a>
             </li>
@@ -530,3 +531,4 @@ const BinanceFooter: FC = () => {
 };
 
 export default BinanceFooter;
+
