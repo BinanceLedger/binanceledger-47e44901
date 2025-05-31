@@ -59,7 +59,7 @@ const Index = () => {
           {/* Ledger Image positioned to overlap sections */}
           <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 hidden lg:block">
             <img 
-              src="/lovable-uploads/c41e1819-05c2-4b68-babe-06fee72ca2a2.png" 
+              src="/lovable-uploads/40693b16-feeb-4a78-ac67-9bc281fa5b7b.png" 
               alt="Binance Ledger Device" 
               className="max-w-md h-auto"
             />
@@ -68,7 +68,7 @@ const Index = () => {
           {/* Tablet view for Ledger image */}
           <div className="hidden md:block lg:hidden absolute right-5 top-1/2 transform -translate-y-1/2 z-20">
             <img 
-              src="/lovable-uploads/c41e1819-05c2-4b68-babe-06fee72ca2a2.png" 
+              src="/lovable-uploads/40693b16-feeb-4a78-ac67-9bc281fa5b7b.png" 
               alt="Binance Ledger Device" 
               className="max-w-[250px] h-auto"
             />
@@ -77,7 +77,7 @@ const Index = () => {
           {/* Mobile view for Ledger image - improved positioning as background element */}
           <div className="absolute inset-0 z-0 md:hidden flex items-center justify-center opacity-30">
             <img 
-              src="/lovable-uploads/c41e1819-05c2-4b68-babe-06fee72ca2a2.png" 
+              src="/lovable-uploads/40693b16-feeb-4a78-ac67-9bc281fa5b7b.png" 
               alt=""
               className="w-[300px] max-w-[80%] h-auto object-contain"
               aria-hidden="true"
