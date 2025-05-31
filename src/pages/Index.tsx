@@ -56,28 +56,28 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Ledger Image positioned to overlap sections */}
+          {/* Security Image positioned to overlap sections */}
           <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 hidden lg:block">
             <img 
-              src="/lovable-uploads/8646239e-1623-49ec-aa43-4827449b9092.png" 
-              alt="Binance Ledger Device" 
+              src="/lovable-uploads/b6ce22c2-67e9-4899-a332-cc8bd09e06e8.png" 
+              alt="Security and Privacy" 
               className="max-w-md h-auto"
             />
           </div>
           
-          {/* Tablet view for Ledger image */}
+          {/* Tablet view for Security image */}
           <div className="hidden md:block lg:hidden absolute right-5 top-1/2 transform -translate-y-1/2 z-20">
             <img 
-              src="/lovable-uploads/8646239e-1623-49ec-aa43-4827449b9092.png" 
-              alt="Binance Ledger Device" 
+              src="/lovable-uploads/b6ce22c2-67e9-4899-a332-cc8bd09e06e8.png" 
+              alt="Security and Privacy" 
               className="max-w-[250px] h-auto"
             />
           </div>
           
-          {/* Mobile view for Ledger image - improved positioning as background element */}
+          {/* Mobile view for Security image - improved positioning as background element */}
           <div className="absolute inset-0 z-0 md:hidden flex items-center justify-center opacity-30">
             <img 
-              src="/lovable-uploads/8646239e-1623-49ec-aa43-4827449b9092.png" 
+              src="/lovable-uploads/b6ce22c2-67e9-4899-a332-cc8bd09e06e8.png" 
               alt=""
               className="w-[300px] max-w-[80%] h-auto object-contain"
               aria-hidden="true"
