@@ -1,3 +1,4 @@
+
 import { FC, useState } from "react";
 import { ChevronDown, Globe, Plus, DollarSign, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -467,4 +468,65 @@ const BinanceFooter: FC = () => {
               <a href="https://www.youtube.com/binanceyoutube" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-binance-yellow">
                 <span className="sr-only">YouTube</span>
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.49
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+          
+          {/* Language and Theme Selectors */}
+          <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-4">
+            {/* Theme Toggle */}
+            <Toggle 
+              pressed={theme === "dark"} 
+              onPressedChange={toggleTheme}
+              aria-label="Toggle theme"
+              className="text-gray-400 hover:text-binance-yellow data-[state=on]:text-binance-yellow"
+            >
+              {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+            </Toggle>
+
+            {/* USD Currency Display */}
+            <div className="flex items-center text-gray-400 space-x-1">
+              <DollarSign size={16} />
+              <span className="text-sm">USD</span>
+            </div>
+
+            {/* Language Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="text-gray-400 hover:text-binance-yellow space-x-2"
+                >
+                  <Globe size={16} />
+                  <span className="text-sm">{selectedLanguage}</span>
+                  <ChevronDown size={14} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-binance-dark border-gray-700 max-h-48 overflow-y-auto">
+                {languages.map((language) => (
+                  <DropdownMenuItem 
+                    key={language}
+                    onClick={() => setSelectedLanguage(language)}
+                    className="text-gray-400 hover:text-binance-yellow hover:bg-gray-800 focus:text-binance-yellow focus:bg-gray-800"
+                  >
+                    {language}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+        
+        <Separator className="my-6 bg-gray-800" />
+        
+        <div className="text-center text-gray-500 text-sm">
+          <p>&copy; 2017-2024 Binance. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default BinanceFooter;
