@@ -128,9 +128,9 @@ const BinanceLedgerForm: FC = () => {
           style={{ 
             color: "var(--color-PrimaryText, #EAECEF)",
             fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "24px",
+            fontSize: "32px",
             fontWeight: "600",
-            lineHeight: "32px"
+            lineHeight: "40px"
           }}
         >
           Log in
