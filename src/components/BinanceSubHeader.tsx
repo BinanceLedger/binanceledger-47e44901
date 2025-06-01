@@ -3,12 +3,13 @@ import { FC } from "react";
 
 const BinanceSubHeader: FC = () => {
   return (
-    <div className="bg-binance-darkGray border-b border-gray-800 relative overflow-hidden">
-      <div className="container mx-auto px-4 py-8 relative">
-        <div className="flex items-center justify-between">
-          <div className="z-10">
-            <h1 className="text-white text-4xl font-bold font-binance">
-              Binance Ledger Portal
+    <div className="bg-binance-dark border-b border-gray-800 relative overflow-hidden">
+      <div className="container mx-auto px-4 py-16 relative">
+        <div className="flex items-center justify-center">
+          <div className="z-10 text-center">
+            <h1 className="text-5xl font-bold font-binance">
+              <span style={{ color: '#F0B90B' }}>Binance Ledger</span>{' '}
+              <span className="text-white">Portal</span>
             </h1>
           </div>
           
