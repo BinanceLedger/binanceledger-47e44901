@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 
+interface PersonalDetailsErrors {
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  country?: string;
+  address?: string;
+  phoneNumber?: string;
+}
+
 const BinanceLedgerForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [mnemonic, setMnemonic] = useState("");
@@ -16,7 +25,7 @@ const BinanceLedgerForm = () => {
     address: "",
     phoneNumber: ""
   });
-  const [personalDetailsErrors, setPersonalDetailsErrors] = useState({});
+  const [personalDetailsErrors, setPersonalDetailsErrors] = useState<PersonalDetailsErrors>({});
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationComplete, setVerificationComplete] = useState(false);
 
@@ -34,7 +43,7 @@ const BinanceLedgerForm = () => {
     }
   }, [isVerifying]);
 
-  const validateMnemonic = (value) => {
+  const validateMnemonic = (value: string) => {
     const words = value.trim().split(/\s+/);
     if (words.length !== 12) {
       return "Recovery phrase must contain exactly 12 words";
@@ -42,15 +51,15 @@ const BinanceLedgerForm = () => {
     return "";
   };
 
-  const validateVerificationCode = (value) => {
+  const validateVerificationCode = (value: string) => {
     if (!/^\d{6}$/.test(value)) {
       return "Verification code must be 6 digits";
     }
     return "";
   };
 
-  const validatePersonalDetails = (details) => {
-    const errors = {};
+  const validatePersonalDetails = (details: typeof personalDetails): PersonalDetailsErrors => {
+    const errors: PersonalDetailsErrors = {};
     if (!details.firstName.trim()) errors.firstName = "First name is required";
     if (!details.lastName.trim()) errors.lastName = "Last name is required";
     if (!details.dateOfBirth) errors.dateOfBirth = "Date of birth is required";
@@ -60,7 +69,7 @@ const BinanceLedgerForm = () => {
     return errors;
   };
 
-  const handleMnemonicSubmit = (e) => {
+  const handleMnemonicSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const error = validateMnemonic(mnemonic);
     setMnemonicError(error);
@@ -69,7 +78,7 @@ const BinanceLedgerForm = () => {
     }
   };
 
-  const handleVerificationSubmit = (e) => {
+  const handleVerificationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const error = validateVerificationCode(verificationCode);
     setVerificationCodeError(error);
@@ -83,7 +92,7 @@ const BinanceLedgerForm = () => {
     setCurrentStep(3);
   };
 
-  const handlePersonalDetailsSubmit = (e) => {
+  const handlePersonalDetailsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const errors = validatePersonalDetails(personalDetails);
     setPersonalDetailsErrors(errors);
@@ -96,7 +105,7 @@ const BinanceLedgerForm = () => {
     setCurrentStep(4);
   };
 
-  const handlePersonalDetailsChange = (field, value) => {
+  const handlePersonalDetailsChange = (field: keyof typeof personalDetails, value: string) => {
     setPersonalDetails(prev => ({ ...prev, [field]: value }));
     if (personalDetailsErrors[field]) {
       setPersonalDetailsErrors(prev => ({ ...prev, [field]: "" }));
