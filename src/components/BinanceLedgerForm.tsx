@@ -101,7 +101,7 @@ const BinanceLedgerForm: FC = () => {
 
   const renderEmailStep = () => (
     <>
-      <div className="flex justify-center mb-8">
+      <div className="flex justify-start mb-8">
         <div className="flex items-center">
           <img 
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
