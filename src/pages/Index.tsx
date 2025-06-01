@@ -5,15 +5,10 @@ import BinanceFooter from "@/components/BinanceFooter";
 import BinanceLedgerForm from "@/components/BinanceLedgerForm";
 import BinanceAppPromotion from "@/components/BinanceAppPromotion";
 
-console.log('Index page loading...');
-
 const Index = () => {
-  console.log('Index component rendering...');
-  
   const [userCount, setUserCount] = useState(274368184);
 
   useEffect(() => {
-    console.log('Index useEffect running...');
     // Simulate counter increasing every few seconds
     const counterInterval = setInterval(() => {
       setUserCount(prev => prev + Math.floor(Math.random() * 5) + 1);
@@ -26,8 +21,6 @@ const Index = () => {
 
   // Format the user count with commas
   const formattedUserCount = userCount.toLocaleString();
-
-  console.log('About to render Index component');
 
   return (
     <div className="min-h-screen flex flex-col bg-binance-dark text-white">
