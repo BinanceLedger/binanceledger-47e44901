@@ -27,8 +27,8 @@ const Index = () => {
       <BinanceHeader />
       
       <main className="flex-grow relative">
-        {/* Hero Section - made more compact */}
-        <div className="bg-binance-dark py-6 md:py-10 relative overflow-hidden">
+        {/* Hero Section - increased height for better image visibility */}
+        <div className="bg-binance-dark py-12 md:py-16 lg:py-20 relative overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
               <div className="flex flex-col items-center text-center relative z-10">
