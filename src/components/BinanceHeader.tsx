@@ -142,12 +142,12 @@ const BinanceHeader: FC = () => {
             </a>
             <span className="block text-binance-yellow py-3 border-b border-[#2B3139]">Security Center</span>
             
-            <div className="pt-6 flex flex-col space-y-3">
+            <div className="pt-6 flex gap-3">
               <a
                 href="https://accounts.binance.com/en/login"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full px-4 py-3 text-center text-binance-black bg-binance-yellow rounded-md font-medium"
+                className="flex-1 px-4 py-3 text-center text-binance-black bg-binance-yellow rounded-md font-medium"
               >
                 Login
               </a>
@@ -155,7 +155,7 @@ const BinanceHeader: FC = () => {
                 href="https://accounts.binance.com/en/register"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full px-4 py-2 text-center border border-binance-yellow text-binance-yellow rounded-md font-medium"
+                className="flex-1 px-4 py-3 text-center border border-binance-yellow text-binance-yellow rounded-md font-medium"
               >
                 Register
               </a>
