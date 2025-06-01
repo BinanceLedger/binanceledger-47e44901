@@ -428,7 +428,8 @@ const BinanceFooter: FC = () => {
           </FooterSection>
         </div>
         
-        <Separator className="my-8 bg-gray-800" />
+        {/* Only add separator on desktop, not mobile to avoid double line */}
+        {!isMobile && <Separator className="my-8 bg-gray-800" />}
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-6 md:space-y-0">
           {/* Community Section with Label */}
