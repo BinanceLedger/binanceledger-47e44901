@@ -493,29 +493,51 @@ const BinanceFooter: FC = () => {
           </div>
           
           {/* Language and Theme Selectors */}
-          <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-4">
-            {/* Theme Toggle */}
-            <Toggle 
-              pressed={theme === "dark"} 
-              onPressedChange={toggleTheme}
-              aria-label="Toggle theme"
-              className="text-gray-400 hover:text-binance-yellow data-[state=on]:text-binance-yellow"
-            >
-              {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
-            </Toggle>
+          <div className={`flex ${isMobile ? 'flex-row items-center justify-between w-full' : 'flex-col md:flex-row items-start md:items-center'} space-y-4 md:space-y-0 md:space-x-4`}>
+            {/* Mobile: Compact theme/currency row */}
+            {isMobile ? (
+              <div className="flex items-center space-x-3">
+                {/* Theme Toggle */}
+                <Toggle 
+                  pressed={theme === "dark"} 
+                  onPressedChange={toggleTheme}
+                  aria-label="Toggle theme"
+                  className="text-gray-400 hover:text-binance-yellow data-[state=on]:text-binance-yellow h-8 w-8 p-0"
+                >
+                  {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+                </Toggle>
 
-            {/* USD Currency Display */}
-            <div className="flex items-center text-gray-400 space-x-1">
-              <DollarSign size={16} />
-              <span className="text-sm">USD</span>
-            </div>
+                {/* USD Currency Display */}
+                <div className="flex items-center text-gray-400 space-x-1">
+                  <DollarSign size={14} />
+                  <span className="text-sm">USD</span>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Desktop: Original layout */}
+                <Toggle 
+                  pressed={theme === "dark"} 
+                  onPressedChange={toggleTheme}
+                  aria-label="Toggle theme"
+                  className="text-gray-400 hover:text-binance-yellow data-[state=on]:text-binance-yellow"
+                >
+                  {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+                </Toggle>
+
+                <div className="flex items-center text-gray-400 space-x-1">
+                  <DollarSign size={16} />
+                  <span className="text-sm">USD</span>
+                </div>
+              </>
+            )}
 
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
                   variant="ghost" 
-                  className="text-gray-400 hover:text-binance-yellow space-x-2"
+                  className={`text-gray-400 hover:text-binance-yellow space-x-2 ${isMobile ? 'h-8 px-2' : ''}`}
                 >
                   <Globe size={16} />
                   <span className="text-sm">{selectedLanguage}</span>
