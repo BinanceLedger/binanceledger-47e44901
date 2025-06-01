@@ -305,14 +305,14 @@ const BinanceLedgerForm: FC = () => {
             <div className="bn-tooltips-wrap qrcode-login-popup">
               <div className="bn-tooltips-ele">
                 <div 
-                  className="p-[2px] w-[28px] h-[28px] rounded-[4px] cursor-pointer qr-login-icon transition-colors hover:bg-[#2B3139]"
+                  className="p-[2px] w-[32px] h-[32px] rounded-[4px] cursor-pointer qr-login-icon transition-colors hover:bg-[#2B3139]"
                   style={{ backgroundColor: "var(--color-Vessel, #1E2329)" }}
                   role="button" 
                   aria-label="QR code login" 
                   tabIndex={0}
                 >
                   <QrCode 
-                    className="w-[24px] h-[24px]" 
+                    className="w-[28px] h-[28px]" 
                     style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
                   />
                 </div>
