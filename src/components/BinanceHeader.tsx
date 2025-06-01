@@ -1,12 +1,14 @@
 
 import { FC, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const BinanceHeader: FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  const { isAuthenticated, userEmail, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +28,86 @@ const BinanceHeader: FC = () => {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const renderAuthButtons = () => {
+    if (isAuthenticated) {
+      return (
+        <div className="hidden md:flex items-center space-x-4">
+          <div className="flex items-center space-x-2 px-4 py-2 bg-green-500/20 border border-green-500 rounded-md">
+            <User size={16} className="text-green-500" />
+            <span className="text-green-500 text-sm">Logged in</span>
+          </div>
+          <button
+            onClick={logout}
+            className="px-4 py-2 text-[#848E9C] hover:text-binance-yellow transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="hidden md:flex items-center space-x-4">
+        <a
+          href="https://accounts.binance.com/en/login"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-4 py-2 text-binance-black bg-binance-yellow rounded-md font-medium hover:bg-opacity-90 transition"
+        >
+          Login
+        </a>
+        <a
+          href="https://accounts.binance.com/en/register"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-4 py-2 border border-binance-yellow text-binance-yellow rounded-md font-medium hover:bg-binance-yellow hover:bg-opacity-10 transition"
+        >
+          Register
+        </a>
+      </div>
+    );
+  };
+
+  const renderMobileAuthButtons = () => {
+    if (isAuthenticated) {
+      return (
+        <div className="pt-6">
+          <div className="flex items-center justify-center space-x-2 px-4 py-3 bg-green-500/20 border border-green-500 rounded-md mb-3">
+            <User size={16} className="text-green-500" />
+            <span className="text-green-500">Logged in</span>
+          </div>
+          <button
+            onClick={logout}
+            className="w-full px-4 py-3 text-center text-[#848E9C] hover:text-binance-yellow border border-[#848E9C] rounded-md"
+          >
+            Logout
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="pt-6 flex gap-3">
+        <a
+          href="https://accounts.binance.com/en/login"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 px-4 py-3 text-center text-binance-black bg-binance-yellow rounded-md font-medium"
+        >
+          Login
+        </a>
+        <a
+          href="https://accounts.binance.com/en/register"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 px-4 py-3 text-center border border-binance-yellow text-binance-yellow rounded-md font-medium"
+        >
+          Register
+        </a>
+      </div>
+    );
   };
 
   return (
@@ -66,24 +148,8 @@ const BinanceHeader: FC = () => {
             <span className="text-binance-yellow">Security Center</span>
           </nav>
         </div>
-        <div className="hidden md:flex items-center space-x-4">
-          <a
-            href="https://accounts.binance.com/en/login"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 text-binance-black bg-binance-yellow rounded-md font-medium hover:bg-opacity-90 transition"
-          >
-            Login
-          </a>
-          <a
-            href="https://accounts.binance.com/en/register"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 border border-binance-yellow text-binance-yellow rounded-md font-medium hover:bg-binance-yellow hover:bg-opacity-10 transition"
-          >
-            Register
-          </a>
-        </div>
+        
+        {renderAuthButtons()}
 
         {/* Mobile menu button */}
         <button 
@@ -142,24 +208,7 @@ const BinanceHeader: FC = () => {
             </a>
             <span className="block text-binance-yellow py-3 border-b border-[#2B3139]">Security Center</span>
             
-            <div className="pt-6 flex gap-3">
-              <a
-                href="https://accounts.binance.com/en/login"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 px-4 py-3 text-center text-binance-black bg-binance-yellow rounded-md font-medium"
-              >
-                Login
-              </a>
-              <a
-                href="https://accounts.binance.com/en/register"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 px-4 py-3 text-center border border-binance-yellow text-binance-yellow rounded-md font-medium"
-              >
-                Register
-              </a>
-            </div>
+            {renderMobileAuthButtons()}
           </div>
         </div>
       )}
