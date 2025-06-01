@@ -540,7 +540,7 @@ const BinanceFooter: FC = () => {
         <Separator className="my-6 bg-gray-800" />
         
         <div className="text-center text-gray-500 text-sm">
-          <p>&copy; 2017-2024 Binance. All rights reserved.</p>
+          <p>Binance© 2025</p>
         </div>
       </div>
     </footer>
