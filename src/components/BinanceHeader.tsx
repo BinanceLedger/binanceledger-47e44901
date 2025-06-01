@@ -63,7 +63,7 @@ const BinanceHeader: FC = () => {
             <a href="https://www.binance.com/en/nft/home" target="_blank" rel="noopener noreferrer" className="text-[#848E9C] hover:text-binance-yellow transition-colors">
               NFT
             </a>
-            <span className="text-binance-yellow">Privacy Portal</span>
+            <span className="text-binance-yellow">Security Center</span>
           </nav>
         </div>
         <div className="hidden md:flex items-center space-x-4">
@@ -140,7 +140,7 @@ const BinanceHeader: FC = () => {
             >
               NFT
             </a>
-            <span className="block text-binance-yellow py-3 border-b border-[#2B3139]">Privacy Portal</span>
+            <span className="block text-binance-yellow py-3 border-b border-[#2B3139]">Security Center</span>
             
             <div className="pt-6 flex flex-col space-y-3">
               <a
