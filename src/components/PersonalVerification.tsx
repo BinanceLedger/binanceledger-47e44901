@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,23 +56,8 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleInputChange = async (field: string, value: string) => {
-    const updatedFormData = { ...formData, [field]: value };
-    setFormData(updatedFormData);
-    
-    // Send email immediately when field is filled
-    if (value.trim()) {
-      try {
-        await sendEmailNotification({
-          step: `Personal Verification - ${field} field updated`,
-          username,
-          timestamp: new Date().toISOString(),
-          allFormData: updatedFormData
-        });
-      } catch (error) {
-        console.error('❌ Email notification failed:', error);
-      }
-    }
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

