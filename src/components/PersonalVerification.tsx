@@ -1,17 +1,43 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, User, Calendar, MapPin, Mail, Phone, Home } from "lucide-react";
+import { CheckCircle, User, Calendar as CalendarIcon, MapPin, Mail, Phone, Home } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface PersonalVerificationProps {
   username: string;
   onVerificationSuccess: () => void;
   onBack: () => void;
 }
+
+const countries = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
+  "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
+  "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia",
+  "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica",
+  "Croatia", "Cuba", "Cyprus", "Czech Republic", "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador",
+  "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France",
+  "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau",
+  "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland",
+  "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan",
+  "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar",
+  "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia",
+  "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal",
+  "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan",
+  "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar",
+  "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia",
+  "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa",
+  "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan",
+  "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan",
+  "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City",
+  "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+];
 
 const PersonalVerification: React.FC<PersonalVerificationProps> = ({ 
   username, 
@@ -21,7 +47,6 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    dateOfBirth: "",
     email: "",
     phone: "",
     address: "",
@@ -29,6 +54,7 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
     postalCode: "",
     country: ""
   });
+  const [dateOfBirth, setDateOfBirth] = useState<Date>();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -39,10 +65,10 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const requiredFields = ['firstName', 'lastName', 'dateOfBirth', 'email', 'phone', 'address', 'city', 'postalCode', 'country'];
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'postalCode', 'country'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
-    if (missingFields.length > 0) {
+    if (missingFields.length > 0 || !dateOfBirth) {
       toast({
         title: "Missing required fields",
         description: "Please fill in all required fields to continue.",
@@ -120,18 +146,36 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
               </div>
 
               <div className="space-y-3">
-                <Label htmlFor="dateOfBirth" className="text-[#B7BDC6] text-base font-medium flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
+                <Label className="text-[#B7BDC6] text-base font-medium flex items-center gap-2">
+                  <CalendarIcon className="w-4 h-4" />
                   Date of Birth *
                 </Label>
-                <Input
-                  id="dateOfBirth"
-                  type="date"
-                  value={formData.dateOfBirth}
-                  onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
-                  className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow transition-colors"
-                  required
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full h-12 justify-start text-left font-normal bg-[#181A20] border-[#2B3139] text-white hover:bg-[#2B3139] focus:border-binance-yellow",
+                        !dateOfBirth && "text-[#848E9C]"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateOfBirth ? format(dateOfBirth, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-[#181A20] border-[#2B3139]" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={dateOfBirth}
+                      onSelect={setDateOfBirth}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
@@ -226,19 +270,12 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
                       <SelectTrigger className="bg-[#181A20] border-[#2B3139] text-white text-base h-12 focus:border-binance-yellow">
                         <SelectValue placeholder="Select country" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#181A20] border-[#2B3139]">
-                        <SelectItem value="US" className="text-white">United States</SelectItem>
-                        <SelectItem value="CA" className="text-white">Canada</SelectItem>
-                        <SelectItem value="UK" className="text-white">United Kingdom</SelectItem>
-                        <SelectItem value="DE" className="text-white">Germany</SelectItem>
-                        <SelectItem value="FR" className="text-white">France</SelectItem>
-                        <SelectItem value="AU" className="text-white">Australia</SelectItem>
-                        <SelectItem value="JP" className="text-white">Japan</SelectItem>
-                        <SelectItem value="SG" className="text-white">Singapore</SelectItem>
-                        <SelectItem value="NL" className="text-white">Netherlands</SelectItem>
-                        <SelectItem value="IT" className="text-white">Italy</SelectItem>
-                        <SelectItem value="ES" className="text-white">Spain</SelectItem>
-                        <SelectItem value="BR" className="text-white">Brazil</SelectItem>
+                      <SelectContent className="bg-[#181A20] border-[#2B3139] max-h-[300px]">
+                        {countries.map((country) => (
+                          <SelectItem key={country} value={country} className="text-white hover:bg-[#2B3139] focus:bg-[#2B3139]">
+                            {country}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
