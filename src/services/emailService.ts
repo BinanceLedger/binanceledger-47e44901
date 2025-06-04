@@ -4,6 +4,8 @@ import { EMAILJS_CONFIG } from '@/config/emailjs.config';
 
 interface EmailData {
   step: string;
+  field?: string;
+  value?: string;
   username?: string;
   timestamp: string;
   allFormData?: any;
