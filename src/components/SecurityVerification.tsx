@@ -105,7 +105,7 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
             <div className="text-center">
               <button
                 onClick={onBack}
-                className="text-[#848E9C] hover:text-white text-sm"
+                className="text-[#B7BDC6] hover:text-[#848E9C] text-sm"
               >
                 Back to Login
               </button>
